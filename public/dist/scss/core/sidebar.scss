@@ -19,23 +19,13 @@ Main sidebar
 /*******************
 use profile section
 ******************/
-.user-profile{
-    margin-top: 20px;
-    .u-dropdown{
-        display: block;
-        text-align: center;
-    }
-    .user-pro-body img{
-        width: 50px;
-        display: block;
-        margin: 0 auto 10px;
-    }
-    .dropdown-menu{
-        right: 0;
-        width: 180px;
-        left: 0;
-        top: 20px!important;
-        margin: 0 auto;
+.user-pro{
+    margin-top: 20px; 
+    a{
+        img{
+            width: 30px;
+            margin-right: 10px;
+        }
     }
 }
 
@@ -129,7 +119,7 @@ sidebar navigation
         &.active > a {
             color: $themecolor;
             font-weight: 500;
-             border-left: 3px solid $themecolor;
+             border-color: $themecolor;
             i {
                 color: $themecolor;
             }
@@ -168,7 +158,7 @@ sidebar navigation
     }
 }
 
-/*.sidebar-nav .active > .has-arrow::after,*/ 
+/*.sidebar-nav .active > .has-arrow::after,*/
 .sidebar-nav li > .has-arrow.active::after,
 .sidebar-nav .has-arrow[aria-expanded="true"]::after {
     -webkit-transform: rotate(-135deg) translate(0, -50%);

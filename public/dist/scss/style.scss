@@ -4,13 +4,13 @@ Author: Niravjoshi / Wrappixel
 File: scss
 */
 
-@import 'variable'; 
+@import 'variable';
 
 //Colors
 @import 'colors/default';
 @import 'colors/green';
 @import 'colors/megna';
-@import 'colors/purple';
+@import 'colors/purple';  
 @import 'colors/red';
 @import 'colors/blue';
 @import 'colors/blue-dark';
@@ -19,6 +19,7 @@ File: scss
 @import 'colors/red-dark';
 @import 'colors/megna-dark';
 @import 'colors/purple-dark';
+
 
 // Import Bootstrap source files
 @import "../../../assets/node_modules/bootstrap/scss/bootstrap";

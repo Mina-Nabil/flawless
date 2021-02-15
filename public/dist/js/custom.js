@@ -11,7 +11,7 @@ $(function () {
     // ==============================================================
     var set = function () {
         var width = (window.innerWidth > 0) ? window.innerWidth : this.screen.width;
-        var topOffset = 55;
+        var topOffset = 190;
         if (width < 1170) {
             $("body").addClass("mini-sidebar");
             $('.navbar-brand span').hide();
@@ -20,7 +20,7 @@ $(function () {
         else {
             $("body").removeClass("mini-sidebar");
             $('.navbar-brand span').show();
-        }
+       }
          var height = ((window.innerHeight > 0) ? window.innerHeight : this.screen.height) - 1;
         height = height - topOffset;
         if (height < 1) height = 1;
@@ -84,8 +84,7 @@ $(function () {
     // ==============================================================
     // Perfact scrollbar
     // ==============================================================
-    $('.scroll-sidebar, .right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
-    $('#chat, #msg, #comment, #todo').perfectScrollbar();
+    $('.right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
     // ==============================================================
     // Resize all elements
     // ==============================================================
@@ -114,6 +113,21 @@ $(function () {
     $('a[data-action="close"]').on('click', function () {
         $(this).closest('.card').removeClass().slideUp('fast');
     });
+    // ==============================================================
+    // fixed navigattion while scrolll
+    // ==============================================================
+    function collapseNavbar() {
+        if ($(window).scrollTop() > 80) {
+            $("body").addClass("fixed-sidebar");
+            $(".left-sidebar").addClass("animated slideInDown");
+
+        } else {
+            $("body").removeClass("fixed-sidebar");
+            $(".left-sidebar").removeClass("animated slideInDown");
+        }
+    }
+    $(window).scroll(collapseNavbar);
+    collapseNavbar()
     // ==============================================================
     // Color variation
     // ==============================================================
@@ -191,7 +205,6 @@ $(function () {
         $("#themecolors li a").removeClass("working"),
         $(this).addClass("working")
     })
-
     // For Custom File Input
     $('.custom-file-input').on('change',function(){
         //get the file name

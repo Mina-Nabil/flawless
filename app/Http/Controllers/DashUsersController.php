@@ -17,7 +17,7 @@ class DashUsersController extends Controller
         $this->data['title'] = "Dashboard Users";
         $this->data['subTitle'] = "Manage All Dashboard Users";
         $this->data['cols'] = ['Username', 'Fullname', 'Type', 'Edit'];
-        $this->data['atts'] = ['DASH_USNM', 'DASH_FLNM', ['foreign' => ['dash_types', 'DHTP_NAME']], ['edit' => ['url' => 'dash/users/edit/', 'att' => 'id']]];
+        $this->data['atts'] = ['DASH_USNM', 'DASH_FLNM', ['foreign' => ['rel'=>'dash_types', 'att'=>'DHTP_NAME']], ['edit' => ['url' => 'dash/users/edit/', 'att' => 'id']]];
         $this->data['homeURL'] = 'dash/users/all';
     }
 

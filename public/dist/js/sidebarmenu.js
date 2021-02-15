@@ -12,21 +12,12 @@ $(function () {
     var element = $('ul#sidebarnav a').filter(function () {
         return this.href == url;
     }).addClass('active').parent().addClass('active');
-    var elements = $('ul#sidebarnav ul li a').filter(function () {
-        return this.href == url;
-    }).addClass('active').parent().addClass('active');
     while (true) {
         if (element.is('li')) {
             element = element.parent().addClass('in').parent().addClass('active').children('a').addClass('active');
-        } 
-        else {
-            break; 
+            
         }
-    }
-    while (true) {
-        if (elements.is('li')) {
-                elements = elements.parent().parent().parent().addClass('in').parent().addClass('active').children('a').addClass('active');
-        }else {
+        else {
             break; 
         }
     }

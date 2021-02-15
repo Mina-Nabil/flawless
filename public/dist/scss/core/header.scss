@@ -17,7 +17,7 @@
             display: none;
         }
         .navbar-header {
-            background: $white;
+            background: rgba(0,0,0,0.05);
             line-height: 65px; 
             padding-left: 10px;
             min-width: 70px;
@@ -35,6 +35,17 @@
             }
         }
         
+        .profile-pic {
+            white-space: nowrap;
+            img{
+                width: 30px;
+                border-radius: 100%;
+            }
+            span{
+                font-size: 14px;
+                white-space: nowrap;
+            }
+        }
         .navbar-nav>.nav-item>.nav-link {
             padding-left: 15px;
             padding-right: 15px;
@@ -148,9 +159,9 @@ Notify
 }
 
 .app-search {
-    line-height: 60px;
+    margin-left: 13px;
+    line-height: 60px;  
     .form-control{
-        
         border-radius: 60px;
         border-color: transparent;
         transition: 0.2s ease-in;

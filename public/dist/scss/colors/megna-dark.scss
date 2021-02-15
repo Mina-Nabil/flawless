@@ -25,7 +25,7 @@
         > ul > li {
             &.active > a {
                 color: $themecolor;
-                border-left: 3px solid $themecolor;
+                border-color: $themecolor!important;   
                 i {
                     color: $themecolor;
                 }
@@ -39,9 +39,7 @@
     }
     
     // Sidebar dark
-    .topbar .top-navbar .navbar-header{
-        background: $sidebar;
-    }
+    
     .topbar{
         .top-navbar .navbar-header .navbar-brand .dark-logo {
             display: none;
@@ -60,8 +58,8 @@
         }
     }
     @media (min-width: 768px){
-        &.mini-sidebar .sidebar-nav #sidebarnav > li > ul, &.mini-sidebar .sidebar-nav #sidebarnav > li:hover > a{
-            background: $sidebar-alt;
+        &.horizontal-nav .sidebar-nav #sidebarnav > li > ul, &.horizontal-nav .sidebar-nav #sidebarnav > li:hover > a{
+            background: $sidebar-alt; 
         }
         
     }

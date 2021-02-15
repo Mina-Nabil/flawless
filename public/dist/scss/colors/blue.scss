@@ -4,9 +4,17 @@
     $themecolor: #03a9f3;
     $themecolor-alt: #26c6da;
     // Topbar
-    .topbar {
+    
+    .topbar{
         background: $themecolor;
-    }
+        .top-navbar .navbar-header .navbar-brand .dark-logo {
+            display: none;
+        }
+        .top-navbar .navbar-header .navbar-brand .light-logo {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.8);
+        }
+    }  
     //Sidebar
     .sidebar-nav {
         ul li a {
@@ -21,7 +29,7 @@
         > ul > li {
             &.active > a {
                 color: $themecolor;
-                border-left: 3px solid $themecolor;
+                border-color: $themecolor!important;   
                 i {
                     color: $themecolor;
                 }

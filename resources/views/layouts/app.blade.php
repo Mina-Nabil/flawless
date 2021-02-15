@@ -28,8 +28,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oregano" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oswald" />
-
-    <!-- Sweet Alert Notification -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Signika" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,14 +38,14 @@
 <![endif]-->
 </head>
 
-<body class="skin-default fixed-layout">
+<body class="horizontal-nav skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
     <div class="preloader">
         <div class="loader">
             <div class="loader__figure"></div>
-            <p class="loader__label">{{ config('app.name', 'Laravel') }}</p>
+            <p class="loader__label">{{ env('APP_NAME', 'Laravel') }}</p>
         </div>
     </div>
     <!-- ============================================================== -->
@@ -56,59 +55,7 @@
         <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
-        <header class="topbar ">
-            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
-                <!-- ============================================================== -->
-                <!-- Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="{{route('home')}}">
-                        <!-- Logo icon --><b>
-                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                            <!-- Dark Logo icon -->
-                            {{-- <img src="{{ asset('images/dark-logo.png') }}" height=40px alt="homepage" class="dark-logo" /> --}}
-                            <!-- Light Logo icon -->
-                            {{-- <img src="{{ asset('images/light-logo.png') }}" height=40px alt="homepage" class="light-logo" /> --}}
-                        </b>
-                        <!--End Logo icon -->
-                        <!-- Logo text --><span>
-                            <!-- dark Logo text -->
-                            {{-- <img src="{{ asset('images/dark-text.png') }}" height=40px alt="homepage" class="dark-logo" /> --}}
-                            <!-- Light Logo text -->
-                            {{-- <img src="{{ asset('images/light-text.png') }}" height=40px class="light-logo" alt="homepage" /></span> </a> --}}
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse">
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav mr-auto">
-                        <!-- This is  -->
-                        <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
-                        <li class="nav-item"> <a class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark" href="javascript:void(0)"><i class="icon-menu"></i></a> </li>
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item">
-                            <form class="app-search d-none d-md-block d-lg-block">
-                                <input type="text" class="form-control" placeholder="Search & enter">
-                            </form>
-                        </li>
-                    </ul>
-                    <!-- ============================================================== -->
-                    <!-- User profile and search -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav my-lg-0">
-                        <!-- ============================================================== -->
-                        <!-- Comment -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item right-side-toggle"> <a class="nav-link  waves-effect waves-light" href="javascript:void(0)"><i class="ti-settings"></i></a></li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+
         <!-- ============================================================== -->
         <!-- End Topbar header -->
         <!-- ============================================================== -->
@@ -118,30 +65,35 @@
         <aside class="left-sidebar">
             <!-- Sidebar scroll-->
             <div class="scroll-sidebar">
-                <!-- User Profile-->
-                <div class="user-profile">
-                    <div class="user-pro-body">
-                        @if(isset(Auth::user()->image))
-                        <div><img src="{{ asset( 'storage/'. Auth::user()->image ) }} " alt="user-img" class="img-circle"></div>
-                        @else
-                        <div><img src="{{ asset('assets/images/users/def-user.png') }} " alt="user-img" class="img-circle"></div>
-                        @endif
-                        <div class="dropdown">
-                            <a href="javascript:void(0)" class="dropdown-toggle u-dropdown link hide-menu" data-toggle="dropdown" role="button" aria-haspopup="true"
-                                aria-expanded="false">{{ Auth::user()->DASH_USNM }} <span class="caret"></span></a>
-                            <div class="dropdown-menu animated flipInY">
-                                <!-- text-->
-                                <a href="{{route('logout')}}" class="dropdown-item"><i class="fa fa-power-off"></i>
-                                    Logout</a>
-                                <!-- text-->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
 
+                    <ul id="sidebarnav">
+                        <li class="user-pro">
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                @if(isset(Auth::user()->DASH_IMGE))
+                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " alt="user-img" class="img-circle" style="width: 30px">
+                                @else
+                                <img src="{{ asset('assets/images/users/def-user.png') }} " alt="user-img" class="img-circle" style="width: 30px">
+                                @endif
+                                <span class="hide-menu">{{ Auth::user()->DASH_USNM }}</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+
+
+                                <!-- text-->
+                                <li> <a href="{{route('logout')}}" class="dropdown-item"><i class="fa fa-power-off"></i>
+                                        Logout</a> </li>
+
+                            </ul>
+                        </li>
+
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="{{route('home')}}">
+                                <img src="{{ asset('images/logo.png') }}" height=60px alt="homepage" class="dark-logo" />
+                            </a>
+                        </div>
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span class="hide-menu">الحسابات</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li>
@@ -225,25 +177,47 @@
                                 <li>
                                 <li><a href="{{url('breeds/show')}}">Breeds</a></li>
                                 <li><a href="{{url('cities/show')}}">Cities</a></li>
+                            </ul>
                         </li>
+                        </li>
+
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-boxes"></i><span class="hide-menu">Users</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('users/show')}}">All App Users</a></li>
+                                <li><a href="{{url('users/show/1')}}">Pet Owners</a></li>
+                                <li><a href="{{url('users/show/2')}}">Trainers</a></li>
+                                <li><a href="{{url('users/add')}}">Add New User</a></li>
+                            </ul>
+                        </li>
+
+
+                        <li> <a href="{{url('dash/users/all')}}"><i class=" fas fa-users"></i>Admins</a>
+
+                        </li>
+
+
+                        <li class="ml-auto  ">
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+
+                                @if(isset(Auth::user()->DASH_IMGE))
+                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} "  class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                @else
+                                <img src="{{ asset('assets/images/users/def-user.png') }} "  class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                @endif
+
+
+                                <span class="hidden-md-down"> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;<i class="fa fa-angle-down"></i></span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <!-- text-->
+                                <a href="{{route('logout')}}"><i class="fa fa-power-off"></i>
+                                    Logout</a>
+                                <!-- text-->
+                            </ul>
+                        </li>
+
                     </ul>
-                    </li>
 
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-boxes"></i><span class="hide-menu">Users</span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{url('users/show')}}">All App Users</a></li>
-                            <li><a href="{{url('users/show/1')}}">Pet Owners</a></li>
-                            <li><a href="{{url('users/show/2')}}">Trainers</a></li>
-                            <li><a href="{{url('users/add')}}">Add New User</a></li>
-                        </ul>
-                    </li>
-
-
-                    <li> <a href="{{url('dash/users/all')}}" ><i class=" fas fa-users"></i>Admins</a>
-                      
-                    </li>
-
-                    </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>
@@ -264,8 +238,16 @@
                 <!-- Bread crumb and right sidebar toggle -->
                 <!-- ============================================================== -->
                 <div class="row page-titles">
+
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor" style="font-family: 'Oregano' ; font-size:33px">PetMatch Dashboard</h4>
+                        <div class=row>
+                            <ul class="navbar-nav m-10">
+                                <!-- This is  -->
+                                <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+
+                            </ul>
+                            <h4 class="text-themecolor m-10" style="font-family: 'Signika' ; font-size:33px">FLAWLESS Dashboard</h4>
+                        </div>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">

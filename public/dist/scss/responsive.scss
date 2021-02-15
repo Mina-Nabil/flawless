@@ -32,10 +32,7 @@ File: scss
  ============================================================== */
 
 @media(min-width:1024px) {
-    .page-wrapper, .footer {
-        margin-left: 220px;
-    }
-    
+     
 }
 
 @media(max-width:1023px) {
@@ -43,12 +40,7 @@ File: scss
         width: 200px;
     }
     
-    .d-flex{
-        display:block!important; 
-        &.no-block{
-            display:flex!important;
-        }
-    }
+    
 }
 
 
@@ -85,6 +77,12 @@ File: scss
     .container-fluid {
         padding: 0px 15px 0px 15px;
         overflow: hidden;
+    }
+    .d-flex{
+        display:block!important; 
+        &.no-block{
+            display:flex!important;
+        }
     }
     /*Header*/
     .topbar {
@@ -236,5 +234,8 @@ File: scss
         text-align: center;
         margin-top: 10px;
         overflow: hidden;
+    }
+    .hidden-md-down{
+        display: none;
     }
 }

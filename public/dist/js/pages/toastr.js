@@ -1,5 +1,5 @@
 /*
-Template Name: Elite  admin
+Template Name: Material Pro admin
 Author: Wrappixel
 Email: niravjoshi87@gmail.com
 File: js
@@ -8,7 +8,7 @@ $(function() {
     "use strict";
       $(".tst1").click(function(){
            $.toast({
-            heading: 'Welcome to Elite  admin',
+            heading: 'Welcome to Material Pro admin',
             text: 'Use the predefined ones, or specify a custom position object.',
             position: 'top-right',
             loaderBg:'#ff6849',
@@ -21,7 +21,7 @@ $(function() {
 
       $(".tst2").click(function(){
            $.toast({
-            heading: 'Welcome to Elite  admin',
+            heading: 'Welcome to Material Pro admin',
             text: 'Use the predefined ones, or specify a custom position object.',
             position: 'top-right',
             loaderBg:'#ff6849',
@@ -33,7 +33,7 @@ $(function() {
      });
       $(".tst3").click(function(){
            $.toast({
-            heading: 'Welcome to Elite  admin',
+            heading: 'Welcome to Material Pro admin',
             text: 'Use the predefined ones, or specify a custom position object.',
             position: 'top-right',
             loaderBg:'#ff6849',
@@ -46,7 +46,7 @@ $(function() {
 
       $(".tst4").click(function(){
            $.toast({
-            heading: 'Welcome to Elite  admin',
+            heading: 'Welcome to Material Pro admin',
             text: 'Use the predefined ones, or specify a custom position object.',
             position: 'top-right',
             loaderBg:'#ff6849',

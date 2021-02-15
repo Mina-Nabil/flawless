@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="row">
-    <div class="col-7">
-        <x-datatable :title="$title" :subtitle="$subTitle" :cols="$cols" :items="$items" :atts="$atts" />
+    <div class="col-lg-7">
+        <x-datatable id="myTable" :title="$title" :subtitle="$subTitle" :cols="$cols" :items="$items" :atts="$atts" />
     </div>
 
     <div class="col-lg-5">
