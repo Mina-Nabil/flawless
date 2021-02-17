@@ -70,143 +70,103 @@
                 <nav class="sidebar-nav">
 
                     <ul id="sidebarnav">
-                        <li class="user-pro">
-                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                                @if(isset(Auth::user()->DASH_IMGE))
-                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " alt="user-img" class="img-circle" style="width: 30px">
-                                @else
-                                <img src="{{ asset('assets/images/users/def-user.png') }} " alt="user-img" class="img-circle" style="width: 30px">
-                                @endif
-                                <span class="hide-menu">{{ Auth::user()->DASH_USNM }}</span>
-                            </a>
-                            <ul aria-expanded="false" class="collapse">
-
-
-                                <!-- text-->
-                                <li> <a href="{{route('logout')}}" class="dropdown-item"><i class="fa fa-power-off"></i>
-                                        Logout</a> </li>
-
-                            </ul>
-                        </li>
+                        <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                            <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        </nav>
 
                         <div class="navbar-header">
                             <a class="navbar-brand" href="{{route('home')}}">
                                 <img src="{{ asset('images/logo.png') }}" height=60px alt="homepage" class="dark-logo" />
                             </a>
                         </div>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span class="hide-menu">الحسابات</span></a>
+
+                        <li class="ml-auto"> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
+                                    class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">الخزينه</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('cash/show')}}">رصيد</a></li>
-                                        <li><a href="{{url('cash/prepare/report')}}">كشف حساب</a></li>
-                                        <li><a href="{{url('cash/add')}}">اضافه</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">البنك</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('bank/show')}}">رصيد</a></li>
-                                        <li><a href="{{url('bank/prepare/report')}}">كشف حساب</a></li>
-                                        <li><a href="{{url('bank/add')}}">اضافه</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="{{url('transtype/show')}}">اعدادات</a></li>
+                                <li><a href="{{url('clients/show')}}">Show</a></li>
+                                <li><a href="{{url('clients/show')}}">Cancelled</a></li>
+                            </ul>
+                        </li>
+
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">Patients</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('patients/show')}}">All</a></li>
+                                <li><a href="{{url('clients/show')}}">Leads</a></li>
+                                <li><a href="{{url('patients/add')}}">Add</a></li>
                             </ul>
                         </li>
 
                         <li>
-                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i><span class="hide-menu">حساب
-                                    عام</span></a>
+                            <a class="has-arrow waves-effect waves-dark" href="{{url('cash/home')}}"><i class="fas fa-newspaper"></i><span class="hide-menu">Cash Account</span></a>
+                        </li>
+
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
+                                    class="hide-menu">Calendars</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('ledger/show')}}">رصيد</a></li>
-                                <li><a href="{{url('ledger/prepare/report')}}">كشف حساب</a></li>
-                                <li><a href="{{url('ledger/add')}}">اضافه</a></li>
-                                <li><a href="{{url('ledger/types/show')}}">انواع حسابات</a></li>
+                                <li><a href="{{url('suppliers/trans/prepare')}}">All</a></li>
+                                <li><a href="{{url('suppliers/trans/quick')}}">Doctors</a></li>
+                                <li><a href="{{url('suppliers/show')}}">Sessions</a></li>
+                                <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
                             </ul>
                         </li>
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">الموردين</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('suppliers/trans/prepare')}}">كشف حساب</a></li>
-                                <li><a href="{{url('suppliers/trans/quick')}}">تعاملات</a></li>
-                                <li><a href="{{url('suppliers/show')}}">اجماليات موردين</a></li>
-                                <li><a href="{{url('suppliers/add')}}">اضافه مورد</a></li>
-                                <li><a href="{{url('suppliers/trans/add')}}">عمليه جديده</a></li>
-                                <li><a href="{{url('suppliers/types/show')}}">انواع</a></li>
-                            </ul>
                         </li>
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti ti-package"></i><span class="hide-menu">مخزن
-                                    قماش</span></a>
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('rawinventory/show')}}">متاح قماش</a></li>
-                                <li><a href="{{url('rawinventory/tran')}}">مجمع تعاملات</a></li>
-                                <li><a href="{{url('rawinventory/add')}}">وارد جديد</a></li>
-                                <li><a href="{{url('raw/tran/add')}}">عمليه جديده</a></li>
-
                                 <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">اعدادات</a>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Revenue</a>
                                     <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('models/show')}}">متاح مجمع موديلات</a></li>
-                                        <li><a href="{{url('types/show')}}">اصناف خامات</a></li>
-                                        <li><a href="{{url('colors/show')}}">الوان</a></li>
-                                        <li><a href="{{url('raw/show')}}">انواع خامات</a></li>
+                                        <li><a href="{{url('models/show')}}">Overall</a></li>
+                                        <li><a href="{{url('types/show')}}">By Doctor</a></li>
+                                        <li><a href="{{url('types/show')}}">By Equipment</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="{{url('products/show')}}">Expenses</a></li>
+                                <li><a href="{{url('products/show')}}">Attendance</a></li>
+                            </ul>
+                        </li>
+
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('rawinventory/show')}}">Machines</a></li>
+                                <li><a href="{{url('rawinventory/show')}}">Services</a></li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Doctors</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('dash/users/2')}}">Accounts</a></li>
+                                        <li><a href="{{url('models/show')}}">Attendance</a></li>
                                     </ul>
                                 </li>
 
-                            </ul>
-                        </li>
-
-
-                        <li> <a href="{{url('raw/prod/show')}}" aria-expanded="false"><i class=" fas fa-cogs"></i><span class="hide-menu">انتاج </span></a>
-
-                        </li>
-
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">Market</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('shops/show')}}">Shops</a></li>
-                                <li><a href="{{url('products/show')}}">Products</a></li>
-                                <li><a href="{{url('vets/show')}}">Vets</a></li>
-                            </ul>
-                        </li>
-
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-barcode"></i><span class="hide-menu">Settings</span></a>
-                            <ul aria-expanded="false" class="collapse">
                                 <li>
-                                <li><a href="{{url('breeds/show')}}">Breeds</a></li>
-                                <li><a href="{{url('cities/show')}}">Cities</a></li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Price Lists</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('models/show')}}">Add</a></li>
+                                        <li><a href="{{url('types/show')}}">Show</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+
                             </ul>
                         </li>
+                        <li class="ml-auto" style="width: 320px">
+                            <form class="app-search d-none d-md-block d-lg-block">
+                                <input type="text" class="form-control" placeholder="Find patients by their Name or Mobile #">
+                            </form>
                         </li>
-
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-boxes"></i><span class="hide-menu">Users</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('users/show')}}">All App Users</a></li>
-                                <li><a href="{{url('users/show/1')}}">Pet Owners</a></li>
-                                <li><a href="{{url('users/show/2')}}">Trainers</a></li>
-                                <li><a href="{{url('users/add')}}">Add New User</a></li>
-                            </ul>
-                        </li>
-
-
-                        <li> <a href="{{url('dash/users/all')}}"><i class=" fas fa-users"></i>Admins</a>
-
-                        </li>
-
 
                         <li class="ml-auto  ">
                             <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
 
                                 @if(isset(Auth::user()->DASH_IMGE))
-                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} "  class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
                                 @else
-                                <img src="{{ asset('assets/images/users/def-user.png') }} "  class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                <img src="{{ asset('assets/images/users/def-user.png') }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
                                 @endif
 
 
-                                <span class="hidden-md-down"> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;<i class="fa fa-angle-down"></i></span>
+                                <span> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;</i></span>
                             </a>
                             <ul aria-expanded="false" class="collapse">
                                 <!-- text-->
@@ -246,17 +206,15 @@
                                 <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
 
                             </ul>
-                            <h4 class="text-themecolor m-10" style="font-family: 'Signika' ; font-size:33px">FLAWLESS Dashboard</h4>
+                            <h4 class="text-themecolor m-10" style="font-family: 'Signika' ; font-size:33px">{{$title}}</h4>
                         </div>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
-                            <a style="font-family: 'Oswald'" href="{{url('clients/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Pet</a>
-                            <a style="font-family: 'Oswald'" href="{{url('suppliers/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add User</a>
-                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Shop
-                            </a>
-                            <a style="font-family: 'Oswald'" href="{{url('rawinventory/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Vet
-                            </a>
+                            <a style="font-family: 'Oswald'" href="{{url('clients/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Book a Session</a>
+                            <a style="font-family: 'Oswald'" href="{{url('suppliers/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Client</a>
+                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Lead </a>
+                            <a style="font-family: 'Oswald'" href="{{url('rawinventory/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Vet </a>
                         </div>
                     </div>
                 </div>
@@ -314,7 +272,7 @@
         <!-- footer -->
         <!-- ============================================================== -->
         <footer class="footer">
-            © 2019 {{config('app.name', 'PetMatch')}} by mSquareApps
+            © 2021 {{config('app.name', 'Flawless')}} by mSquareApps
         </footer>
         <!-- ============================================================== -->
         <!-- End footer -->

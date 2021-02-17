@@ -35,4 +35,9 @@ class DashUser extends Authenticatable
     public function dash_types(){
         return $this->hasOne( "App\Models\DashType" , 'id', 'DASH_TYPE_ID');
     }
+
+    public function toggle(){
+        $this->DASH_ACTV = ($this->DASH_ACTV + 1) % 2;
+        $this->save();
+    }
 }

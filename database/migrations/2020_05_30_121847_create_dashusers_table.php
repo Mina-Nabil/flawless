@@ -15,17 +15,19 @@ class CreateDashusersTable extends Migration
     {
 
         Schema::create('dash_types', function (Blueprint $table){
-            $table->increments('id');
+            $table->id();
             $table->string('DHTP_NAME');
         });
 
         Schema::create('dash_users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('DASH_USNM');
             $table->string('DASH_FLNM');
             $table->string('DASH_PASS');
+            $table->tinyInteger('DASH_ACTV')->default(1);
+            $table->string('DASH_MOBN')->nullable();
             $table->string('DASH_IMGE')->nullable();
-            $table->unsignedInteger('DASH_TYPE_ID')->default(1);
+            $table->foreignId('DASH_TYPE_ID')->constrained("dash_types")->default(1);
             $table->rememberToken();
             $table->timestamps();
         });

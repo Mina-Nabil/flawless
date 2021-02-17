@@ -34,7 +34,7 @@ class HomeController extends Controller
         $data['first'] = true;
 
         if (isset($userName)) {
-            if (Auth::attempt(array('DASH_USNM' => $userName, 'password' => $passWord), true)) {
+            if (Auth::attempt(array('DASH_USNM' => $userName, 'password' => $passWord, 'DASH_ACTV' => 1), true)) {
                 return redirect('/home');
             } else {
                 $data['first'] = false;
@@ -60,6 +60,7 @@ class HomeController extends Controller
     public function index()
     {
         if (!Auth::check()) return redirect('/login');
-        return view('home');
+        $data['title'] = "FLAWLESS Dashboard";
+        return view('home', $data);
     }
 }

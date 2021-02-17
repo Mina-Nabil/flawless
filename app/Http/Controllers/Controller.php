@@ -13,5 +13,12 @@ class Controller extends BaseController
 
     function __construct(){
         $this->middleware('auth');
+        $this->setMainDataItems();
     }
+
+    private function setMainDataItems(){
+    
+    }
+
+    protected $data;
 }
