@@ -7,14 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    }
 
     public function login()
     {
@@ -60,7 +52,7 @@ class HomeController extends Controller
     public function index()
     {
         if (!Auth::check()) return redirect('/login');
-        $data['title'] = "FLAWLESS Dashboard";
-        return view('home', $data);
+        $this->data['title'] = "FLAWLESS Dashboard";
+        return view('home', $this->data);
     }
 }

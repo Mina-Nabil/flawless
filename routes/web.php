@@ -14,6 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Settings
+Route::get('settings/devices', 'SettingsController@devices');
+Route::post('add/device', 'SettingsController@addDevice');
+Route::post('edit/device', 'SettingsController@editDevice');
+Route::post('delete/device', 'SettingsController@deleteDevice');
+Route::post('add/area', 'SettingsController@addArea');
+Route::post('edit/area', 'SettingsController@editArea');
+Route::post('delete/area', 'SettingsController@deleteArea');
+
+//Patients
+Route::get('patients/home','PatientsController@home');
+Route::get('patients/add', 'PatientsController@add');
+Route::get('patients/profile/{id}', 'PatientsController@profile');
+Route::post('patients/pay', 'PatientsController@pay');
+Route::post('patients/insert', 'PatientsController@insert');
+Route::post('patients/update', 'PatientsController@update');
+
 //Cash Account
 Route::get("cash/home", 'CashController@home');
 Route::post("cash/insert", 'CashController@insert');

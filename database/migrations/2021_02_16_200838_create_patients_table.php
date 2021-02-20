@@ -17,7 +17,7 @@ class CreatePatientsTable extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
             $table->string("PTNT_NAME");
-            $table->integer("PTNT_CODE");
+            $table->integer("PTNT_CODE")->nullable();
             $table->string("PTNT_MOBN");
             $table->string("PTNT_ADRS")->nullable();
             $table->double("PTNT_BLNC")->default(0);

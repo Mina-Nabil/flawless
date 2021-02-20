@@ -24,6 +24,7 @@
     <link href="{{ asset('dist/css/pages/file-upload.css')}}" rel="stylesheet">
     <link href="{{ asset('assets/node_modules/dropify/dist/css/dropify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/node_modules/toast-master/css/jquery.toast.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oregano" />
@@ -88,17 +89,10 @@
                             </ul>
                         </li>
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">Patients</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('patients/show')}}">All</a></li>
-                                <li><a href="{{url('clients/show')}}">Leads</a></li>
-                                <li><a href="{{url('patients/add')}}">Add</a></li>
-                            </ul>
+                        <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
                         </li>
 
-                        <li>
-                            <a class="has-arrow waves-effect waves-dark" href="{{url('cash/home')}}"><i class="fas fa-newspaper"></i><span class="hide-menu">Cash Account</span></a>
-                        </li>
+
 
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
                                     class="hide-menu">Calendars</span></a>
@@ -110,6 +104,8 @@
                             </ul>
                         </li>
 
+                        <li>
+                            <a class="waves-effect waves-dark" href="{{url('cash/home')}}"><i class="fas fa-newspaper"></i>Cash Account</a>
                         </li>
 
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
@@ -129,23 +125,9 @@
 
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('rawinventory/show')}}">Machines</a></li>
-                                <li><a href="{{url('rawinventory/show')}}">Services</a></li>
-                                <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Doctors</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('dash/users/2')}}">Accounts</a></li>
-                                        <li><a href="{{url('models/show')}}">Attendance</a></li>
-                                    </ul>
-                                </li>
-
-                                <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Price Lists</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('models/show')}}">Add</a></li>
-                                        <li><a href="{{url('types/show')}}">Show</a></li>
-                                    </ul>
-                                </li>
+                                <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
+                                <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
+                                <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
                                 <li><a href="{{url('dash/users/1')}}">Admins</a></li>
 
                             </ul>
@@ -212,9 +194,11 @@
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
                             <a style="font-family: 'Oswald'" href="{{url('clients/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Book a Session</a>
-                            <a style="font-family: 'Oswald'" href="{{url('suppliers/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Client</a>
-                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Lead </a>
-                            <a style="font-family: 'Oswald'" href="{{url('rawinventory/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Add Vet </a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info d-none d-lg-block m-l-15"><i
+                                    class="fa fa-plus-circle"></i> Add
+                                Patient</a>
+                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
+                            <a style="font-family: 'Oswald'" href="{{url('rawinventory/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
                         </div>
                     </div>
                 </div>
@@ -226,8 +210,57 @@
                 <!-- ============================================================== -->
                 @yield('content')
                 <!-- ============================================================== -->
-                <!-- End PAge Content -->
+                <!-- MAIN MODALS -->
                 <!-- ============================================================== -->
+                <div id="add-patient-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add New Patient</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label>Name*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="patientNameModal" class="form-control" placeholder="Patient Name" name=name required>
+                                    </div>
+                                    <small class="text-danger">{{$errors->first('name')}}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mobile*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="patientMobnModal" class="form-control" placeholder="Patient Mobile Number" name=mobn required>
+                                    </div>
+                                    <small class="text-danger">{{$errors->first('mobn')}}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Balance*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" id="patientBlncModal" step=0.01 class="form-control" placeholder="Patient Balance" name=balance value="0" required>
+                                    </div>
+                                    <small class="text-muted">In case patient owes us or we owe him money, default is 0</small>
+                                    <small class="text-danger">{{$errors->first('balance')}}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" name="adrs" id="patientAdrsModal"></textarea>
+                                    </div>
+
+                                    <small class="text-danger">{{$errors->first('adrs')}}</small>
+                                </div>
+
+                                <button type="button" onclick="addNewPatient(true)" class="btn btn-success mr-2">Add Patient</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- ============================================================== -->
                 <!-- Right sidebar -->
                 <!-- ============================================================== -->
@@ -305,6 +338,7 @@
     <script src="{{ asset('dist/js/pages/jquery.PrintArea.js') }}" type="text/JavaScript"></script>
     <!-- This is for the bt switch -->
     <script src="{{ asset('assets/node_modules/bootstrap-switch/bootstrap-switch.min.js') }}"></script>
+    <script src="{{ asset('assets/node_modules/toast-master/js/jquery.toast.js') }}"></script>
 
     <script type="text/javascript">
         $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
@@ -342,6 +376,7 @@
     <script src="{{ asset('dist/js/pages/jasny-bootstrap.js') }}"></script>
     <script src="{{ asset('assets/node_modules/dropify/dist/js/dropify.min.js')}}"></script>
     <script src="{{ asset('assets/node_modules/select2/dist/js/select2.full.min.js') }}" type="text/javascript">
+
     </script>
 
     <!-- Start Table Search Script -->
@@ -402,105 +437,7 @@
         const day = d.getDay();
         const month = d.getMonth();
         const formatted = day + "/" + month + "/" + year;
-        // $(function () {
-        //     $(function () {
-
-        //         var table = $('#myTable').DataTable({
-        //             "displayLength": 25,
-        //             dom: 'Bfrtip',
-        //             buttons: [
-        //                 {
-        //                     extend: 'print',
-        //                     text: 'Print',
-        //                     title: 'Veneto',
-        //                     footer: true,
-        //                     messageTop: "Date: " + formatted,
-        //                     customize: function (win) {
-        //                         $(win.document.body)
-        //                             .prepend('<center><img src="{{asset('images / dark - logo.png')}}" style="position:absolute; margin: auto; ; margin-top: 460px ; left: 0; right: 0; opacity:0.2" /></center>')
-        //                             .css('font-size', '24px')
-
-        //                         //$('#stampHeader' ).addClass( 'stampHeader' );
-        //                         $(win.document.body).find('table')
-        //                             .css('border', 'solid')
-        //                             .css('margin-top', '20px')
-        //                             .css('font-size', 'inherit');
-        //                         $(win.document.body).find('th')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px')
-        //                             .css('font-size', 'inherit')
-        //                         $(win.document.body).find('td')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px');
-        //                         $(win.document.body).find('tr')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px')
-        //                     }
-        //                 }, {
-        //                     extend: 'excel',
-        //                     title: 'Veneto',
-        //                     footer: true,
-
-        //                 }
-        //             ]
-        //         });
-        //         var table = $('#myTable2').DataTable({
-        //             "displayLength": 25,
-        //             dom: 'Bfrtip',
-        //             buttons: [
-        //                 {
-        //                     extend: 'print',
-        //                     text: 'Print',
-        //                     title: 'Veneto',
-        //                     footer: true,
-        //                     messageTop: "Date: " + formatted,
-        //                     customize: function (win) {
-        //                         $(win.document.body)
-        //                             .prepend('<center><img src="{{asset('images / dark - logo.png')}}" style="position:absolute; margin: auto; ; margin-top: 460px ; left: 0; right: 0; opacity:0.2" /></center>')
-        //                             .css('font-size', '24px')
-
-        //                         //$('#stampHeader' ).addClass( 'stampHeader' );
-        //                         $(win.document.body).find('table')
-        //                             .css('border', 'solid')
-        //                             .css('margin-top', '20px')
-        //                             .css('font-size', 'inherit');
-        //                         $(win.document.body).find('th')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px')
-        //                             .css('font-size', 'inherit')
-        //                         $(win.document.body).find('td')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px');
-        //                         $(win.document.body).find('tr')
-        //                             .css('border', 'solid')
-        //                             .css('border', '!important')
-        //                             .css('border-width', '1px')
-        //                     }
-        //                 }, {
-        //                     extend: 'excel',
-        //                     title: 'Veneto',
-        //                     footer: true,
-
-        //                 }
-        //             ]
-        //         });
-        //         // Order by the grouping
-        //         $('#example tbody').on('click', 'tr.group', function () {
-        //             var currentOrder = table.order()[0];
-        //             if (currentOrder[0] === 2 && currentOrder[1] === 'asc') {
-        //                 table.order([2, 'desc']).draw();
-        //             } else {
-        //                 table.order([2, 'asc']).draw();
-        //             }
-        //         });
-        //     });
-        // });
-
+     
 
         $(' .buttons-print, .buttons-pdf, .buttons-excel').addClass('btn btn-info mr-1');
         // File Upload JS
@@ -538,6 +475,7 @@
                 }
             })
         });
+
         $(function () {
             // For select 2
             $(".select2").select2();
@@ -576,9 +514,133 @@
             });
         });
 
-
+  
     </script>
     <!-- End Table Search Script -->
+    <script>
+        function addNewPatient(isModal) {
+            if(isModal){
+                var name = $('#patientNameModal').val();
+                var adrs = $('#patientAdrsModal').val();
+                var mobn = $('#patientMobnModal').val();
+                var balance = $('#patientBlncModal').val();
+            } else {
+                var name = $('#patientName').val();
+                var adrs = $('#patientAdrs').val();
+                var mobn = $('#patientMobn').val();
+                var balance = $('#patientBlnc').val();
+            }
+   
+            console.log(adrs)
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("name", name)
+            formData.append("adrs", adrs)
+            formData.append("balance", balance)
+            formData.append("mobn", mobn)
+
+            var url = "{{$addPatientFormURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url, false);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState=4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Patient added successfully",
+                    icon: "success"
+                })
+                    addPatientToTable(this.responseText, name, mobn, balance, adrs);  
+                    resetPatientForm();     
+            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["name"]){
+                        errorMesage += errors.errors.name + " " ;
+                    }
+                    if(errors.errors["mobn"]){
+                        errorMesage += errors.errors["mobn"] + " " ;
+                    }
+
+                    errorMesage = errorMesage.replace('mobn', 'Mobile Number')
+                    errorMesage = errorMesage.replace('name', 'Patient Name')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+
+        }
+
+        function addPatientToTable(id, name, mobile, balance, address){
+            var patientTable = $('#patientsTableBody')
+            console.log(patientTable);
+            $('#patientsTableBody').prepend("<tr>\
+                  <td>" + id + "</td>\
+                  <td><a href='{{url('patients/profile')}}/" + id + "' > " + name + "</a></td>\
+                  <td>" + mobile + "</td>\
+                  <td>" + balance + "</td>\
+                  <td>\
+                    <button type='button' style='padding:.1rem' class='btn btn-secondary' data-container='body' data-toggle='popover' data-placement='bottom'\
+                        data-content='"+ address +"' data-original-title='Address:'> <i class='far fa-list-alt'></i>\
+                    </button>\
+                </td>\
+                <td>Just Now</td>\
+            </tr>\
+            ")
+        }
+
+        function resetPatientForm(){
+            var name = $('#patientName').val("");
+            var adrs = $('#patientAdrs').val("");
+            var mobn = $('#patientMobn').val("");
+            var balance = $('#patientBlnc').val("0");
+            var name = $('#patientNameModal').val("");
+            var adrs = $('#patientAdrsModal').val("");
+            var mobn = $('#patientMobnModal').val("");
+            var balance = $('#patientBlncModal').val("0");
+        }
+
+        function IsNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
+        function isJson(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
+
+    </script>
+
+    @yield('js_content')
+
 </body>
 
 </html>

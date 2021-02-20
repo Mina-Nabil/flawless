@@ -30,7 +30,7 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="{{$id}}Body">
 
                     @foreach($items as $item)
                     <tr>

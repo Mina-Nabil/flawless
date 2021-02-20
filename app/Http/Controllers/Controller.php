@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -11,13 +12,19 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    function __construct(){
-        $this->middleware('auth');
-        $this->setMainDataItems();
+    function __construct()
+    {
+        if (!request()->is('login')) {
+            $this->middleware('auth');
+            $this->middleware("\App\Http\Middleware\CheckType");
+            $this->setMainDataItems();
+        }
     }
 
-    private function setMainDataItems(){
-    
+    private function setMainDataItems()
+    {
+        $this->data['addPatientFormTitle'] = "Add New Patient";
+        $this->data['addPatientFormURL'] = url('patients/insert');
     }
 
     protected $data;
