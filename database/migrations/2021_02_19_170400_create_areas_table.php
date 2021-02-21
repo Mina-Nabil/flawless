@@ -15,7 +15,7 @@ class CreateAreasTable extends Migration
     {
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
-            $table->string("AREA_NAME");
+            $table->string("AREA_NAME")->unique();
         });
     }
 

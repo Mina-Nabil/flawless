@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 //Settings
 Route::get('settings/devices', 'SettingsController@devices');
+Route::get('settings/pricelists', 'SettingsController@pricelists');
+Route::post('add/pricelist', 'SettingsController@addPricelist');
+Route::post('edit/pricelist', 'SettingsController@editPricelist');
+Route::post('delete/pricelist', 'SettingsController@deletePricelist');
+Route::post('sync/pricelist/items', 'SettingsController@syncPricelist');
+Route::post('get/pricelist/items', 'SettingsController@getPricelistItems');
 Route::post('add/device', 'SettingsController@addDevice');
 Route::post('edit/device', 'SettingsController@editDevice');
 Route::post('delete/device', 'SettingsController@deleteDevice');

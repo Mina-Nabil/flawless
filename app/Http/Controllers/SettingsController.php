@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Device;
+use App\Models\PriceList;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -23,6 +24,118 @@ class SettingsController extends Controller
         $this->data['delAreaURL'] =     url('delete/area');
 
         return view("settings.devices", $this->data);
+    }
+
+    function pricelists()
+    {
+        $this->data['title']    =       "Manage Price Lists";
+        $this->data['pricelists']  =       PriceList::all();
+        $this->data['devices']  =       Device::all();
+        $this->data['areas']  =       Area::all();
+        $this->data['addPricelistURL'] =   url('add/pricelist');
+        $this->data['editPricelistURL'] =  url('edit/pricelist');
+        $this->data['delPricelistURL'] =   url('delete/pricelist');
+        $this->data['syncPricelistItemsURL'] =   url('sync/pricelist/items');
+        $this->data['getPricelistItems'] =   url('get/pricelist/items');
+
+        return view("settings.pricelists", $this->data);
+    }
+
+    //price list functions
+    function addPricelist(Request $request)
+    {
+        $request->validate([
+            "name" => "required|unique:pricelists,PRLS_NAME",
+        ]);
+
+        $pricelist = new PriceList();
+        $pricelist->PRLS_NAME = $request->name;
+        $pricelist->PRLS_DFLT = $request->isDefault ? 1 : 0;
+
+        $pricelist->save();
+        if ($pricelist->PRLS_DFLT)
+            PriceList::setDefaultPriceList($pricelist->id);
+        return $pricelist->id;
+    }
+    function editPricelist(Request $request)
+    {
+
+        $request->validate([
+            "id"   => "required",
+        ]);
+
+        $pricelist = PriceList::findOrFail($request->id);
+
+        $request->validate([
+            "id"   => "required",
+            "name" => ["required", Rule::unique('pricelists', "PRLS_NAME")->ignore($pricelist->PRLS_NAME, "PRLS_NAME"),],
+        ]);
+
+        $pricelist->PRLS_NAME = $request->name;
+        $pricelist->PRLS_DFLT = $request->isDefault ? 1 : 0;
+
+        $pricelist->save();
+        if ($pricelist->PRLS_DFLT)
+            PriceList::setDefaultPriceList($pricelist->id);
+        return $pricelist->id;
+    }
+
+    function deletePricelist(Request $request)
+    {
+        $request->validate([
+            "id"   => "required",
+        ]);
+
+        $pricelist = PriceList::findOrFail($request->id);
+        $pricelist->deleteAll();
+        return "1";
+    }
+
+    function syncPricelist(Request $request)
+    {
+        $request->validate([
+            "id"   => "required",
+        ]);
+
+        $pricelist = PriceList::findOrFail($request->id);
+        $pricelist->pricelistItems()->delete();
+        foreach ($request->device as $key => $deviceID) {
+            $pricelistItem = [
+                "PLIT_DVIC_ID"  =>  $deviceID,
+                "PLIT_PRCE"     =>  $request->price[$key],
+            ];
+            if ($request->service[$key] == -1) {
+                $pricelistItem["PLIT_TYPE"] = "Pulse";
+                $pricelistItem["PLIT_AREA_ID"] = NULL;
+            } elseif ($request->service[$key] == 0) {
+                $pricelistItem["PLIT_TYPE"] = "Session";
+                $pricelistItem["PLIT_AREA_ID"] = NULL;
+            } elseif ($request->service[$key] > 0) {
+                $pricelistItem["PLIT_TYPE"] = "Area";
+                $pricelistItem["PLIT_AREA_ID"] = $request->service[$key];
+            }
+            $pricelist->pricelistItems()->create($pricelistItem);
+        }
+
+       return redirect("settings/pricelists");
+    }
+
+    function getPricelistItems(Request $request){
+        $request->validate([
+            "id" => "required"
+        ]);
+        $pricelist = PriceList::findOrFail($request->id);
+        $items = $pricelist->pricelistItems;
+        $ret = [];
+        foreach ($items as $item) {
+            array_push( $ret,  [
+                "PLIT_DVIC_ID" => $item->PLIT_DVIC_ID,
+                "PLIT_AREA_ID" => ($item->PLIT_TYPE == "Session") ? 0 : (($item->PLIT_TYPE == "Pulse") ? -1 : $item->PLIT_AREA_ID),
+                "PLIT_PRCE" => $item->PLIT_PRCE,
+            ]);
+        }
+    
+        echo json_encode($ret);
     }
 
     ///devices functions

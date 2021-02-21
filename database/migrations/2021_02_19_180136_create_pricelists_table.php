@@ -15,16 +15,21 @@ class CreatePricelistsTable extends Migration
     {
         Schema::create('pricelists', function (Blueprint $table) {
             $table->id();
-            $table->string("PRLS_NAME");
+            $table->string("PRLS_NAME")->unique();
+            $table->tinyInteger("PRLS_DFLT")->default(0);
         });
 
         Schema::create("pricelist_items", function (Blueprint $table){
             $table->id();
-            $table->foreignId("PRIT_PRLS_ID")->constrained('devices');
-            $table->enum("PRLS_TYPE", ["Area", "Pulse", "Session"]);
-            $table->foreignId("PRLS_DVIC_ID")->constrained('devices');
-            $table->foreignId("PRLS_AREA_ID")->constrained('areas')->nullable();
-            $table->double("PRLS_PRCE");
+            $table->foreignId("PLIT_PRLS_ID")->constrained('pricelists');
+            $table->enum("PLIT_TYPE", ["Area", "Pulse", "Session"]);
+            $table->foreignId("PLIT_DVIC_ID")->constrained('devices');
+            $table->foreignId("PLIT_AREA_ID")->nullable()->constrained('areas');
+            $table->double("PLIT_PRCE");
+        });
+
+        Schema::table("patients", function (Blueprint $table){
+            $table->foreignId("PTNT_PRLS_ID")->nullable()->constrained("pricelists");
         });
     }
 
@@ -35,7 +40,11 @@ class CreatePricelistsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pricelist_item');
+        Schema::table("patients", function (Blueprint $table){
+            $table->dropForeign("patients_ptnt_prls_id_foreign");
+            $table->dropColumn("PTNT_PRLS_ID");
+        });
+        Schema::dropIfExists('pricelist_items');
         Schema::dropIfExists('pricelists');
     }
 }

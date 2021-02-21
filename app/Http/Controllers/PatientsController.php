@@ -7,6 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\PatientPayment;
+use App\Models\PriceList;
 use App\Models\Session;
 use App\Rules\triplename;
 use Illuminate\Support\Facades\DB;
@@ -158,7 +159,7 @@ class PatientsController extends Controller
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BLNC = $request->balance ?? 0;
-
+        $patient->PTNT_PRLS_ID = PriceList::getDefaultList()->id ?? NULL;
         $patient->save();
         
         return $patient->id;

@@ -17,6 +17,10 @@ class Patient extends Model
         return $this->hasMany("App\Models\Session", "SSHN_PTNT_ID", "id");
     }
 
+    public function pricelist(){
+        return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
+    }
+
     public function totalPaid(){
         return 0;
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)

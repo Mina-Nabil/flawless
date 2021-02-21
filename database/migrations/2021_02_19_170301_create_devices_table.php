@@ -15,7 +15,7 @@ class CreateDevicesTable extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string("DVIC_NAME");
+            $table->string("DVIC_NAME")->unique();
         });
     }
 
