@@ -8,15 +8,15 @@ class Area extends Model
 {
     public $timestamps = false;
 
-    public function priceListItems()
+    public function pricelistItems()
     {
-        return $this->hasMany('App\Models\PriceListItem', 'PRLS_AREA_ID');
+        return $this->hasMany('App\Models\PriceListItem', 'PLIT_AREA_ID');
     }
 
     //delete 
     function deleteAll()
     {
-        $this->priceListItems()->delete();
+        $this->pricelistItems()->delete();
         $this->delete();
     }
 }

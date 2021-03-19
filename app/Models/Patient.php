@@ -16,6 +16,10 @@ class Patient extends Model
     public function sessions(){
         return $this->hasMany("App\Models\Session", "SSHN_PTNT_ID", "id");
     }
+ 
+    public function services(){
+        return $this->hasManyThrough(SessionItem::class, "App\Models\Session", "SSHN_PTNT_ID", "SHIT_SSHN_ID");
+    }
 
     public function pricelist(){
         return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
@@ -50,7 +54,11 @@ class Patient extends Model
     public static function getPatientsCountCreatedThisMonth() {
         $startOfMonth = (new DateTime('now'))->format('Y-m-01');
         $endOfMonth = (new DateTime('now'))->format('Y-m-t');
-        return DB::table('patients')->whereBetween("created_at", [$startOfMonth, $endOfMonth])->get()->count();
+        return DB::table('patients')->whereBetween("created_at", [$startOfMonth, $endOfMonth])->count();
+    }
+
+    public function deductBalance($moneyToDeducted, $sessionID){
+        $this->pay(-1*$moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
     }
 
     ///////transactions
@@ -60,19 +68,22 @@ class Patient extends Model
         return $this->hasMany('App\Models\PatientPayment', 'PTPY_PTNT_ID');
     }
 
-    public function pay($amount, $comment=null)
+    public function pay($amount, $comment=null, $addCashEntry=true, $isVisa=false)
     {
-        DB::transaction(function () use ($amount, $comment) {
-            $this->PTNT_BLNC -= $amount;
+        DB::transaction(function () use ($amount, $comment, $addCashEntry, $isVisa) {
+            $this->PTNT_BLNC += $amount;
             $payment =  new PatientPayment();
             $payment->PTPY_PAID = $amount;
             $payment->PTPY_CMNT = $comment;
             $payment->PTPY_BLNC = $this->PTNT_BLNC;
+            $payment->PTPY_TYPE = ($isVisa) ? "Visa" : "Cash";
             $payment->PTPY_DASH_ID = Auth::user()->id;
 
             $this->payments()->save($payment);
-            $cashTitle = "Recieved from " . $this->PTNT_NAME;
-            Cash::entry($cashTitle, $amount, 0, $comment);
+            if($addCashEntry && !$isVisa){
+                $cashTitle = "Recieved from " . $this->PTNT_NAME;
+                Cash::entry($cashTitle, $amount, 0, $comment);
+            }
             $this->save();
         });
     }

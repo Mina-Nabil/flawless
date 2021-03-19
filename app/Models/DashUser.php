@@ -36,6 +36,14 @@ class DashUser extends Authenticatable
         return $this->hasOne( "App\Models\DashType" , 'id', 'DASH_TYPE_ID');
     }
 
+    public function isAdmin(){
+        return ($this->DASH_TYPE_ID == 1);
+    }
+
+    public function isDoctor(){
+        return ($this->DASH_TYPE_ID == 2);
+    }
+
     public function toggle(){
         $this->DASH_ACTV = ($this->DASH_ACTV + 1) % 2;
         $this->save();

@@ -11,7 +11,7 @@
     <meta name="csrf-token" content="{{ Session::token() }}">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/dark-logo.png') }}">
-    <title>{{  config('app.name', 'PetMatch') }}</title>
+    <title>{{  config('app.name', 'Flawless') }}</title>
     <!-- Custom CSS -->
     <link href="{{asset('dist/css/style.min.css')}}" rel="stylesheet">
     <link href="{{asset('dist/css/style.min.css')}}" media=print rel="stylesheet">
@@ -118,8 +118,7 @@
                                         <li><a href="{{url('types/show')}}">By Equipment</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="{{url('products/show')}}">Expenses</a></li>
-                                <li><a href="{{url('products/show')}}">Attendance</a></li>
+                                <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                             </ul>
                         </li>
 
@@ -193,12 +192,13 @@
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
-                            <a style="font-family: 'Oswald'" href="{{url('clients/trans/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Book a Session</a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal"
+                                class="btn btn-info d-none d-lg-block m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info d-none d-lg-block m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add
                                 Patient</a>
                             <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
-                            <a style="font-family: 'Oswald'" href="{{url('rawinventory/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
                         </div>
                     </div>
                 </div>
@@ -211,6 +211,9 @@
                 @yield('content')
                 <!-- ============================================================== -->
                 <!-- MAIN MODALS -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- ADD NEW PATIENT -->
                 <!-- ============================================================== -->
                 <div id="add-patient-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                     <div class="modal-dialog">
@@ -238,6 +241,17 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Pricelist*</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listIDModal>
+                                        @foreach($allPricelists as $list)
+                                        <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
+                                            {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
                                     <label>Balance*</label>
                                     <div class="input-group mb-3">
                                         <input type="number" id="patientBlncModal" step=0.01 class="form-control" placeholder="Patient Balance" name=balance value="0" required>
@@ -256,6 +270,98 @@
                                 </div>
 
                                 <button type="button" onclick="addNewPatient(true)" class="btn btn-success mr-2">Add Patient</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="add-attendance" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Attendance</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label>Doctor</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="attendanceModalDoctor">
+                                        @foreach($doctors as $doctor)
+                                        <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}  </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" value="{{date('Y-m-d')}}" id="attendanceModalDate" class="form-control" placeholder="Attendance Date" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" id="attendanceModalComment"></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="addAttendance()" class="btn btn-success mr-2">Add Attendance</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- ADD NEW SESSION -->
+                <!-- ============================================================== -->
+                <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Book a Session</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group col-md-12 m-t-0">
+                                    <h5>Patients</h5>
+                                    <select class="select2 form-control" style="width:100%" name=patientID id=patientSel>
+
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Date*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Start Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>End Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Extra Notes</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment"></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="addNewSession()" class="btn btn-success mr-2">Add Session</button>
 
                             </div>
                         </div>
@@ -524,36 +630,39 @@
                 var adrs = $('#patientAdrsModal').val();
                 var mobn = $('#patientMobnModal').val();
                 var balance = $('#patientBlncModal').val();
+                var listID = $('#listIDModal').val();
             } else {
                 var name = $('#patientName').val();
                 var adrs = $('#patientAdrs').val();
                 var mobn = $('#patientMobn').val();
                 var balance = $('#patientBlnc').val();
+                var listID = $('#listID').val();
             }
-   
-            console.log(adrs)
+
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
             formData.append("name", name)
             formData.append("adrs", adrs)
             formData.append("balance", balance)
             formData.append("mobn", mobn)
+            formData.append("listID", listID)
 
             var url = "{{$addPatientFormURL}}";
 
             var http = new XMLHttpRequest();
-            http.open("POST", url, false);
+            http.open("POST", url);
             http.setRequestHeader("Accept", "application/json");
 
             http.onreadystatechange = function (){
-            if(this.readyState=4 && this.status == 200 && IsNumeric(this.responseText) ){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
                 Swal.fire({
                     title: "Success!",
                     text: "Patient added successfully",
                     icon: "success"
                 })
                     addPatientToTable(this.responseText, name, mobn, balance, adrs);  
-                    resetPatientForm();     
+                    resetPatientForm();  
+                    $('#add-patient-modal').modal('toggle');   
             } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
@@ -623,6 +732,194 @@
             var balance = $('#patientBlncModal').val("0");
         }
 
+        function addNewSession(){
+            var id    = $('#patientSel').val();
+            var date    = $('#sessionDate').val();
+            var start   = $('#sessionStartTime').val();
+            var end     = $('#sessionEndTime').val();
+            var comment = $('#sessionComment').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("patientID", id)
+            formData.append("sesDate", date)
+            formData.append("start", start)
+            formData.append("end", end)
+            formData.append("comment", comment)
+
+            var url = "{{$addSessionFormURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Session added successfully",
+                    icon: "success"
+                })
+                // append sessions table   
+                resetSessionsForm()
+            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["patientID"]){
+                        errorMesage += errors.errors.patientID + " " ;
+                    }
+                    if(errors.errors["date"]){
+                        errorMesage += errors.errors["date"] + " " ;
+                    }
+                    if(errors.errors["start"]){
+                        errorMesage += errors.errors["start"] + " " ;
+                    }
+                    if(errors.errors["end"]){
+                        errorMesage += errors.errors["end"] + " " ;
+                    }
+
+                    errorMesage = errorMesage.replace('sesDate', 'Session Date')
+                    errorMesage = errorMesage.replace('patientID', 'Patient ID')
+                    errorMesage = errorMesage.replace('start', 'Start Time')
+                    errorMesage = errorMesage.replace('end', 'End Time')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+        function resetSessionsForm(){
+            $('#patientSel').val("");
+            $('#sessionDate').val("");
+            $('#sessionStartTime').val("");
+            $('#sessionEndTime').val("");
+            $('#sessionComment').val("");
+
+        }
+
+        var patients = [];
+        var patientsProxy = new Proxy(patients, {
+            set: function (target, key, value){
+                patients = value;
+                loadPatients();
+                return true;
+            }
+        })
+
+        function loadPatients(){
+            $('#patientSel').html("null");
+
+            patients.forEach(patient => {
+                patOption = new Option(patient.PTNT_NAME, patient.id, false, false)
+                $('#patientSel').append(patOption).trigger('change')
+            });
+           
+        }
+
+        function addAttendance(){
+            var doctor      =   $('#attendanceModalDoctor').val();
+            var date        =   $('#attendanceModalDate').val();
+            var comment     =   $('#attendanceModalComment').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("doctorID", doctor)
+            formData.append("date", date)
+            formData.append("comment", comment)
+
+            var url = "{{$addAttendanceURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Attendance added successfully",
+                    icon: "success"
+                }) 
+           
+            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["doctorID"]){
+                        errorMesage += errors.errors.doctorID + " " ;
+                    }
+                    if(errors.errors["date"]){
+                        errorMesage += errors.errors["date"] + " " ;
+                    }
+                 
+                    errorMesage = errorMesage.replace('date', 'Attendance Date')
+                    errorMesage = errorMesage.replace('doctorID', 'Doctor ID')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+        function getPatientsArray() {
+            var patients = []; 
+
+            var url = "{{$getPatientsURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("GET", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+                if(this.readyState==4 && this.status == 200 && isJson(this.responseText) ){
+                    patientsProxy.patients = JSON.parse(this.responseText)
+                }
+            }
+
+            http.send()
+
+        }
+
         function IsNumeric(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
@@ -635,6 +932,13 @@
             }
             return true;
         }
+
+        $(document).on("click", ".addSessionButton", function () {
+  
+            getPatientsArray();
+
+        });
+
 
 
     </script>

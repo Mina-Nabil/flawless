@@ -92,6 +92,13 @@
                                 <span class="hidden-xs-down">Add Patient Payment</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#pay" role="tab" aria-selected="false">
+                                <span class="hidden-sm-up">
+                                    <i class="fas fa-hand-holding-usd"></i></span>
+                                <span class="hidden-xs-down">Create Follow-up</span>
+                            </a>
+                        </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">

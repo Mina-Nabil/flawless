@@ -13,7 +13,7 @@
                 <small class="text-muted p-t-30 db">Phone</small>
                 <h6>{{$patient->PTNT_MOBN}}</h6>
                 <small class="text-muted p-t-30 db">Number of sessions</small>
-                {{-- <h6>{{$patient->sessionCount()}}</h6> --}}
+                <h6>{{$patient->sessions_count}}</h6>
                 <small class="text-muted p-t-30 db">Address</small>
                 <h6>{{$patient->PTNT_ADRS}}</h6>
                 <small class="text-muted p-t-30 db">Since</small>
@@ -25,7 +25,7 @@
                 <h5 class="card-title">Total Paid</h5>
                 <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                     <span class="display-5 text-success"><i class=" ti-money"></i></span>
-                    {{-- <a href="javscript:void(0)" class="link display-5 ml-auto">{{number_format($patient->totalPaid(),2)}}</a> --}}
+                    <a href="javscript:void(0)" class="link display-5 ml-auto">{{number_format($patient->sessions_sum_SSHN_PAID,2)}}</a>
                 </div>
             </div>
         </div>
@@ -60,7 +60,52 @@
                         <h4 class="card-title">Patient's Sessions History</h4>
                         <h6 class="card-subtitle">Total Money Paid: {{$patient->totalPaid()}}, Discount offered: {{$patient->totalDiscount()}}</h6>
                         <div class="col-12">
-                            {{-- <x-datatable id="patientHistoryTable" :title="$title ?? 'Sessions History'" :subtitle="$subTitle ?? ''" :cols="$sessionsCols" :items="$sessionList" :atts="$sessionAtts" :cardTitle="false" /> --}}
+                            <div class="table-responsive m-t-5">
+                                <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Doctor</th>
+                                            <th>Status</th>
+                                            <th>Start</th>
+                                            <th>End</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sessionTableBody">
+                                        @foreach ($patient->sessions as $session)
+                                        <a href="javascript:void(0)">
+                                            <tr>
+                                                <td>{{$session->SSHN_DATE}}</td>
+                                                <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
+                                                <td>
+                                                    <a href="{{ url('sessions/details/' . $session->id)}}">
+                                                        @switch($session->SSHN_STTS)
+                                                        @case("New")
+                                                        <?php $class="label label-info" ?>
+                                                        @break
+                                                        @case("Pending Payment")
+                                                        <?php $class="label label-warning" ?>
+                                                        @break
+                                                        @case("Cancelled")
+                                                        <?php $class="label label-danger" ?>
+                                                        @break
+                                                        @case("Done")
+                                                        <?php $class="label label-success" ?>
+                                                        @break
+                                                        @endswitch
+                                                        <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
+                                                    </a>
+                                                </td>
+                                                <td>{{$session->SSHN_STRT_TIME}}</td>
+                                                <td>{{$session->SSHN_END_TIME}}</td>
+                                                <td>{{$session->SSHN_TOTL}}</td>
+                                            </tr>
+                                        </a>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,7 +117,7 @@
                         <h4 class="card-title">Patient's Services</h4>
                         <h6 class="card-subtitle">All Services applied to the Patient</h6>
                         <div class="col-12">
-                            {{-- <x-datatable id="patientServicesTable" :title="$title ?? 'Services'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" /> --}}
+                            <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" />
                         </div>
                     </div>
                 </div>
@@ -124,7 +169,7 @@
 
                 <div class="tab-pane" id="settings" role="tabpanel">
                     <div class="card-body">
-                        <h4 class="card-title">Edit {{ $patient->PTNT_NAME }}'s Info</h4>
+                        <h4 class="card-title">Edit {{ $patient->PTNT_NAME }}'s Info & Pricelist</h4>
                         <form class="form pt-3" method="post" action="{{ url($formURL) }}" enctype="multipart/form-data">
                             @csrf
                             <input type=hidden name=id value="{{(isset($patient)) ? $patient->id : ''}}">
@@ -143,6 +188,18 @@
                                     <input type="text" class="form-control" placeholder="Mobile Number" name=mobn value="{{ (isset($patient)) ? $patient->PTNT_MOBN : old('mob') }}" required>
                                 </div>
                                 <small class="text-danger">{{$errors->first('mobn')}}</small>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Pricelist*</label>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listIDModal>
+                                    @foreach($allPricelists as $list)
+                                    <option value="{{$list->id}}" @if($list->id == $patient->PTNT_PRLS_ID) selected @endif >
+                                        {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -172,6 +229,27 @@
     </div>
     <!-- Column -->
 </div>
+<script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
+<script src="{{ asset('assets/node_modules/datatables/datatables.min.js') }}"></script>
+<script>
+    $(function () {
+            $(function () {
+
+                var table = $('#sessionsTable').DataTable({
+                    "displayLength": 25,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            title: 'Flawless',
+                            footer: true,
+                            className: 'btn-info'
+                        }
+                    ]
+                });
+            })
+        })
+</script>
 @endsection
 
 @section("js_content")

@@ -46,36 +46,22 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::findOrFail($id);
+        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
-
-        //Orders Array
-        $this->data['orderList']    =  [];   #Session::getOrdersByPatient($id);
+        $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile" ;
+    
+        //Services Table
+        $this->data['servicesList']    =   $this->data['patient']->services;
         $this->data['cardTitle'] = false;
-        $this->data['title'] = $this->data['patient']->PTNT_NAME . "'s Patient Profile";
-        $this->data['ordersCols'] = ['id', 'Status', 'Payment',  'Items', 'Ordered On', 'Total'];
-        $this->data['orderAtts'] = [
-            ['attUrl' => ['url' => "orders/details", "shownAtt" => 'id', "urlAtt" => 'id']],
-            [
-                'stateQuery' => [
-                    "classes" => [
-                        "1" => "label-info",
-                        "2" => "label-warning",
-                        "3" =>  "label-dark bg-dark",
-                        "4" =>  "label-success",
-                        "5" =>  "label-danger",
-                        "6" =>  "label-primary",
-                    ],
-                    "att"           =>  "ORDR_STTS_ID",
-                    'foreignAtt'    => "STTS_NAME",
-                    'url'           => "orders/details/",
-                    'urlAtt'        =>  'id'
-                ]
-            ],
-            'PYOP_NAME',
-            'itemsCount',
-            'ORDR_OPEN_DATE',
-            'ORDR_TOTL'
+        $this->data['servicesCols'] = [ 'Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit'];
+        $this->data['servicesAtts'] = [
+            ['foreign' => ['rel' => 'session' , 'att' => 'SSHN_DATE' ]],
+            ['attUrl' => ['url' => "sessions/details", "shownAtt" => 'SHIT_SSHN_ID', "urlAtt" => 'SHIT_SSHN_ID']],
+            ['foreignForeign' => ['rel1' => 'session' , 'rel2' => 'doctor' , 'att' => 'DASH_USNM' ]],
+            ['foreignForeign' => ['rel1' => 'pricelistItem' , 'rel2' => 'device' , 'att' => 'DVIC_NAME' ]],
+            ['foreign' => ['rel' => 'pricelistItem' , 'att' => 'PLIT_TYPE' ]],
+            ['foreignForeign' => ['rel1' => 'pricelistItem' , 'rel2' => 'area' , 'att' => 'AREA_NAME' ]],
+            'SHIT_QNTY'
         ];
 
         //Pay table
@@ -83,10 +69,9 @@ class PatientsController extends Controller
             ->orderByDesc('id')->get();
         $this->data['payTitle'] = "Patients Account";
         $this->data['paySubtitle'] = "Check all {$this->data['patient']->PTNT_NAME}'s transactions ";
-        $this->data['payCols'] = ['Date', 'Paid By', 'Amount', 'Balance', 'Comment'];
+        $this->data['payCols'] = ['Date', 'Amount', 'Balance', 'Comment'];
         $this->data['payAtts'] = [
             ['date' => ['att' => 'created_at']],
-            ['foreign' => ["rel" => 'dash_user', "att" => 'DASH_USNM']],
             ["number" => ['att' => 'PTPY_PAID', 'nums' => 2]],
             ["number" => ['att' => 'PTPY_BLNC', 'nums' => 2]],
             ["comment" => ['att' => 'PTPY_CMNT']],
@@ -159,7 +144,7 @@ class PatientsController extends Controller
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BLNC = $request->balance ?? 0;
-        $patient->PTNT_PRLS_ID = PriceList::getDefaultList()->id ?? NULL;
+        $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->save();
         
         return $patient->id;
@@ -181,9 +166,17 @@ class PatientsController extends Controller
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BLNC = $request->balance ?? 0;
+        $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
 
         $patient->save();
 
         return redirect("patients/profile/" . $patient->id);
+    }
+
+
+    //////?API function
+
+    public function getJSONPatients(){
+        return json_encode(Patient::all(), JSON_UNESCAPED_UNICODE);
     }
 }

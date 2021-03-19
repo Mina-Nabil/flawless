@@ -51,6 +51,8 @@
                         </td>
                         @elseif(array_key_exists('foreign', $att))
                         <td>{{ $item->{$att['foreign']['rel']}->{$att['foreign']['att']} ?? '' }}</td>
+                        @elseif(array_key_exists('foreignForeign', $att))
+                        <td>{{ $item->{$att['foreignForeign']['rel1']}->{$att['foreignForeign']['rel2']}->{$att['foreignForeign']['att']} ?? '' }}</td>
                         @elseif(array_key_exists('sumForeign', $att))
                         <td>{{ $item->{$att['sumForeign']['rel']}->sum($att['sumForeign']['att'])  }}</td>
                         @elseif(array_key_exists('url', $att))

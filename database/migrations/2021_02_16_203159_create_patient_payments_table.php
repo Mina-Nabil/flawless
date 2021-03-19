@@ -19,6 +19,7 @@ class CreatePatientPaymentsTable extends Migration
             $table->foreignId('PTPY_DASH_ID')->constrained('dash_users');
             $table->double('PTPY_PAID');
             $table->double('PTPY_BLNC');
+            $table->enum('PTPY_TYPE', ["Cash", "Visa"])->default('Cash');
             $table->string('PTPY_CMNT')->nullable();
             $table->timestamps();
         });

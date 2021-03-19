@@ -12,6 +12,10 @@ class PriceListItem extends Model
     public $fillable = ["PLIT_DVIC_ID", "PLIT_PRCE", "PLIT_TYPE", "PLIT_AREA_ID"] ;
 
     public function area(){
-        return $this->belongsTo("App\Models\Area", 'PRLS_AREA_ID');
+        return $this->belongsTo("App\Models\Area", 'PLIT_AREA_ID');
+    }
+
+    public function device(){
+        return $this->belongsTo("App\Models\Device", 'PLIT_DVIC_ID');
     }
 }

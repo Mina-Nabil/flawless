@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,6 +28,9 @@ class HomeController extends Controller
 
         if (isset($userName)) {
             if (Auth::attempt(array('DASH_USNM' => $userName, 'password' => $passWord, 'DASH_ACTV' => 1), true)) {
+                //logging in
+                if (Auth::user()->isDoctor() == 2) //if doctor
+                    Attendance::createAttendance(Auth::user()->id, date('Y-m-d'));
                 return redirect('/home');
             } else {
                 $data['first'] = false;
@@ -42,17 +46,5 @@ class HomeController extends Controller
     {
         Auth::logout();
         return redirect('login');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        if (!Auth::check()) return redirect('/login');
-        $this->data['title'] = "FLAWLESS Dashboard";
-        return view('home', $this->data);
     }
 }

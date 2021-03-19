@@ -20,6 +20,9 @@ class CheckType
             if (request()->is('cash/*')) {
                 return abort(404);
             } 
+            if (request()->is('attendance/*')) {
+                return abort(404);
+            } 
         }
         return $next($request);
     }

@@ -13,6 +13,30 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+//Sessions
+Route::get('sessions/details/{id}', 'SessionsController@details');
+Route::post('sessions/edit', 'SessionsController@edit');
+Route::get('sessions/show/{state}', 'SessionsController@index');
+Route::get('sessions/settle/balance/{id}', 'SessionsController@settleBalance');
+Route::post('sessions/add/payment', 'SessionsController@acceptPayment');
+Route::post('sessions/insert', 'SessionsController@insert');
+Route::post('sessions/update/services', 'SessionsController@manageServices');
+Route::post('sessions/set/discount', 'SessionsController@setDiscount');
+Route::post('sessions/set/doctor', 'SessionsController@setDoctor');
+Route::get('sessions/set/pending/{id}', 'SessionsController@setSessionPending');
+Route::get('sessions/set/new/{id}', 'SessionsController@setSessionNew');
+Route::get('sessions/set/done/{id}', 'SessionsController@setSessionDone');
+Route::get('sessions/set/cancelled/{id}', 'SessionsController@setSessionCancelled');
+Route::post('sessions/api/get/services', 'SessionsController@getServices');
+
+//attendance
+Route::get('attendance/home', 'AttendanceController@index');
+Route::post('attendance/insert', 'AttendanceController@addAttendance');
+Route::get('attendance/query', 'AttendanceController@prepareQuery');
+Route::post('attendance/query', 'AttendanceController@loadQuery');
+Route::post('attendance/set/state', 'AttendanceController@setAttendance');
+
+//followups
 
 //Settings
 Route::get('settings/devices', 'SettingsController@devices');
@@ -36,6 +60,7 @@ Route::get('patients/profile/{id}', 'PatientsController@profile');
 Route::post('patients/pay', 'PatientsController@pay');
 Route::post('patients/insert', 'PatientsController@insert');
 Route::post('patients/update', 'PatientsController@update');
+Route::get('patients/get/json', 'PatientsController@getJSONPatients');
 
 //Cash Account
 Route::get("cash/home", 'CashController@home');
@@ -53,5 +78,5 @@ Route::get("dash/users/delete/{id}", 'DashUsersController@delete');
 Route::get('logout', 'HomeController@logout')->name('logout');
 Route::get('/login', 'HomeController@login')->name('login');
 Route::post('/login', 'HomeController@authenticate')->name('login');
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/home', 'SessionsController@index')->name('home');
+Route::get('/', 'SessionsController@index')->name('home');
