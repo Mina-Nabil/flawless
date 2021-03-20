@@ -12,7 +12,7 @@ class AttendanceController extends Controller
     public function index()
     {
         //show unconfirmed attendace
-        $this->loadAttendanceData("New");
+        $this->data['items'] = Attendance::getAttendanceData("New");
         $this->data['title']            =   'Attendance Sheet';
         $this->data['cardTitle']        =   'Unconfirmed Attendance';
         $this->data['cardSubtitle']        =   'Show Unconfirmed Attendance records';
@@ -32,11 +32,11 @@ class AttendanceController extends Controller
             "to" => "required",
         ]);
 
-        $this->loadAttendanceData($request->status, $request->from, $request->to, $request->doctor);
+        $this->data['items'] = Attendance::getAttendanceData($request->type, $request->from, $request->to, $request->doctor);
 
         $this->data['title']        =   'Attendance Sheet Report';
         $this->data['cardTitle']    =   'Attendance';
-        $this->data['cardSubtitle'] =   'Showing attendance from ' . $request->from . ' to ' . $request->to ;
+        $this->data['cardSubtitle'] =   'Showing attendance from ' . $request->from . ' to ' . $request->to;
 
         $this->data['canChange']        =   false;
         $this->data['showConfirmed']    =   true;
@@ -72,25 +72,6 @@ class AttendanceController extends Controller
             "date"      =>  "required"
         ]);
 
-        return Attendance::createAttendance($request->doctorID, $request->date, Auth::user()->isAdmin());
-    }
-
-    private function loadAttendanceData($type = null, $from = null, $to = null, $doctor = null)
-    {
-        $query = Attendance::with('doctor');
-        if (!is_null($type)) {
-            $query = $query->where("ATND_STTS", $type);
-        }
-
-        if (!is_null($doctor)) {
-            $query = $query->where("ATND_DCTR_ID", $doctor);
-        }
-
-        if (!is_null($from) && !is_null($to)) {
-            $query = $query->whereBetween("ATND_DATE", [
-                $from, $to
-            ]);
-        }
-        $this->data['items'] = $query->get();
+        return Attendance::createAttendance($request->doctorID, $request->date, $request->comment);
     }
 }

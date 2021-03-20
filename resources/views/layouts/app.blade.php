@@ -37,6 +37,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+@yield("header")
 </head>
 
 <body class="horizontal-nav skin-megna fixed-layout">
@@ -84,8 +85,7 @@
                         <li class="ml-auto"> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
                                     class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('clients/show')}}">Show</a></li>
-                                <li><a href="{{url('clients/show')}}">Cancelled</a></li>
+                                <li><a href="{{url('sessions/query')}}">Query</a></li>
                             </ul>
                         </li>
 

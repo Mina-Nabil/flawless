@@ -47,7 +47,7 @@
                         <div class="col-6 form-group">
                             <label>To*</label>
                             <div class="input-group mb-3">
-                                <input type="date" class="form-control" name=to value="{{date('Y-m-d')}}" required>
+                                <input type="date" class="form-control" name=to required>
                             </div>
                         </div>
                     </div>

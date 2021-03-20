@@ -48,4 +48,8 @@ class DashUser extends Authenticatable
         $this->DASH_ACTV = ($this->DASH_ACTV + 1) % 2;
         $this->save();
     }
+
+    public static function admins(){
+        return self::where("DASH_TYPE_ID", 1)->get();
+    }
 }

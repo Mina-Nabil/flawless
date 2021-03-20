@@ -43,8 +43,10 @@
                                         class="{{$class}} open-setAttendance" 
                                         @if($canChange)
                                         href="javascript:void(0)" data-toggle="modal" data-target="#set-status-modal"
-                                        @endif
                                         data-id="{{$item->id}}"
+                                        @else
+                                        disabled
+                                        @endif
                                         >{{ $item->ATND_STTS }}
                                     </button>
 
@@ -52,7 +54,7 @@
 
                                 <td>
                                     <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
-                                        data-content="{{$item->ATND_TEXT }}" data-original-title="Comment"> <i class="far fa-list-alt"></i>
+                                        data-content="{{$item->ATND_CMNT }}" data-original-title="Comment"> <div style="display: none">{{$item->ATND_CMNT }}</div><i class="far fa-list-alt"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -82,7 +84,7 @@
 
                     <div class="form-group">
                         <label>Status</label>
-                        <select class="select form-control  col-md-12 mb-3" style="width:100%" id=listIDModal>
+                        <select class="select form-control  col-md-12 mb-3" style="width:100%" name=status id=listIDModal>
                             <option value="Confirmed">Confirmed</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>

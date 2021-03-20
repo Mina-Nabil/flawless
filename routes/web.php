@@ -28,6 +28,8 @@ Route::get('sessions/set/new/{id}', 'SessionsController@setSessionNew');
 Route::get('sessions/set/done/{id}', 'SessionsController@setSessionDone');
 Route::get('sessions/set/cancelled/{id}', 'SessionsController@setSessionCancelled');
 Route::post('sessions/api/get/services', 'SessionsController@getServices');
+Route::get('sessions/query', "SessionsController@prepareQuery");
+Route::post('sessions/query', "SessionsController@loadQuery");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');

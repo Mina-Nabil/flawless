@@ -21,22 +21,26 @@ class Attendance extends Model
         $this->save();
     }
 
-    public static function createAttendance($doctor, $date, $isConfirmed = false)
+    public static function createAttendance($doctor, $date, $comment = null)
     {
         $prevAttendance = self::hasAttendance($doctor, $date);
         if (is_null($prevAttendance)) {
-            $insertArr = [  
+            $insertArr = [
                 "ATND_DCTR_ID"  =>  $doctor,
-                "ATND_DATE"     =>  $date
+                "ATND_DATE"     =>  $date,
+                "ATND_CMNT"     =>  $comment,
             ];
-            if ($isConfirmed)
+            if (Auth::user()->isAdmin()){
                 $insertArr['ATND_STTS'] = 'Confirmed';
+                $insertArr['ATND_USER_ID'] = Auth::user()->id;
+            }
             return self::insert($insertArr); //returns 1 if inserted .. 0 if no
-        } elseif ($isConfirmed && Auth::user()->isAdmin()) {
+        } elseif (Auth::user()->isAdmin()) {
             $prevAttendance->ATND_STTS = "Confirmed";
             $prevAttendance->ATND_USER_ID = Auth::user()->id;
+            $prevAttendance->ATND_CMNT = $comment;
             $prevAttendance->save();
-        } 
+        }
         return -1; //already has attendance
     }
 
@@ -50,6 +54,25 @@ class Attendance extends Model
         return self::where("ATND_STTS", "NEW")->get()->count();
     }
 
+    //Query 
+    public static function getAttendanceData($type = null, $from = null, $to = null, $doctor = null)
+    {
+        $query = Attendance::with('doctor');
+        if (!is_null($type) && $type!='All') {
+            $query = $query->where("ATND_STTS", $type);
+        }
+
+        if (!is_null($doctor) && $doctor>0) {
+            $query = $query->where("ATND_DCTR_ID", $doctor);
+        }
+
+        if (!is_null($from) && !is_null($to)) {
+            $query = $query->whereBetween("ATND_DATE", [
+                $from, $to
+            ]);
+        }
+        return $query->get();
+    }
 
     ///relations
     function doctor()

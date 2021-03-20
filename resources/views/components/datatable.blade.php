@@ -46,8 +46,8 @@
                         </td>
                         @elseif(array_key_exists('del', $att))
                         <td>
-                            <div onclick="confirmAndGoTo('{{url( $att['del']['url'] . $item->{$att['del']['att']})}}', '{{$att['del']['msg'] ?? 'delete this row'}}')"><a
-                                    href="javascript:void(0)"><img src="{{ asset('images/del.png') }}" width=25 height=25></a></div>
+                            <div onclick="confirmAndGoTo('{{url( $att['del']['url'] . $item->{$att['del']['att']})}}', '{{$att['del']['msg'] ?? 'delete this row'}}')"><a href="javascript:void(0)"><img
+                                        src="{{ asset('images/del.png') }}" width=25 height=25></a></div>
                         </td>
                         @elseif(array_key_exists('foreign', $att))
                         <td>{{ $item->{$att['foreign']['rel']}->{$att['foreign']['att']} ?? '' }}</td>
@@ -61,12 +61,24 @@
                         <td><a target="_blank" href="http://{{ $item->{$att['remoteURL']['att']} }}">
                                 {{ (strlen($item->{$att['remoteURL']['att']}) < 15 ) ? $item->{$att['remoteURL']['att']} : substr($item->{$att['remoteURL']['att']},0,26).'..'  }}</a></td>
                         @elseif(array_key_exists('verified', $att))
-                        <td>{{ $item->{$att['verified']['att']}  }}
+                        <td>{{ $item->{$att['verified']['att']} ?? '' }}
+                            @isset($item->{$att['verified']['att']})
                             @if($item->{$att['verified']['isVerified']})
                             <i class="fas fa-check-circle" style="color:lightgreen">
                                 @else
-                                <i class=" fas fa-exclamation-circle" style="color:red">
-                                    @endif
+                                <i class=" fas fa-exclamation-circle" style="color:red"></i>
+                                @endif
+                                @endisset
+                        </td>
+                        @elseif(array_key_exists('verifiedRel', $att))
+                        <td>{{ $item->{$att['verifiedRel']['rel']}->{$att['verifiedRel']['relAtt']} ?? '' }}
+                            @isset($item->{$att['verifiedRel']['rel']}->{$att['verifiedRel']['relAtt']})
+                            @if($item->{$att['verifiedRel']['isVerified']})
+                            <i title="{{$att['verifiedRel']['iconTitle']}}" class="fas fa-check-circle" style="color:lightgreen"></i>
+                            @else
+                            <i title="{{$att['verifiedRel']['iconTitle']}}" class=" fas fa-exclamation-circle" style="color:red"></i>
+                            @endif
+                            @endisset
                         </td>
                         @elseif(array_key_exists('dynamicUrl', $att))
                         <td><a href="{{ url($att['dynamicUrl']['baseUrl'].$item->{$att['dynamicUrl']['val']}) }}">{{ $item->{$att['dynamicUrl']['att']}  }}</a></td>
@@ -117,7 +129,8 @@
                         @elseif(array_key_exists('comment', $att))
                         <td>
                             <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
-                                data-content="{{$item->{$att['comment']['att']} }}" data-original-title="{{ $att['comment']['title'] ?? 'Comment:'}}"> <i class="far fa-list-alt"></i>
+                                data-content="{{$item->{$att['comment']['att']} }}" data-original-title="{{ $att['comment']['title'] ?? 'Comment:'}}">
+                                <div style="display: none">{{$item->{$att['comment']['att']} }}</div><i class="far fa-list-alt"></i>
                             </button>
                         </td>
                         @elseif(array_key_exists('hidden', $att))

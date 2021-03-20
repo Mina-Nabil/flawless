@@ -12,6 +12,9 @@ class Session extends Model
 {
     public $timestamps = false;
     private $remainingMoney;
+    protected $dates = ['SSHN_DATE'];
+
+    //Query functions
 
     public function getRemainingMoney()
     {
@@ -21,44 +24,62 @@ class Session extends Model
         return $this->remainingMoney;
     }
 
-
     public static function getNewSessions($startDate, $endDate)
     {
-        return self::getSessions("New", $startDate, $endDate);
+        return self::getSessions("asc", "New", $startDate, $endDate);
     }
 
     public static function getPendingPaymentSessions()
     {
-        return self::getSessions("Pending Payment", null, null);
+        return self::getSessions("asc", "Pending Payment", null, null);
     }
 
     public static function getTodaySessions()
     {
-        return self::getSessions(null, date('Y-m-d'), date('Y-m-d'));
+        return self::getSessions("asc", null, date('Y-m-d'), date('Y-m-d'));
     }
 
     public static function getDoneSessions($startDate, $endDate)
     {
-        return self::getSessions("Done", $startDate, $endDate);
+        return self::getSessions("desc", "Done", $startDate, $endDate);
     }
 
-    private static function getSessions($state = null, $startDate = null, $endDate = null)
+    public static function getSessions($order='desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision=null)
     {
-        $query = self::with("doctor", "patient", "creator");
-
-        if ($startDate == $endDate && !is_null($startDate)) {
-            $query = $query->where("SSHN_DATE", "=", $startDate);
-        } else {
-            if ($startDate != null)
-                $query = $query->where("SSHN_DATE", ">=", $startDate);
-
-            if ($endDate != null)
-                $query = $query->where("SSHN_DATE", "<=", $endDate);
-        }
+        $query = self::with("doctor", "patient", "creator", "accepter");
 
 
-        if ($state != null)
-            $query = $query->where("SSHN_STTS", $state);
+        if ($state != null && $state != "All")
+            $query = $query->where("SSHN_STTS", "=", $state);
+
+        if ($startDate != null)
+            $query = $query->where("SSHN_DATE", ">=", $startDate);
+
+        if ($endDate != null)
+            $query = $query->where("SSHN_DATE", "<=", $endDate);
+
+        if ($endDate != null)
+            $query = $query->where("SSHN_DATE", "<=", $endDate);
+
+        if ($patient != null && $patient>0)
+            $query = $query->where("SSHN_PTNT_ID", $patient);
+
+        if ($doctor != null && $doctor>0)
+            $query = $query->where("SSHN_DCTR_ID", $doctor);
+
+        if ($openedBy != null && $openedBy>0)
+            $query = $query->where("SSHN_OPEN_ID", $openedBy);
+
+        if ($moneyBy != null && $moneyBy>0)
+            $query = $query->where("SSHN_ACPT_ID", $patient);
+
+        if ($isCommision != null && $isCommision!=0)
+            $query = $query->where("SSHN_CMSH", $isCommision);
+
+        if ($totalBegin != null && is_numeric($totalBegin) && $totalEnd != null && is_numeric($totalEnd))
+            $query = $query->whereBetween("SSHN_TOTL", [$totalBegin, $totalEnd]);
+
+        $query = $query->orderBy('SSHN_DATE', $order);
 
         return  $query->get();
     }
@@ -82,6 +103,14 @@ class Session extends Model
     public static function getNewCount($startDate, $endDate)
     {
         return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New")->count();
+    }
+
+    public static function getMinTotal(){
+        return self::min('SSHN_TOTL');
+    }
+
+    public static function getMaxTotal(){
+        return self::max('SSHN_TOTL');
     }
 
     public static function createNewSession($patientID, $date, $startTime, $endTime, $comment = null)
@@ -130,6 +159,7 @@ class Session extends Model
                 $amountToDeduct = min($remainingMoney, $patient->PTNT_BLNC);
 
                 $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $remainingMoney;
+                $this->SSHN_ACPT_ID = Auth::user()->id;
                 $this->patient->deductBalance($amountToDeduct, $this->id);
                 if ($this->save()) {
                     $this->logEvent("Settled Amount ({$amountToDeduct}) from client balance ");
@@ -144,6 +174,7 @@ class Session extends Model
         if ($this->canEditMoney())
             DB::transaction(function () use ($amount, $remainingMoney, $isCash) {
                 if ($amount > $remainingMoney) {
+                    $this->SSHN_ACPT_ID = Auth::user()->id;
                     $this->SSHN_PAID = $this->SSHN_PAID + $remainingMoney;
                     $extra = $amount - $remainingMoney;
                     $this->patient->pay($extra, "Extra Cash Entry from Session#{$this->id}", false);
@@ -151,6 +182,7 @@ class Session extends Model
                         $this->logEvent(($isCash) ? 'Cash' : 'Visa' . " paid: {$amount} , Extra amount ({$extra}) added to patient balance ");
                     }
                 } elseif ($amount <= $remainingMoney) {
+                    $this->SSHN_ACPT_ID = Auth::user()->id;
                     $this->SSHN_PAID = $this->SSHN_PAID + $amount;
                     if ($this->save()) {
                         $this->logEvent(($isCash) ? 'Cash' : 'Visa' . " paid: {$amount} ");

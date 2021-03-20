@@ -35,7 +35,7 @@ class SessionsController extends Controller
 
         //attendance count
         $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount();
-        
+
         //followups count
         $this->data['followupsCount'] = 12;
 
@@ -194,6 +194,71 @@ class SessionsController extends Controller
         $session->assignTo($request->doctorID);
 
         return $this->redirectToDetails($session->id);
+    }
+
+    public function prepareQuery()
+    {
+        //page info
+        $this->data['title']            =   'Load Sessions Report';
+        $this->data['formTitle']            =   'Sessions Query';
+        $this->data['formSubtitle']            =   'Filter Sessions report by';
+
+        //filters data
+        $this->data['patients'] = Patient::all();
+        $this->data['admins']   = DashUser::admins();
+        $this->data['sessionsMin'] = Session::getMinTotal();
+        $this->data['sessionsMax'] = Session::getMaxTotal();
+
+        return view("sessions.query", $this->data);
+    }
+
+    public function loadQuery(Request $request)
+    {
+        $request->validate([
+            "from"  =>  "required",
+            "to"    =>  "required"
+        ]);
+
+
+        //query
+        $this->data['items'] = Session::getSessions("asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
+
+        $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Paid To", "Comment"];
+
+        $this->data['atts'] = [
+            ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
+            ["verifiedRel"  =>  ["rel"  =>  "doctor",   "relAtt"   =>  "DASH_USNM", 'isVerified' => 'SSHN_CMSH', 'iconTitle' => "Commission"]],
+            ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_NAME"]],
+            [
+                'state'     => [
+                    "att"   =>  "SSHN_STTS",
+                    "text" => [
+                        "New" => "New",
+                        "Pending Payment" => "Pending Payment",
+                        "Cancelled" => "Cancelled",
+                        "Done" => "Done",
+                    ],
+                    "classes" => [
+                        "New" => "label-info",
+                        "Pending Payment" => "label-dark",
+                        "Cancelled" => "label-danger",
+                        "Done" => "label-success",
+                    ],
+                ]
+            ],
+            ["foreign"  =>  ["rel"  =>  "creator",  "att"   =>  "DASH_USNM"]],
+            ["number"   =>  ["att"  =>  "SSHN_TOTL"]],
+            ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
+            ["comment"  =>  ["att"  =>  "SSHN_TEXT"]],
+
+        ];
+
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Sessions Report";
+        $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
+
+        return view('layouts.table', $this->data);
     }
 
     //////Set States
