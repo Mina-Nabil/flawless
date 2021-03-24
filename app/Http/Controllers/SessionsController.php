@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Cash;
 use App\Models\DashUser;
 use App\Models\Device;
+use App\Models\FollowUp;
 use App\Models\Patient;
 use App\Models\Session;
 use DateTime;
@@ -37,7 +38,7 @@ class SessionsController extends Controller
         $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount();
 
         //followups count
-        $this->data['followupsCount'] = 12;
+        $this->data['followupsCount'] = FollowUp::getUnconfirmedCount();
 
         //cash data
         $this->data['paidToday'] = Cash::paidToday();
@@ -97,7 +98,7 @@ class SessionsController extends Controller
 
         //page data
         $this->data['title']    = "Session Details";
-        $this->data['patients'] = Patient::all();
+        // $this->data['patients'] = Patient::all(); added by default
         $this->data['devices']  = Device::all();
         $this->data['areas']    = Area::all();
         $this->data['doctors']    = DashUser::where("DASH_TYPE_ID", 2)->with('dash_types')->get();
@@ -204,7 +205,7 @@ class SessionsController extends Controller
         $this->data['formSubtitle']            =   'Filter Sessions report by';
 
         //filters data
-        $this->data['patients'] = Patient::all();
+        // $this->data['patients'] = Patient::all(); added by default in Controller
         $this->data['admins']   = DashUser::admins();
         $this->data['sessionsMin'] = Session::getMinTotal();
         $this->data['sessionsMax'] = Session::getMaxTotal();
@@ -277,10 +278,10 @@ class SessionsController extends Controller
         return $this->redirectToDetails($session->id);
     }
 
-    public function setSessionDone($id)
+    public function setSessionDone($id, $date = null)
     {
         $session = Session::findOrFail($id);
-        $session->setAsDone();
+        $session->setAsDone($date);
         return $this->redirectToDetails($session->id);
     }
 

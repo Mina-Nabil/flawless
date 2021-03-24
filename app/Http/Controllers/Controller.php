@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DashUser;
+use App\Models\Patient;
 use App\Models\PriceList;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -30,9 +31,11 @@ class Controller extends BaseController
         $this->data['getPatientsURL']       = url('patients/get/json');
         $this->data['addSessionFormURL']    = url('sessions/insert');
         $this->data['addAttendanceURL']    = url('attendance/insert');
+        $this->data['addFollowupURL']    = url('followups/insert');
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['doctors']              =   DashUser::where("DASH_TYPE_ID", 2)->get();
+        $this->data['patients']             =   Patient::orderByDesc('id')->get();
     }
 
     protected $data;

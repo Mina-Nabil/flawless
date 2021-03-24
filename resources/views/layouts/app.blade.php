@@ -82,11 +82,13 @@
                             </a>
                         </div>
 
-                        <li class="ml-auto"> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
+                        <li class="ml-auto"> <a class="waves-effect waves-dark" href="{{url('sessions/query')}}" aria-expanded="false"><i class="fas fa-list"></i>Sessions</a>
+                            
+                            {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
                                     class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('sessions/query')}}">Query</a></li>
-                            </ul>
+                                <li><a href="{{url('sessions/query')}}">Show</a></li>
+                            </ul> --}}
                         </li>
 
                         <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
@@ -94,7 +96,7 @@
 
 
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
+                        {{-- <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
                                     class="hide-menu">Calendars</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('suppliers/trans/prepare')}}">All</a></li>
@@ -102,10 +104,14 @@
                                 <li><a href="{{url('suppliers/show')}}">Sessions</a></li>
                                 <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
                             </ul>
-                        </li>
+                        </li> --}}
 
                         <li>
-                            <a class="waves-effect waves-dark" href="{{url('cash/home')}}"><i class="fas fa-newspaper"></i>Cash Account</a>
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('cash/home')}}">Cash</a></li>
+                                <li><a href="{{url('visa/home')}}">Visa</a></li>
+                            </ul>
                         </li>
 
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
@@ -118,6 +124,7 @@
                                         <li><a href="{{url('types/show')}}">By Equipment</a></li>
                                     </ul>
                                 </li>
+                                <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
                                 <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                             </ul>
                         </li>
@@ -199,6 +206,7 @@
                                 Patient</a>
                             <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
+                          
                         </div>
                     </div>
                 </div>
@@ -314,6 +322,46 @@
                         </div>
                     </div>
                 </div>
+
+
+                {{-- <div id="add-followup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Followup</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label>Patient</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="followupModalPatient">
+                                        @foreach($patients as $patient)
+                                        <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} ({{$patient->PTNT_MOBN}})  </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" value="{{date('Y-m-d')}}" id="followupModalDate" class="form-control" placeholder="Followup Call Date" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" id="followupModalComment"></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="addFollowup()" class="btn btn-success mr-2">Add Follow-Up</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
                 <!-- ============================================================== -->
                 <!-- ADD NEW SESSION -->
                 <!-- ============================================================== -->
@@ -769,8 +817,8 @@
                     if(errors.errors["patientID"]){
                         errorMesage += errors.errors.patientID + " " ;
                     }
-                    if(errors.errors["date"]){
-                        errorMesage += errors.errors["date"] + " " ;
+                    if(errors.errors["sesDate"]){
+                        errorMesage += errors.errors["sesDate"] + " " ;
                     }
                     if(errors.errors["start"]){
                         errorMesage += errors.errors["start"] + " " ;
@@ -875,6 +923,71 @@
                  
                     errorMesage = errorMesage.replace('date', 'Attendance Date')
                     errorMesage = errorMesage.replace('doctorID', 'Doctor ID')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+
+        function addFollowup(){
+            var patient     =   $('#followupModalPatient').val();
+            var date        =   $('#followupModalDate').val();
+            var comment     =   $('#followupModalComment').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("patientID", patient)
+            formData.append("date", date)
+            formData.append("comment", comment)
+
+            var url = "{{$addFollowupURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Followup added successfully",
+                    icon: "success"
+                }) 
+           
+            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["patientID"]){
+                        errorMesage += errors.errors.patientID + " " ;
+                    }
+                    if(errors.errors["date"]){
+                        errorMesage += errors.errors["date"] + " " ;
+                    }
+                 
+                    errorMesage = errorMesage.replace('date', 'Follow Up Date')
+                    errorMesage = errorMesage.replace('patientID', 'Patient')
 
                     Swal.fire({
                         title: "Error!",

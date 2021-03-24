@@ -35,13 +35,18 @@
                             <a target="_blank" href="{{url('patients/profile/' . $session->SSHN_PTNT_ID )}}">
                                 {{$session->patient->PTNT_NAME }}
                             </a>
+                            @if($session->patient->PTNT_BLNC != 0)
+                            <br>
+                            <small>Current Balance: <strong>{{$session->patient->PTNT_BLNC}}</strong></small>
+                            @endif
+
                         </p>
                     </div>
                     <div class="col-md-2">
                         <div class="font-bold mb-2">
                             Session Date
                         </div>
-                        <p class="text-muted">{{$session->SSHN_DATE}}</p>
+                        <p class="text-muted">{{$session->SSHN_DATE->format('d-M-Y')}}</p>
                     </div>
                     <div class="col-md-2">
                         <div class="font-bold mb-2">
@@ -151,10 +156,10 @@
                             New</button>
                         <button class="btn btn-warning mr-2" onclick="confirmAndGoTo('{{url($setSessionPendingUrl)}}', 'Set Session as Pending Payment')" @if(!$session->canBePending())
                             disabled @endif >Session Is Ready For Payment</button>
-                        <button class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($setSessionDoneUrl)}}', 'Set Session as Done')" @if(!$session->canBeDone()) disabled @endif
-                            >Set Session As Done</button>
                         <button class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($setSessionCancelledUrl)}}', 'Cancel the Session')" @if(!$session->canBeCancelled()) disabled @endif >
                             Cancel Session</button>
+                        <button class="btn btn-success mr-2" onclick="setAsDone()" @if(!$session->canBeDone()) disabled @endif
+                            >Set Session As Done</button>
 
                     </div>
                 </div>
@@ -351,7 +356,7 @@
 
                                 <div class="form-group">
                                     <label>Patients</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=patientID>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" >
                                         @foreach($patients as $patient)
                                         <option value="{{$patient->id}}" @if($patient->id == $session->SSHN_PTNT_ID)
                                             selected
@@ -366,7 +371,7 @@
                                 <div class="form-group">
                                     <label>Date*</label>
                                     <div class="input-group mb-3">
-                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate value="{{$session->SSHN_DATE}}" required>
+                                        <input type="date" class="form-control" placeholder="Session Day" name=sessionDate value="{{$session->SSHN_DATE}}" required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionDate')}}</small>
                                 </div>
@@ -374,7 +379,7 @@
                                 <div class="form-group">
                                     <label>Start Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" value="{{$session->SSHN_STRT_TIME}}" name=sessionStartTime
+                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{$session->SSHN_STRT_TIME}}" name=sessionStartTime
                                             required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionStartTime')}}</small>
@@ -383,7 +388,7 @@
                                 <div class="form-group">
                                     <label>End Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" value="{{$session->SSHN_END_TIME}}" name=sessionEndTime required>
+                                        <input type="time" class="form-control" placeholder="Session End Time" value="{{$session->SSHN_END_TIME}}" name=sessionEndTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionEndTime')}}</small>
                                 </div>
@@ -391,7 +396,7 @@
                                 <div class="form-group">
                                     <label>Extra Notes</label>
                                     <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment">{{$session->SSHN_TEXT}}</textarea>
+                                        <textarea class="form-control" rows="2" name="sessionComment">{{$session->SSHN_TEXT}}</textarea>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionComment')}}</small>
                                 </div>
@@ -467,6 +472,7 @@
         $('#service' + row).html("") //clearing the select
         $('#service' + row).removeAttr('disabled')
         services.forEach(service => {
+            console.log(service)
             var newOption = new Option(service.serviceName, service.id, false, false);
             $('#service' + row).append(newOption).trigger('change');
         });
@@ -489,6 +495,36 @@
             }
         });
     }
+
+    function setAsDone() {
+
+        var dateInput = document.createElement("input");
+        dateInput.type = "date";
+        dateInput.className = "form-control"
+        dateInput.placeholder = "Followup Date"
+        dateInput.value = "{{((new DateTime() )->add(new DateInterval('P7D')))->format('Y-m-d')}}"
+
+
+        Swal.fire({
+                text: "Are you sure you want to set the session as done?",
+                icon: "warning",
+                showCancelButton: true,
+            }).then( async (isConfirm) => {
+                if(isConfirm.value){
+                        inputValue = await Swal.fire({
+                        text: "Add a follow up?",
+                        icon: "warning",
+                        input: "text",
+                        inputValue: "{{((new DateTime() )->add(new DateInterval('P7D')))->format('Y-m-d')}}",
+                        inputLabel: 'Date',
+                        showCancelButton: true,
+                        cancelButtonText: "No",
+                        confirmButtonText: "Yes",
+                    });
+                    window.location.href = '{{url($setSessionDoneUrl)}}/' + inputValue.value ;
+                }
+            })
+        }
 
 </script>
 

@@ -15,11 +15,11 @@ class CreateFollowupsTable extends Migration
     {
         Schema::create('followups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("FLUP_PTNT_ID")->constrained("patients");
+            $table->foreignId("FLUP_SSHN_ID")->constrained("sessions");
             $table->foreignId("FLUP_DASH_ID")->nullable()->constrained("dash_users"); //caller
-            $table->enum("FLUP_STTS",["New", "Called", "Failed", "Success"]);
+            $table->enum("FLUP_STTS",["New", "Cancelled", "Confirmed"])->default("New");
             $table->date("FLUP_DATE");
-            $table->dateTime("FLUP_CALL"); //last call
+            $table->dateTime("FLUP_CALL")->nullable(); //last call
             $table->text("FLUP_TEXT")->nullable();
             $table->softDeletes();
             $table->timestamps();

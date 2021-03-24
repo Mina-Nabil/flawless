@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateInterval;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +45,7 @@ class Session extends Model
         return self::getSessions("desc", "Done", $startDate, $endDate);
     }
 
-    public static function getSessions($order='desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision=null)
+    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = null)
     {
         $query = self::with("doctor", "patient", "creator", "accepter");
 
@@ -61,19 +62,19 @@ class Session extends Model
         if ($endDate != null)
             $query = $query->where("SSHN_DATE", "<=", $endDate);
 
-        if ($patient != null && $patient>0)
+        if ($patient != null && $patient > 0)
             $query = $query->where("SSHN_PTNT_ID", $patient);
 
-        if ($doctor != null && $doctor>0)
+        if ($doctor != null && $doctor > 0)
             $query = $query->where("SSHN_DCTR_ID", $doctor);
 
-        if ($openedBy != null && $openedBy>0)
+        if ($openedBy != null && $openedBy > 0)
             $query = $query->where("SSHN_OPEN_ID", $openedBy);
 
-        if ($moneyBy != null && $moneyBy>0)
+        if ($moneyBy != null && $moneyBy > 0)
             $query = $query->where("SSHN_ACPT_ID", $patient);
 
-        if ($isCommision != null && $isCommision!=0)
+        if ($isCommision != null && $isCommision != 0)
             $query = $query->where("SSHN_CMSH", $isCommision);
 
         if ($totalBegin != null && is_numeric($totalBegin) && $totalEnd != null && is_numeric($totalEnd))
@@ -105,11 +106,13 @@ class Session extends Model
         return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New")->count();
     }
 
-    public static function getMinTotal(){
+    public static function getMinTotal()
+    {
         return self::min('SSHN_TOTL');
     }
 
-    public static function getMaxTotal(){
+    public static function getMaxTotal()
+    {
         return self::max('SSHN_TOTL');
     }
 
@@ -126,6 +129,7 @@ class Session extends Model
         if ($res) {
             $session = Session::findOrFail($res);
             $session->logEvent("Created Session");
+            $session->createFollowup();
             return 1;
         } else return 0;
     }
@@ -155,8 +159,7 @@ class Session extends Model
         if ($this->canEditMoney())
             DB::transaction(function () {
                 $remainingMoney = $this->getRemainingMoney();
-                $patient = Patient::findOrFail($this->SSHN_PTNT_ID);
-                $amountToDeduct = min($remainingMoney, $patient->PTNT_BLNC);
+                $amountToDeduct = $remainingMoney;
 
                 $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $remainingMoney;
                 $this->SSHN_ACPT_ID = Auth::user()->id;
@@ -188,9 +191,11 @@ class Session extends Model
                         $this->logEvent(($isCash) ? 'Cash' : 'Visa' . " paid: {$amount} ");
                     }
                 }
+                $transTitle = "Recieved from " . $this->patient->PTNT_NAME;
                 if ($isCash) {
-                    $cashTitle = "Recieved from " . $this->patient->PTNT_NAME;
-                    Cash::entry($cashTitle, $amount, 0, "Automated Cash Entry for Session#{$this->id}");
+                    Cash::entry($transTitle, $amount, 0, "Automated Cash Entry for Session#{$this->id}");
+                } else {
+                    Visa::entry($transTitle, $amount, 0, "Automated Visa Entry for Session#{$this->id}");
                 }
             });
     }
@@ -272,22 +277,40 @@ class Session extends Model
         }
     }
 
-    public function setAsDone()
+    public function setAsDone($followUpDate = null)
     {
         if ($this->canBeDone()) {
             $this->SSHN_STTS = "Done";
             $this->save();
             $this->logEvent("Set Session as DONE :)");
+            if ($followUpDate !== null && strtotime($followUpDate)) {
+                $this->createFeedback($followUpDate);
+            }
         }
     }
 
-    public function setAsCancelled()
+    public function createFollowup($comment = null)
+    {
+        FollowUp::createFollowup($this->id, $this->SSHN_DATE->sub(new DateInterval('P2D'))->format('Y-m-d'), $comment);
+    }
+
+    public function createFeedback()
+    {
+        Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P7D'))->format('Y-m-d'));
+    }
+
+    public function setAsCancelled($comment = null)
     {
         if ($this->canBeCancelled()) {
             $this->SSHN_STTS = "Cancelled";
-            $this->save();
-            $this->logEvent("Set Session as Cancelled");
+            if ($comment !== null)
+                $this->SSHN_TEXT = $this->SSHN_TEXT . ". Cancellation Note: " . $comment;
+            if ($this->save()) {
+                $this->logEvent("Set Session as Cancelled");
+                return true;
+            }
         }
+        return false;
     }
 
     ////privilages
@@ -313,7 +336,7 @@ class Session extends Model
 
     public function canBeNew()
     {
-        return ($this->SSHN_STTS != "New" && ($this->SSHN_STTS != "Done" && $this->SSHN_PAID > 0));
+        return ($this->SSHN_STTS != "New" && $this->SSHN_STTS != "Done");
     }
 
     public function canBePending()
@@ -323,7 +346,7 @@ class Session extends Model
 
     public function canBeCancelled()
     {
-        return ($this->SSHN_STTS != "Cancelled" && (($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment") && $this->getRemainingMoney() == 0));
+        return ($this->SSHN_STTS == "New" && !$this->SSHN_TOTL > 0);
     }
 
     public function canBeDone()

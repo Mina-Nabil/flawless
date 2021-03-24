@@ -18,7 +18,7 @@ class CreateFeedbacksTable extends Migration
             $table->foreignId('FDBK_SSHN_ID')->constrained('sessions');
             $table->foreignId('FDBK_DASH_ID')->nullable()->constrained('sessions'); //caller
             $table->double('FDBK_OVRL')->default(0);
-            $table->double('FDBK_DCTR')->default(0);
+            // $table->double('FDBK_DCTR')->default(0);
             $table->text('FDBK_TEXT')->nullable(); //extra comment
             $table->timestamps();
         });

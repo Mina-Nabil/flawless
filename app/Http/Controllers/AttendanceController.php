@@ -60,9 +60,9 @@ class AttendanceController extends Controller
 
         $attendace = Attendance::findOrFail($request->id);
 
-        $attendace->setAttendance($request->status, $request->comment);
+        return $attendace->setAttendance($request->status, $request->comment);
 
-        return redirect("attendance/home");
+        // return redirect("attendance/home");
     }
 
     public function addAttendance(Request $request)

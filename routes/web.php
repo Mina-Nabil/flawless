@@ -25,7 +25,7 @@ Route::post('sessions/set/discount', 'SessionsController@setDiscount');
 Route::post('sessions/set/doctor', 'SessionsController@setDoctor');
 Route::get('sessions/set/pending/{id}', 'SessionsController@setSessionPending');
 Route::get('sessions/set/new/{id}', 'SessionsController@setSessionNew');
-Route::get('sessions/set/done/{id}', 'SessionsController@setSessionDone');
+Route::get('sessions/set/done/{id}/{date?}', 'SessionsController@setSessionDone');
 Route::get('sessions/set/cancelled/{id}', 'SessionsController@setSessionCancelled');
 Route::post('sessions/api/get/services', 'SessionsController@getServices');
 Route::get('sessions/query', "SessionsController@prepareQuery");
@@ -37,6 +37,13 @@ Route::post('attendance/insert', 'AttendanceController@addAttendance');
 Route::get('attendance/query', 'AttendanceController@prepareQuery');
 Route::post('attendance/query', 'AttendanceController@loadQuery');
 Route::post('attendance/set/state', 'AttendanceController@setAttendance');
+
+//followups
+Route::get('followups/home', 'FollowupsController@index');
+Route::post('followups/insert', 'FollowupsController@insert');
+Route::get('followups/query', 'FollowupsController@prepareQuery');
+Route::post('followups/query', 'FollowupsController@loadQuery');
+Route::post('followups/set/state', 'FollowupsController@setFollowup');
 
 //followups
 
@@ -67,6 +74,10 @@ Route::get('patients/get/json', 'PatientsController@getJSONPatients');
 //Cash Account
 Route::get("cash/home", 'CashController@home');
 Route::post("cash/insert", 'CashController@insert');
+
+//Visa Account
+Route::get("visa/home", 'VisaController@home');
+Route::post("visa/insert", 'VisaController@insert');
 
 //Dashboard users
 Route::get("dash/users/{userType}", 'DashUsersController@index');

@@ -18,7 +18,7 @@ class Attendance extends Model
         $this->ATND_USER_ID = Auth::user()->id;
         if (!is_null($comment))
             $this->ATND_CMNT = $comment;
-        $this->save();
+        return $this->save();
     }
 
     public static function createAttendance($doctor, $date, $comment = null)

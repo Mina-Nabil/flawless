@@ -117,7 +117,7 @@
                             @foreach ($sessions as $session)
                             <a href="javascript:void(0)">
                                 <tr>
-                                    <td>{{$session->SSHN_DATE}}</td>
+                                    <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
                                     <td>{{$session->patient->PTNT_NAME}}</td>
                                     <td>
                                         <a href="{{ url('sessions/details/' . $session->id)}}">
