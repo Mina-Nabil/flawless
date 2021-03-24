@@ -15,6 +15,7 @@
                                 <th>Session Date</th>
                                 <th>Patient</th>
                                 @if($showCaller)
+                                <th>Rating</th>
                                 <th>Caller</th>
                                 <th>On</th>
                                 @endif
@@ -25,44 +26,41 @@
                         <tbody>
                             @foreach ($items as $item)
                             <tr>
-                                <td>{{$item->FLUP_DATE->format('d-M-Y')}}</td>
+                                <td>{{$item->FDBK_DATE->format('d-M-Y')}}</td>
                                 <td>{{$item->session->SSHN_DATE->format('d-M-Y')}}</td>
                                 <td>{{$item->session->patient->PTNT_NAME}}</td>
                                 @if($showCaller)
+                                <td>{{$item->FDBK_OVRL ?? ""}}</td>
                                 <td>{{$item->caller->DASH_USNM ?? ""}}</td>
-                                <td>{{$item->FLUP_CALL ?? ""}}</td>
+                                <td>{{$item->FDBK_CALL ?? ""}}</td>
                                 @endif
                                 <td>
-                                    <button id="status{{$item->id}}" @switch($item->FLUP_STTS)
+                                    <button id="status{{$item->id}}" @switch($item->FDBK_STTS)
                                         @case("New")
                                         <?php $class="label label-info " ?>
                                         @break
-                                        @case("Confirmed")
+                                        @case("Called")
                                         <?php $class="label label-success " ?>
                                         @break
                                         @case("Cancelled")
                                         <?php $class="label label-danger " ?>
                                         @break
                                         @endswitch
-                                        class="{{$class}} open-setFollowup"
+                                        class="{{$class}} open-setFeedback"
                                         @if($canCall)
                                         href="javascript:void(0)" data-toggle="modal" data-target="#set-status-modal"
                                         data-id="{{$item->id}}"
                                         @else
                                         disabled
                                         @endif
-                                        >{{ $item->FLUP_STTS }}
+                                        >{{ $item->FDBK_STTS }}
                                     </button>
 
                                 </td>
 
                                 <td>
-                                    <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{$item->FLUP_TEXT }}
-                                        Session Date: {{$item->session->SSHN_DATE->format('d-M-Y')}}
-                                        Session Note: {{$item->session->SSHN_TEXT}}" data-original-title="Comment">
-                                        <div style="display: none">{{$item->FLUP_TEXT }}
-                                            Session Date: {{$item->session->SSHN_DATE->format('d-M-Y')}}
-                                            Session Note: {{$item->session->SSHN_TEXT}}</div><i class="far fa-list-alt"></i>
+                                    <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{$item->FDBK_TEXT }}" data-original-title="Comment">
+                                        <div style="display: none">{{$item->FDBK_TEXT }}</div><i class="far fa-list-alt"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -82,55 +80,40 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Followup Call</h4>
+                <h4 class="modal-title">Feedback Call</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                {{-- <form action="{{url($setFollowupsURL)}}" method="POST"> --}}
+                {{-- <form action="{{url($setFeedbackURL)}}" method="POST"> --}}
                 @csrf
-                <input type="hidden" name=id id="followupID">
+                <input type="hidden" name=id id="feedbackID">
 
                 <div class="form-group">
-                    <label>Confirm Session?</label>
+                    <label>Called Patient?</label>
                     <div class="bt-switch">
                         <div>
-                            <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isSessionSwitch" data-off-text="No" name="isCommission"
-                                onchange="switchChanged()" checked>
+                            <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isCallSwitch" data-off-text="No" onchange="switchChanged()"
+                                checked>
                         </div>
                     </div>
                 </div>
-                {{-- <div id="sessionDateDiv">
+                <div id="feedbackRatingDiv">
                     <div class="form-group" style="display: block">
-                        <label>Session Date</label>
+                        <label>Patient Overall Satisfaction</label>
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control" id=sessionDate  name=sessionDate>
+                            <input type="number" min=0 max=10 step=1 placeholder="0 is the worst rating, 10 is the highest" class="form-control" id=feedbackOverall>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Start Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>End Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
-                        </div>
-                    </div>
-
-                </div> --}}
+                </div>
 
                 <div class="form-group">
-                    <label>Comment</label>
+                    <label>Extra Notes</label>
                     <div class="input-group mb-3">
                         <textarea class="form-control" rows="2" id=commentText name="comment"></textarea>
                     </div>
                 </div>
 
-                <button type="button" onclick="setFollowup()" class="btn btn-success mr-2">Set Status</button>
+                <button type="button" onclick="setFeedback()" class="btn btn-success mr-2">Set Status</button>
                 {{-- </form> --}}
             </div>
         </div>
@@ -142,41 +125,37 @@
 
 @section('js_content')
 <script>
-    $(document).on("click", ".open-setFollowup", function () {
+    @if($canCall)
+    $(document).on("click", ".open-setFeedback", function () {
         var accessData = $(this).data('id');
-        $(".modal-body #followupID").val( accessData );
+        $(".modal-body #feedbackID").val( accessData );
     });
 
     function switchChanged(){
-        var isSet = $('#isSessionSwitch').is(':checked')
+        var isSet = $('#isCallSwitch').is(':checked')
         console.log(isSet)
         if(isSet){
-            $('#sessionDateDiv').css("display", "block")
+            $('#feedbackRatingDiv').css("display", "block")
         } else {
-            $('#sessionDateDiv').css("display", "none")
+            $('#feedbackRatingDiv').css("display", "none")
         }
     }
 
-    function setFollowup(){
-        var id          =   $('#followupID').val();
-        var isSession   =   $('#isSessionSwitch').is(':checked');
+    function setFeedback(){
+        var id          =   $('#feedbackID').val();
+        var isCalled   =   $('#isCallSwitch').is(':checked');
         var comment     =   $('#commentText').val();
-
-        // var date        =   $('#sessionDate').val();
-        // var startTime   =   $('#sessionStartTime').val();
-        // var endTime     =   $('#sessionEndTime').val();
+        var overall     =   $('#feedbackOverall').val();
 
         var formData = new FormData();
         formData.append('_token','{{ csrf_token() }}');
         formData.append("id", id)
-        formData.append("status", isSession)
+        formData.append("status", isCalled)
+        formData.append("overall", overall)
         formData.append("comment", comment)
 
-        // formData.append("sessionDate", date)
-        // formData.append("sessionStartTime", startTime)
-        // formData.append("sessionEndTime", endTime)
 
-        var url = "{{url($setFollowupsURL)}}";
+        var url = "{{url($setFeedbackURL)}}";
 
         var http = new XMLHttpRequest();
         http.open("POST", url);
@@ -189,10 +168,10 @@
                 text: "Data Saved successfully",
                 icon: "success"
             });
-            if(isSession){
-                setFollowupConfirmed(id)
+            if(isCalled){
+                setFeedbackConfirmed(id)
             } else {
-                setFollowupCancelled(id)
+                setFeedbackCancelled(id)
             }
         
             } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
@@ -203,22 +182,14 @@
                     if(errors.errors["status"]){
                         errorMesage += errors.errors.status + " " ;
                     }
-
-                    // if(errors.errors["sessionDate"]){
-                    //     errorMesage += errors.errors.sessionDate + " " ;
-                    // }
-
-                    // if(errors.errors["sessionStartTime"]){
-                    //     errorMesage += errors.errors.sessionStartTime + " " ;
-                    // }
-
-                    // if(errors.errors["sessionEndTime"]){
-                    //     errorMesage += errors.errors.sessionEndTime + " " ;
-                    // }
+                    
+                    if(errors.errors["overall"]){
+                        errorMesage += errors.errors.overall + " " ;
+                    }
                 
-                    errorMesage = errorMesage.replace('status', 'Followup Status')
+                    errorMesage = errorMesage.replace('status', 'Feedback Status')
+                    errorMesage = errorMesage.replace('overall', 'Overall Rating')
    
-
                     Swal.fire({
                         title: "Error!",
                         text: errorMesage ,
@@ -245,19 +216,19 @@
         }
 
 
-    function setFollowupConfirmed(id){
+    function setFeedbackConfirmed(id){
         $('#status' + id).attr("class", "label label-success")
         $('#status' + id).removeAttr("data-toggle")
-        $('#status' + id).html("Success")
+        $('#status' + id).html("Called")
     }
 
 
-    function setFollowupCancelled(id){
+    function setFeedbackCancelled(id){
         $('#status' + id).attr("class", "label label-danger")
         $('#status' + id).removeAttr("data-toggle")
-        $('#status' + id).html("Failed")
+        $('#status' + id).html("Cancelled")
     }
-
+    @endif
     $(function () {
         $(function () {
             var table = $('#attendanceTable').DataTable({

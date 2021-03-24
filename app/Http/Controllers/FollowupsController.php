@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DashUser;
 use App\Models\FollowUp;
 use App\Models\Patient;
 use DateInterval;
@@ -66,7 +67,7 @@ class FollowupsController extends Controller
         $this->data['cardTitle']    =   'Followups';
         $this->data['cardSubtitle'] =   'Showing Followups from ' . $request->from . ' to ' . $request->to;
 
-        $this->data['canChange']        =   false;
+        $this->data['canCall']        =   false;
         $this->data['showCaller']    =   true;
         return view("followups.table", $this->data);
     }
@@ -77,6 +78,7 @@ class FollowupsController extends Controller
         $this->data['formTitle']        =   'Follow-up Query';
         $this->data['formSubtitle']     =   'Filter Follow-ups report by';
         // $this->data['patients']         =   Patient::all(); loaded by default
+        $this->data['admins']           =   DashUser::admins(); 
 
         return view("followups.query", $this->data);
     }

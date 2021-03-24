@@ -129,7 +129,10 @@ class Session extends Model
         if ($res) {
             $session = Session::findOrFail($res);
             $session->logEvent("Created Session");
-            $session->createFollowup();
+            $today = (new DateTime());
+            $twoDaysBeforeSession = (new DateTime($date))->sub(new DateInterval('P2D'));
+            if ($twoDaysBeforeSession > $today)
+                $session->createFollowup();
             return 1;
         } else return 0;
     }
@@ -277,15 +280,13 @@ class Session extends Model
         }
     }
 
-    public function setAsDone($followUpDate = null)
+    public function setAsDone()
     {
         if ($this->canBeDone()) {
             $this->SSHN_STTS = "Done";
             $this->save();
             $this->logEvent("Set Session as DONE :)");
-            if ($followUpDate !== null && strtotime($followUpDate)) {
-                $this->createFeedback($followUpDate);
-            }
+            $this->createFeedback();
         }
     }
 
@@ -296,7 +297,7 @@ class Session extends Model
 
     public function createFeedback()
     {
-        Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P7D'))->format('Y-m-d'));
+        Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));
     }
 
     public function setAsCancelled($comment = null)
@@ -351,7 +352,7 @@ class Session extends Model
 
     public function canBeDone()
     {
-        return ($this->SSHN_STTS != "Done" && (($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment") && $this->SSHN_TOTL > 0 && $this->getRemainingMoney() <= 0));
+        return ($this->SSHN_STTS != "Done" && $this->SSHN_DCTR_ID != null && (($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment") && $this->SSHN_TOTL > 0 && $this->getRemainingMoney() <= 0));
     }
 
     /////relations

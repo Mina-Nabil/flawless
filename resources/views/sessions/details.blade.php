@@ -117,7 +117,12 @@
 
                             @if(isset($session->doctor))
                             <li>
-                                <p class="text-muted">Managed by Dr. {{$session->doctor->DASH_USNM}} </p>
+                                <p class="text-muted">Managed by Dr. {{$session->doctor->DASH_USNM}}
+                                <i class="fas fa-check-circle" style="color:lightgreen"></i> </p>
+                            </li>
+                            @else
+                            <li>
+                                <p class="text-muted">No Assigned Doctor yet <i class=" fas fa-exclamation-triangle" style="color:#fec107"></i></p>
                             </li>
                             @endif
 
@@ -509,19 +514,19 @@
                 text: "Are you sure you want to set the session as done?",
                 icon: "warning",
                 showCancelButton: true,
-            }).then( async (isConfirm) => {
+            }).then( (isConfirm) => {
                 if(isConfirm.value){
-                        inputValue = await Swal.fire({
-                        text: "Add a follow up?",
-                        icon: "warning",
-                        input: "text",
-                        inputValue: "{{((new DateTime() )->add(new DateInterval('P7D')))->format('Y-m-d')}}",
-                        inputLabel: 'Date',
-                        showCancelButton: true,
-                        cancelButtonText: "No",
-                        confirmButtonText: "Yes",
-                    });
-                    window.location.href = '{{url($setSessionDoneUrl)}}/' + inputValue.value ;
+                    //     inputValue = await Swal.fire({
+                    //     text: "Add a follow up?",
+                    //     icon: "warning",
+                    //     input: "text",
+                    //     inputValue: "{{((new DateTime() )->add(new DateInterval('P7D')))->format('Y-m-d')}}",
+                    //     inputLabel: 'Date',
+                    //     showCancelButton: true,
+                    //     cancelButtonText: "No",
+                    //     confirmButtonText: "Yes",
+                    // });
+                    window.location.href = '{{url($setSessionDoneUrl)}}';
                 }
             })
         }

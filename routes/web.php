@@ -45,7 +45,13 @@ Route::get('followups/query', 'FollowupsController@prepareQuery');
 Route::post('followups/query', 'FollowupsController@loadQuery');
 Route::post('followups/set/state', 'FollowupsController@setFollowup');
 
-//followups
+//feedbacks
+Route::get('feedbacks/home', 'FeedbacksController@index');
+Route::post('feedbacks/insert', 'FeedbacksController@insert');
+Route::get('feedbacks/query', 'FeedbacksController@prepareQuery');
+Route::post('feedbacks/query', 'FeedbacksController@loadQuery');
+Route::post('feedbacks/set/state', 'FeedbacksController@setFeedback');
+
 
 //Settings
 Route::get('settings/devices', 'SettingsController@devices');

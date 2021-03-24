@@ -12,22 +12,24 @@ class Attendance extends Model
         'ATND_DATE',
     ];
 
-    public function setAttendance($type, $comment = null)
+    public function setAttendance($type, $shifts=1, $comment = null)
     {
         $this->ATND_STTS = $type;
         $this->ATND_USER_ID = Auth::user()->id;
+        $this->ATND_SHFT = $shifts;
         if (!is_null($comment))
             $this->ATND_CMNT = $comment;
         return $this->save();
     }
 
-    public static function createAttendance($doctor, $date, $comment = null)
+    public static function createAttendance($doctor, $date, $comment = null, $shifts=1)
     {
         $prevAttendance = self::hasAttendance($doctor, $date);
         if (is_null($prevAttendance)) {
             $insertArr = [
                 "ATND_DCTR_ID"  =>  $doctor,
                 "ATND_DATE"     =>  $date,
+                "ATND_SHFT"     =>  $shifts,
                 "ATND_CMNT"     =>  $comment,
             ];
             if (Auth::user()->isAdmin()){

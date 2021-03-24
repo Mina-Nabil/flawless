@@ -52,4 +52,8 @@ class DashUser extends Authenticatable
     public static function admins(){
         return self::where("DASH_TYPE_ID", 1)->get();
     }
+
+    public static function doctors(){
+        return self::where("DASH_TYPE_ID", 2)->get();
+    }
 }

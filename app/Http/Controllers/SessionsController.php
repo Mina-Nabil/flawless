@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Cash;
 use App\Models\DashUser;
 use App\Models\Device;
+use App\Models\Feedback;
 use App\Models\FollowUp;
 use App\Models\Patient;
 use App\Models\Session;
@@ -36,9 +37,10 @@ class SessionsController extends Controller
 
         //attendance count
         $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount();
-
         //followups count
         $this->data['followupsCount'] = FollowUp::getUnconfirmedCount();
+        //followups count
+        $this->data['feedbacksCount'] = Feedback::getUnconfirmedCount();
 
         //cash data
         $this->data['paidToday'] = Cash::paidToday();

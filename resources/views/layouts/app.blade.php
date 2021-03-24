@@ -37,7 +37,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-@yield("header")
+    @yield("header")
 </head>
 
 <body class="horizontal-nav skin-megna fixed-layout">
@@ -83,86 +83,87 @@
                         </div>
 
                         <li class="ml-auto"> <a class="waves-effect waves-dark" href="{{url('sessions/query')}}" aria-expanded="false"><i class="fas fa-list"></i>Sessions</a>
-                            
+
                             {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
                                     class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
-                            </ul> --}}
-                        </li>
+                    </ul> --}}
+                    </li>
 
-                        <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
-                        </li>
+                    <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
+                    </li>
 
 
 
-                        {{-- <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
+                    {{-- <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
                                     class="hide-menu">Calendars</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('suppliers/trans/prepare')}}">All</a></li>
-                                <li><a href="{{url('suppliers/trans/quick')}}">Doctors</a></li>
-                                <li><a href="{{url('suppliers/show')}}">Sessions</a></li>
-                                <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
-                            </ul>
-                        </li> --}}
+                    <li><a href="{{url('suppliers/trans/quick')}}">Doctors</a></li>
+                    <li><a href="{{url('suppliers/show')}}">Sessions</a></li>
+                    <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
+                    </ul>
+                    </li> --}}
 
-                        <li>
-                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('cash/home')}}">Cash</a></li>
-                                <li><a href="{{url('visa/home')}}">Visa</a></li>
-                            </ul>
-                        </li>
+                    <li>
+                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="{{url('cash/home')}}">Cash</a></li>
+                            <li><a href="{{url('visa/home')}}">Visa</a></li>
+                        </ul>
+                    </li>
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Revenue</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('models/show')}}">Overall</a></li>
-                                        <li><a href="{{url('types/show')}}">By Doctor</a></li>
-                                        <li><a href="{{url('types/show')}}">By Equipment</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
-                                <li><a href="{{url('attendance/query')}}">Attendance</a></li>
-                            </ul>
-                        </li>
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Revenue</a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li><a href="{{url('models/show')}}">Overall</a></li>
+                                    <li><a href="{{url('types/show')}}">By Doctor</a></li>
+                                    <li><a href="{{url('types/show')}}">By Equipment</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{url('attendance/query')}}">Attendance</a></li>
+                            <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
+                            <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
+                        </ul>
+                    </li>
 
-                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
-                                <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
-                                <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
-                                <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
+                            <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
+                            <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
+                            <li><a href="{{url('dash/users/1')}}">Admins</a></li>
 
-                            </ul>
-                        </li>
-                        <li class="ml-auto" style="width: 320px">
-                            <form class="app-search d-none d-md-block d-lg-block">
-                                <input type="text" class="form-control" placeholder="Find patients by their Name or Mobile #">
-                            </form>
-                        </li>
+                        </ul>
+                    </li>
+                    <li class="ml-auto" style="width: 320px">
+                        <form class="app-search d-none d-md-block d-lg-block">
+                            <input type="text" class="form-control" placeholder="Find patients by their Name or Mobile #">
+                        </form>
+                    </li>
 
-                        <li class="ml-auto  ">
-                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <li class="ml-auto  ">
+                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
 
-                                @if(isset(Auth::user()->DASH_IMGE))
-                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
-                                @else
-                                <img src="{{ asset('assets/images/users/def-user.png') }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
-                                @endif
+                            @if(isset(Auth::user()->DASH_IMGE))
+                            <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                            @else
+                            <img src="{{ asset('assets/images/users/def-user.png') }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                            @endif
 
 
-                                <span> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;</i></span>
-                            </a>
-                            <ul aria-expanded="false" class="collapse">
-                                <!-- text-->
-                                <a href="{{route('logout')}}"><i class="fa fa-power-off"></i>
-                                    Logout</a>
-                                <!-- text-->
-                            </ul>
-                        </li>
+                            <span> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;</i></span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <!-- text-->
+                            <a href="{{route('logout')}}"><i class="fa fa-power-off"></i>
+                                Logout</a>
+                            <!-- text-->
+                        </ul>
+                    </li>
 
                     </ul>
 
@@ -205,8 +206,9 @@
                                     class="fa fa-plus-circle"></i> Add
                                 Patient</a>
                             <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
-                          
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i
+                                    class="fa fa-plus-circle"></i> Attendance </a>
+
                         </div>
                     </div>
                 </div>
@@ -297,10 +299,19 @@
                                     <label>Doctor</label>
                                     <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="attendanceModalDoctor">
                                         @foreach($doctors as $doctor)
-                                        <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}  </option>
+                                        <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}} </option>
                                         @endforeach
                                     </select>
                                 </div>
+
+
+                                <div class="form-group" style="display: block">
+                                    <label>Shifts</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min=0 max=2 step=1 placeholder="1 Or 2 Shifts" value=1 class="form-control" id=numberOfShiftsModal>
+                                    </div>
+                                </div>
+
 
                                 <div class="form-group">
                                     <label>Date</label>
@@ -337,133 +348,133 @@
                                     <label>Patient</label>
                                     <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="followupModalPatient">
                                         @foreach($patients as $patient)
-                                        <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} ({{$patient->PTNT_MOBN}})  </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Date</label>
-                                    <div class="input-group mb-3">
-                                        <input type="date" value="{{date('Y-m-d')}}" id="followupModalDate" class="form-control" placeholder="Followup Call Date" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Comment</label>
-                                    <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="2" id="followupModalComment"></textarea>
-                                    </div>
-                                </div>
-
-                                <button type="button" onclick="addFollowup()" class="btn btn-success mr-2">Add Follow-Up</button>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
-                <!-- ============================================================== -->
-                <!-- ADD NEW SESSION -->
-                <!-- ============================================================== -->
-                <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Book a Session</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            </div>
-                            <div class="modal-body">
-
-                                <div class="form-group col-md-12 m-t-0">
-                                    <h5>Patients</h5>
-                                    <select class="select2 form-control" style="width:100%" name=patientID id=patientSel>
-
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Date*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Start Time*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>End Time*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Extra Notes</label>
-                                    <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment"></textarea>
-                                    </div>
-                                </div>
-
-                                <button type="button" onclick="addNewSession()" class="btn btn-success mr-2">Add Session</button>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <div class="right-sidebar">
-                    <div class="slimscrollright">
-                        <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span>
-                        </div>
-                        <div class="r-panel-body">
-                            <ul id="themecolors" class="m-t-20">
-                                <li><b>With Light sidebar</b></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme working">1</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                                <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme ">7</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
-                                </li>
-                                <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme ">12</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
+                                        <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} ({{$patient->PTNT_MOBN}}) </option>
+                @endforeach
+                </select>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
+
+            <div class="form-group">
+                <label>Date</label>
+                <div class="input-group mb-3">
+                    <input type="date" value="{{date('Y-m-d')}}" id="followupModalDate" class="form-control" placeholder="Followup Call Date" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Comment</label>
+                <div class="input-group mb-3">
+                    <textarea class="form-control" rows="2" id="followupModalComment"></textarea>
+                </div>
+            </div>
+
+            <button type="button" onclick="addFollowup()" class="btn btn-success mr-2">Add Follow-Up</button>
+
         </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- footer -->
-        <!-- ============================================================== -->
-        <footer class="footer">
-            © 2021 {{config('app.name', 'Flawless')}} by mSquareApps
-        </footer>
-        <!-- ============================================================== -->
-        <!-- End footer -->
-        <!-- ============================================================== -->
+    </div>
+    </div>
+    </div> --}}
+    <!-- ============================================================== -->
+    <!-- ADD NEW SESSION -->
+    <!-- ============================================================== -->
+    <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Book a Session</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group col-md-12 m-t-0">
+                        <h5>Patients</h5>
+                        <select class="select2 form-control" style="width:100%" name=patientID id=patientSel>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date*</label>
+                        <div class="input-group mb-3">
+                            <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start Time*</label>
+                        <div class="input-group mb-3">
+                            <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Time*</label>
+                        <div class="input-group mb-3">
+                            <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra Notes</label>
+                        <div class="input-group mb-3">
+                            <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="addNewSession()" class="btn btn-success mr-2">Add Session</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Right sidebar -->
+    <!-- ============================================================== -->
+    <!-- .right-sidebar -->
+    <div class="right-sidebar">
+        <div class="slimscrollright">
+            <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span>
+            </div>
+            <div class="r-panel-body">
+                <ul id="themecolors" class="m-t-20">
+                    <li><b>With Light sidebar</b></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme working">1</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
+                    <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme ">7</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
+                    </li>
+                    <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
+                    <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme ">12</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Right sidebar -->
+    <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Page wrapper  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <footer class="footer">
+        © 2021 {{config('app.name', 'Flawless')}} by mSquareApps
+    </footer>
+    <!-- ============================================================== -->
+    <!-- End footer -->
+    <!-- ============================================================== -->
     </div>
     <!-- ============================================================== -->
     <!-- End Wrapper -->
@@ -888,12 +899,14 @@
         function addAttendance(){
             var doctor      =   $('#attendanceModalDoctor').val();
             var date        =   $('#attendanceModalDate').val();
+            var shifts      =   $('#numberOfShiftsModal').val();
             var comment     =   $('#attendanceModalComment').val();
 
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
             formData.append("doctorID", doctor)
             formData.append("date", date)
+            formData.append("shifts", shifts)
             formData.append("comment", comment)
 
             var url = "{{$addAttendanceURL}}";

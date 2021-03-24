@@ -60,7 +60,7 @@ class AttendanceController extends Controller
 
         $attendace = Attendance::findOrFail($request->id);
 
-        return $attendace->setAttendance($request->status, $request->comment);
+        return $attendace->setAttendance($request->status, $request->shifts, $request->comment);
 
         // return redirect("attendance/home");
     }
@@ -72,6 +72,6 @@ class AttendanceController extends Controller
             "date"      =>  "required"
         ]);
 
-        return Attendance::createAttendance($request->doctorID, $request->date, $request->comment);
+        return Attendance::createAttendance($request->doctorID, $request->date, $request->comment, $request->shifts);
     }
 }

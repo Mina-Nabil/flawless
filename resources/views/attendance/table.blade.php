@@ -17,6 +17,7 @@
                                 <th>Approver</th>
                                 @endif
                                 <th>Status</th>
+                                <th>Shifts</th>
                                 <th>Comment</th>
                             </tr>
                         </thead>
@@ -51,7 +52,7 @@
                                     </button>
 
                                 </td>
-
+                                <td>{{$item->ATND_SHFT}}</td>
                                 <td>
                                     <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
                                         data-content="{{$item->ATND_CMNT }}" data-original-title="Comment">
@@ -91,6 +92,13 @@
                     </select>
                 </div>
 
+                <div class="form-group" style="display: block">
+                    <label>Shifts</label>
+                    <div class="input-group mb-3">
+                        <input type="number" min=0 max=2 step=1 placeholder="1 Or 2 Shifts" value=1 class="form-control" id=numberOfShifts>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Comment</label>
                     <div class="input-group mb-3">
@@ -114,12 +122,14 @@
     function setAttendance(){
             var id          =   $('#attendanceID').val();
             var state       =   $('#attendanceStateSel').val();
+            var shifts       =   $('#numberOfShifts').val();
             var comment     =   $('#attendanceComment').val();
 
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
             formData.append("id", id)
             formData.append("status", state)
+            formData.append("shifts", shifts)
             formData.append("comment", comment)
 
             var url = "{{url($setAttendanceURL)}}";

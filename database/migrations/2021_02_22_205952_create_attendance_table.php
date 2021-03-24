@@ -20,6 +20,7 @@ class CreateAttendanceTable extends Migration
             $table->enum("ATND_STTS",["New", "Confirmed", "Cancelled"])->default('New');
             $table->text("ATND_CMNT")->nullable();
             $table->date("ATND_DATE");
+            $table->tinyInteger("ATND_SHFT")->default(1);
             $table->timestamps();
         });
     }
