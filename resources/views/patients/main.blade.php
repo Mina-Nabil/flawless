@@ -48,26 +48,12 @@
                 <!-- Nav tabs -->
                 <div class="vtabs">
                     <ul class="nav nav-tabs tabs-vertical" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#follows" role="tab" aria-selected="false">
-                                <span class="hidden-sm-up">
-                                    <i class="ti-calendar"></i></span>
-                                <span class="hidden-xs-down">Follow-Ups</span>
-                            </a>
-                        </li>
                         <li class="nav-item ">
-                            <a class="nav-link" data-toggle="tab" href="#patients" role="tab" aria-selected="false">
+                            <a class="nav-link active" data-toggle="tab" href="#patients" role="tab" aria-selected="false">
                                 <span class="hidden-sm-up"><i class="ti-user"></i></span>
                                 <span class="hidden-xs-down">Patients</span>
                             </a>
-                        </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#leads" role="tab" aria-selected="false">
-                                <span class="hidden-sm-up">
-                                    <i class="ti-book"></i></span>
-                                <span class="hidden-xs-down">Leads</span>
-                            </a>
-                        </li> --}}
+                        </li>        
 
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#addPatient" role="tab" aria-selected="false">
@@ -77,14 +63,6 @@
                             </a>
                         </li>
 
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#addLead" role="tab" aria-selected="false">
-                                <span class="hidden-sm-up">
-                                    <i class="fas fa-hand-holding-usd"></i></span>
-                                <span class="hidden-xs-down">Add Lead</span>
-                            </a>
-                        </li> --}}
-
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#pay" role="tab" aria-selected="false">
                                 <span class="hidden-sm-up">
@@ -92,37 +70,17 @@
                                 <span class="hidden-xs-down">Add Patient Payment</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#pay" role="tab" aria-selected="false">
-                                <span class="hidden-sm-up">
-                                    <i class="fas fa-hand-holding-usd"></i></span>
-                                <span class="hidden-xs-down">Create Follow-up</span>
-                            </a>
-                        </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div class="tab-pane active" id="follows" role="tabpanel">
-                            <div class="row">
-                                <div class="col-12">
-                                    {{-- <x-datatable id="followUpsTable" :title="$todayTitle" :subtitle="$todaySubtitle" :cols="$todayCols" :items="$todayTrans" :atts="$todayAtts" /> --}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="patients" role="tabpanel">
+                        <div class="tab-pane active" id="patients" role="tabpanel">
                             <div class="row">
                                 <div class="col-12">
                                     <x-datatable id="patientsTable" :title="$patientsTitle" :subtitle="$patientsSubtitle" :cols="$patientsCols" :items="$patients" :atts="$patientsAtts" />
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="leads" role="tabpanel">
-                            <div class="row">
-                                <div class="col-12">
-                                    {{-- <x-datatable id="leadsTable" :title="$transTitle" :subtitle="$transSubtitle" :cols="$transCols" :items="$trans" :atts="$transAtts" /> --}}
-                                </div>
-                            </div>
-                        </div>
+      
 
                         <div class="tab-pane" id="addPatient" role="tabpanel">
                             <div class="row">

@@ -3,6 +3,7 @@
 @section('content')
 
 <div class="row justify-content-center">
+    @if(Auth::user()->isAdmin())
     <div class="col-lg-3">
         <div class=row>
             <div class=col-6>
@@ -64,8 +65,8 @@
                 </div>
             </div>
         </div>
-
     </div>
+    @endif
     <div class="col-lg-9">
         <div class="card">
             <div class="card-header">{{(new DateTime)->format('F Y')}} Sessions</div>

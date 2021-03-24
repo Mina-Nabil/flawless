@@ -67,12 +67,13 @@
                         </div>
                         <p class="text-muted">{{$session->patient->PTNT_MOBN}}</p>
                     </div>
-
                     <div class="col-md-2">
+                        @if(Auth::user()->isAdmin())
                         <div class="font-bold mb-2">
                             Total {{($session->SSHN_DISC > 0) ? "(Discount)" : ""}}
                         </div>
                         <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->SSHN_DISC > 0) ? "(" .$session->SSHN_DISC. "EGP)" : ""}}</p>
+                        @endif
                     </div>
                     <div class="col-md-4">
                         <div class="font-bold mb-2">
@@ -94,11 +95,11 @@
                     <li class="nav-item"> <a class="nav-link active" role="tab" data-toggle="tab" href="#status">Session Status</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#services">Services</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient History</a> </li>
-                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     @if(Auth::user()->isAdmin() )
+                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
-                    @endif
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#settings">Session Info</a> </li>
+                    @endif
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#log">Log</a> </li>
 
                 </ul>
@@ -118,7 +119,7 @@
                             @if(isset($session->doctor))
                             <li>
                                 <p class="text-muted">Managed by Dr. {{$session->doctor->DASH_USNM}}
-                                <i class="fas fa-check-circle" style="color:lightgreen"></i> </p>
+                                    <i class="fas fa-check-circle" style="color:lightgreen"></i> </p>
                             </li>
                             @else
                             <li>
@@ -265,7 +266,7 @@
                         </div>
                     </div>
                 </div>
-
+                @if(Auth::user()->isAdmin() )
                 <!--Add Item tab-->
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">
@@ -317,7 +318,7 @@
                     </div>
                 </div>
 
-                @if(Auth::user()->isAdmin() )
+
                 {{-- Session Details --}}
                 <div class="tab-pane" id="doctor" role="tabpanel">
                     <div class="card-body">
@@ -346,7 +347,6 @@
                         </form>
                     </div>
                 </div>
-                @endif
 
                 <!--Settings tab-->
                 <div class="tab-pane " id="settings" role="tabpanel">
@@ -361,7 +361,7 @@
 
                                 <div class="form-group">
                                     <label>Patients</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" >
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%">
                                         @foreach($patients as $patient)
                                         <option value="{{$patient->id}}" @if($patient->id == $session->SSHN_PTNT_ID)
                                             selected
@@ -384,8 +384,7 @@
                                 <div class="form-group">
                                     <label>Start Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{$session->SSHN_STRT_TIME}}" name=sessionStartTime
-                                            required>
+                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{$session->SSHN_STRT_TIME}}" name=sessionStartTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionStartTime')}}</small>
                                 </div>
@@ -414,7 +413,7 @@
                         </div>
                     </div>
                 </div>
-
+                @endif
 
                 <div class="tab-pane" id="log" role="tabpanel">
                     <div class="card-body">

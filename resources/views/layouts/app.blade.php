@@ -105,7 +105,7 @@
                     <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
                     </ul>
                     </li> --}}
-
+                    @if(Auth::user()->isAdmin())
                     <li>
                         <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
                         <ul aria-expanded="false" class="collapse">
@@ -113,7 +113,8 @@
                             <li><a href="{{url('visa/home')}}">Visa</a></li>
                         </ul>
                     </li>
-
+                    @endif
+                    @if(Auth::user()->isAdmin())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li>
@@ -129,7 +130,8 @@
                             <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
                         </ul>
                     </li>
-
+                    @endif
+                    @if(Auth::user()->isAdmin())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
@@ -139,6 +141,7 @@
 
                         </ul>
                     </li>
+                    @endif
                     <li class="ml-auto" style="width: 320px">
                         <form class="app-search d-none d-md-block d-lg-block">
                             <input type="text" class="form-control" placeholder="Find patients by their Name or Mobile #">
@@ -200,12 +203,13 @@
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
+                            @if(Auth::user()->isAdmin())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal"
                                 class="btn btn-info d-none d-lg-block m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info d-none d-lg-block m-l-15"><i
-                                    class="fa fa-plus-circle"></i> Add
-                                Patient</a>
+                                    class="fa fa-plus-circle"></i> Add Patient</a>
                             <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
+                            @endif
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i
                                     class="fa fa-plus-circle"></i> Attendance </a>
 
