@@ -38,6 +38,7 @@ class CreateSessionsTable extends Migration
             $table->foreignId("SHIT_SSHN_ID")->constrained("sessions");
             $table->foreignId("SHIT_PLIT_ID")->constrained("pricelist_items");
             $table->double("SHIT_PRCE");
+            $table->string("SHIT_NOTE")->nullable();
             $table->integer("SHIT_QNTY")->default(1);
             $table->double("SHIT_TOTL");
         });

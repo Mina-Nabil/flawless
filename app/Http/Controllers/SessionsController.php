@@ -87,15 +87,16 @@ class SessionsController extends Controller
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
         $this->data['cardTitle'] = false;
-        $this->data['servicesCols'] = ['Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit'];
+        $this->data['servicesCols'] = ['Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit', 'Comment'];
         $this->data['servicesAtts'] = [
-            ['foreign' => ['rel' => 'session', 'att' => 'SSHN_DATE']],
+            ['foreignDate' => ['rel' => 'session', 'att' => 'SSHN_DATE', 'format' => 'd-M-Y']],
             ['attUrl' => ['url' => "sessions/details", "shownAtt" => 'SHIT_SSHN_ID', "urlAtt" => 'SHIT_SSHN_ID']],
             ['foreignForeign' => ['rel1' => 'session', 'rel2' => 'doctor', 'att' => 'DASH_USNM']],
             ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'device', 'att' => 'DVIC_NAME']],
             ['foreign' => ['rel' => 'pricelistItem', 'att' => 'PLIT_TYPE']],
             ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
-            'SHIT_QNTY'
+            'SHIT_QNTY',
+            ['comment' => ['att' => "SHIT_NOTE"]]
         ];
 
         //page data
@@ -134,7 +135,7 @@ class SessionsController extends Controller
         $session->clearServices();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $session->addService($pricelistID, $request->unit[$key], false);
+                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false);
             }
 
         if (isset($request->isCommission) && $request->isCommission == "on")

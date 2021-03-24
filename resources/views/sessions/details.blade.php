@@ -141,8 +141,9 @@
 
                                     @endforeach
                                 </ul>
-                                @endif
-
+                            </li>
+                            @endif
+                            @if(Auth::user()->isAdmin())
                             <li>
                                 @if($session->getRemainingMoney() != 0)
                                 <p class="text-muted">Payment not yet fully collected please collect payment before setting Session as Done, {{$session->getRemainingMoney()}}EGP remaining
@@ -156,6 +157,7 @@
                                 <p class="text-muted">No Services attached</p>
                                 @endif
                             </li>
+                            @endif
                         </ul>
 
                         <button class="btn btn-info mr-2" onclick="confirmAndGoTo('{{url($setSessionNewUrl)}}', 'Set Session as New')" @if(!$session->canBeNew()) disabled @endif >Set Session as
@@ -203,7 +205,7 @@
                             <?php $i = 1?>
                             @foreach ($session->items as $item)
                             <div class="row removeclass{{$i}}">
-                                <div class="col-lg-4">
+                                <div class="col-lg-3">
                                     <div class="input-group mb-2">
                                         <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required
                                             @if(!$session->canEditServices()) disabled @endif>
@@ -219,21 +221,33 @@
 
 
 
-                                <div class="col-4">
+                                <div class="col-3">
                                     <div class="input-group mb-2">
                                         <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required
                                             @if(!$session->canEditServices()) disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Type</option>
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)
-                                            <option value="{{$service['id']}}" {{($service['id'] == $item->SHIT_PLIT_ID ) ? 'selected' : ''}}> {{$service['serviceName']}} </option>
+                                            <option value="{{$service['id']}}" <?php if($service['id'] == $item->SHIT_PLIT_ID ) { ?> selected <?php  
+                                            if($service['serviceName'] != "Pulse") { 
+                                            $readOnly=true;
+                                            } else {
+                                            $readOnly=false;  
+                                            } }?>> {{$service['serviceName']}} </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
-                                <div class="col-4">
+                                <div class="col-3">
                                     <div class="input-group mb-3">
-                                        <input id="unit{{$item->id}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[] readonly>
+                                        <input id="note{{$i}}" value="{{$item->SHIT_NOTE}}" type="text" class="form-control" placeholder="Note" name=note[]>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="input-group mb-3">
+                                        <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]
+                                            {{($readOnly) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
                                             <button class="btn btn-danger" id="dynamicAddButton" type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
@@ -566,7 +580,7 @@
         divtest.setAttribute("class", "row removeclass" + room);
 
         var concatString = "";
-        concatString +=   '<div class="col-lg-4">\
+        concatString +=   '<div class="col-lg-3">\
                                     <div class="input-group mb-2">\
                                         <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
                                                 <option disabled hidden selected value="" class="text-muted">Device</option>';
@@ -576,14 +590,20 @@
                     concatString +=   '</select>\
                                     </div>\
                                 </div>\
-                                <div class="col-4">\
+                                <div class="col-3">\
                                         <div class="input-group mb-2">\
                                             <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
                                             </select>\
                                         </div>\
                                     </div>'
+                    
+                    concatString += '<div class="col-3">\
+                                        <div class="input-group mb-3">\
+                                            <input id="note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[] >\
+                                        </div>\
+                                    </div>'
 
-                    concatString +='<div class="col-4">\
+                    concatString +='<div class="col-3">\
                                         <div class="input-group mb-3">\
                                             <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]>\
                                                 <div class="input-group-append">\
@@ -607,9 +627,11 @@
 
     function checkUnit(rid) {
         rowName = $('#service' + rid).select2('data')[0].text
+      
         if(rowName=="Pulse"){
             $('#unit' + rid).removeAttr('readonly')
             $('#unit' + rid).val('0')
+            console.log(   $('#unit' + rid))
         } else {
             $('#unit' + rid).attr('readonly' , 'true')
             $('#unit' + rid).val('1') 

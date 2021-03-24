@@ -138,14 +138,15 @@ class Session extends Model
     }
 
     ///services
-    public function addService($pricelistID, $unit, $recalculateTotal = true)
+    public function addService($pricelistID, $unit, $note=null, $recalculateTotal = true)
     {
         if ($this->canEditServices())
-            DB::transaction(function () use ($pricelistID, $unit, $recalculateTotal) {
+            DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal) {
                 $pricelistItem = PriceListItem::findOrFail($pricelistID);
                 $this->items()->create([
                     "SHIT_PLIT_ID"  =>  $pricelistItem->id,
                     "SHIT_PRCE"     =>  $pricelistItem->PLIT_PRCE,
+                    "SHIT_NOTE"     =>  $note,
                     "SHIT_QNTY"     =>  $unit,
                     "SHIT_TOTL"     =>  $unit * $pricelistItem->PLIT_PRCE,
                 ]);
