@@ -208,7 +208,7 @@
                                 class="btn btn-info m-b-5 m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add Patient</a>
-                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
+                            <a style="font-family: 'Oswald'" href="{{url('cash/home')}}" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
                             @endif
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Attendance </a>
