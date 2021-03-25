@@ -73,7 +73,7 @@
             <div class="card-body">
                 <div class="row m-b-0">
                     <!-- Column -->
-                    <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="col-3">
                         <a href="{{$newSessionsURL}}">
                             <div class="card m-b-0">
                                 <div class="box bg-info text-center">
@@ -83,7 +83,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="col-3">
                         <a href="{{$todaySessionsURL}}">
                             <div class="card m-b-0">
                                 <div class="box bg-dark text-center">
@@ -93,7 +93,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="col-3">
                         <a href="{{$pendingSessionsURL}}">
                             <div class="card m-b-0">
                                 <div class="box bg-warning text-center">
@@ -103,7 +103,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="col-3">
                         <a href="{{$doneSessionsURL}}">
                             <div class="card m-b-0">
                                 <div class="box bg-success text-center">
