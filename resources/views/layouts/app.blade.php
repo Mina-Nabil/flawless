@@ -205,12 +205,12 @@
                         <div class="d-flex justify-content-end align-items-center">
                             @if(Auth::user()->isAdmin())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal"
-                                class="btn btn-info d-none d-lg-block m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info d-none d-lg-block m-l-15"><i
+                                class="btn btn-info m-b-5 m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add Patient</a>
-                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
+                            <a style="font-family: 'Oswald'" href="{{url('sales/add')}}" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
                             @endif
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info d-none d-lg-block m-l-15"><i
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Attendance </a>
 
                         </div>
