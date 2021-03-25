@@ -191,7 +191,7 @@ $(function () {
     }
 
     function setup() {
-        var tmp = "skin-blue-dark" // get('skin')
+        var tmp = get('skin')
         if (tmp && $.inArray(tmp, mySkins)) changeSkin(tmp)
             // Add the change skin listener
         $('[data-skin]').on('click', function (e) {
