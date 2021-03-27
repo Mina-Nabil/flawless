@@ -108,6 +108,17 @@
                                             </div>
 
                                             <div class="form-group">
+                                                <label>Pricelist*</label>
+                                                <select class="select2 form-control  col-md-12 mb-3 " style="width:100%" id=listID>
+                                                    @foreach($allPricelists as $list)
+                                                    <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
+                                                        {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
                                                 <label>Balance*</label>
                                                 <div class="input-group mb-3">
                                                     <input type="number" id="patientBlnc" step=0.01 class="form-control" placeholder="Patient Balance" name=balance value="0" required>

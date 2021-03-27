@@ -653,6 +653,10 @@
                 dropdownParent: $("#add-session-modal")
             });
 
+            $("#listIDModal").select2({
+                dropdownParent: $("#add-patient-modal")
+            });
+
             $(".ajax").select2({
                 ajax: {
                     url: "https://api.github.com/search/repositories",
