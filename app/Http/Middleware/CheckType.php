@@ -20,6 +20,9 @@ class CheckType
             if (request()->is('dash/*')) {
                 return abort(404);
             } 
+            if (request()->is('patients/*')) {
+                return abort(404);
+            } 
             if (request()->is('cash/*')) {
                 return abort(404);
             } 

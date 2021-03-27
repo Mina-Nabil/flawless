@@ -90,7 +90,7 @@
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
                     </ul> --}}
                     </li>
-
+                    @if(Auth::user()->isAdmin())
                     <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
                     </li>
 
@@ -105,7 +105,6 @@
                     <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
                     </ul>
                     </li> --}}
-                    @if(Auth::user()->isAdmin())
                     <li>
                         <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
                         <ul aria-expanded="false" class="collapse">
