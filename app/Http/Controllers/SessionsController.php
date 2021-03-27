@@ -11,6 +11,7 @@ use App\Models\Feedback;
 use App\Models\FollowUp;
 use App\Models\Patient;
 use App\Models\Session;
+use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class SessionsController extends Controller
         $this->data['title'] = "FLAWLESS Dashboard";
 
         //dates
-        $startOfMonth = (new DateTime())->format('Y-m-01');
+        $startOfMonth = (new DateTime())->sub(new DateInterval("P1M"))->format('Y-m-01');
         $endOfMonth = (new DateTime())->format('Y-m-t');
 
         //counts
