@@ -256,7 +256,7 @@
 
                                 <div class="form-group">
                                     <label>Pricelist*</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listIDModal>
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id=listIDModal>
                                         @foreach($allPricelists as $list)
                                         <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
                                             {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
@@ -301,7 +301,7 @@
 
                                 <div class="form-group">
                                     <label>Doctor</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="attendanceModalDoctor">
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id="attendanceModalDoctor">
                                         @foreach($doctors as $doctor)
                                         <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}} </option>
                                         @endforeach
@@ -391,7 +391,7 @@
 
                     <div class="form-group col-md-12 m-t-0">
                         <h5>Patients</h5>
-                        <select class="select2 form-control" style="width:100%" name=patientID id=patientSel>
+                        <select class="select2 form-control modalSelect2" style="width:100%" name=patientID id=patientSel>
 
                         </select>
                     </div>
@@ -648,6 +648,11 @@
         $(function () {
             // For select 2
             $(".select2").select2();
+
+            $("#patientSel").select2({
+                dropdownParent: $("#add-session-modal")
+            });
+
             $(".ajax").select2({
                 ajax: {
                     url: "https://api.github.com/search/repositories",
