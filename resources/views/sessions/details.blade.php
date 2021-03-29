@@ -375,7 +375,7 @@
 
                                 <div class="form-group">
                                     <label>Patients</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%">
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=patientID>
                                         @foreach($patients as $patient)
                                         <option value="{{$patient->id}}" @if($patient->id == $session->SSHN_PTNT_ID)
                                             selected
