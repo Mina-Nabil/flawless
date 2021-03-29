@@ -30,16 +30,16 @@ class Patient extends Model
 
     public function totalPaid()
     {
-        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)
+        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS', "Done")
             ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
-            ->get()->first() ?? 0;
+            ->get()->first()->paid ?? 0;
     }
 
     public function totalDiscount()
     {
-        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)
+        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS', "Done")
             ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
-            ->get()->first() ?? 0;
+            ->get()->first()->discount ?? 0;
     }
 
     public function servicesTaken()
