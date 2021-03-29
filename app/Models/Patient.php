@@ -30,7 +30,7 @@ class Patient extends Model
 
     public function totalPaid()
     {
-        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS', "Done")
+        return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)
             ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
             ->get()->first()->paid ?? 0;
     }

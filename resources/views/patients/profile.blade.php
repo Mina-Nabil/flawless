@@ -25,7 +25,7 @@
                 <h5 class="card-title">Total Paid</h5>
                 <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                     <span class="display-5 text-success"><i class=" ti-money"></i></span>
-                    <a href="javscript:void(0)" class="link display-5 ml-auto">{{number_format($patient->sessions_sum_SSHN_PAID,2)}}</a>
+                    <a href="javscript:void(0)" class="link display-5 ml-auto">{{number_format($patient->totalPaid())}}</a>
                 </div>
             </div>
         </div>
