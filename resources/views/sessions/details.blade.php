@@ -250,7 +250,7 @@
                                             {{($readOnly) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
-                                            <button class="btn btn-danger" id="dynamicAddButton" type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
+                                            <button class="btn btn-danger"  type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
                                                     class="fa fa-minus"></i></button>
                                         </div>
 
@@ -390,7 +390,7 @@
                                 <div class="form-group">
                                     <label>Date*</label>
                                     <div class="input-group mb-3">
-                                        <input type="date" class="form-control" placeholder="Session Day" name=sessionDate value="{{$session->SSHN_DATE}}" required>
+                                        <input type="date" class="form-control" placeholder="Session Day" name=sessionDate value="{{$session->SSHN_DATE->format('Y-m-d')}}" required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionDate')}}</small>
                                 </div>
@@ -424,6 +424,11 @@
                             @else
                             <p class="text-muted">Old Session Info can't be modified</p>
                             @endif
+                            <hr>
+
+                            <input type="hidden" value="{{$session->id}}">
+                            <button type="button" class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($deleteSessionURL)}}', 'delete this session and all its info')" >Delete Session</button>
+
                         </div>
                     </div>
                 </div>
@@ -607,7 +612,7 @@
                                         <div class="input-group mb-3">\
                                             <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]>\
                                                 <div class="input-group-append">\
-                                                    <button class="btn btn-danger" id="dynamicAddButton" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
+                                                    <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
                                                 </div>\
                                         </div>\
                                     </div>'

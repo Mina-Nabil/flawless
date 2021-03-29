@@ -113,6 +113,7 @@ class SessionsController extends Controller
         $this->data['doctorURL']               = "sessions/set/doctor";
         $this->data['discountURL']              = "sessions/set/discount";
         $this->data['editSessionURL']           = "sessions/edit";
+        $this->data['deleteSessionURL']           = "sessions/delete/" .  $this->data['session']->id;
         $this->data['settleSessionOnBalanceURL'] = url('sessions/settle/balance/' . $this->data['session']->id);
 
         $this->data['setSessionPendingUrl']     = "sessions/set/pending/" . $this->data['session']->id;
@@ -332,6 +333,14 @@ class SessionsController extends Controller
         return redirect("sessions/details/" . $session->id);
     }
 
+    public function delete($sessionID)
+    {
+
+        $session = Session::findOrFail($sessionID);
+        $session->deleteSession();
+        return $this->redirectToHome();
+    }
+
     /////API functions
     public function getServices(Request $request)
     {
@@ -350,5 +359,9 @@ class SessionsController extends Controller
     private function redirectToDetails($id)
     {
         return redirect('sessions/details/' . $id);
+    }
+    private function redirectToHome()
+    {
+        return redirect('/');
     }
 }

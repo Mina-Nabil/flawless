@@ -30,6 +30,7 @@ Route::get('sessions/set/cancelled/{id}', 'SessionsController@setSessionCancelle
 Route::post('sessions/api/get/services', 'SessionsController@getServices');
 Route::get('sessions/query', "SessionsController@prepareQuery");
 Route::post('sessions/query', "SessionsController@loadQuery");
+Route::get('sessions/delete/{id}', "SessionsController@delete");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');

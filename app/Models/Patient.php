@@ -9,56 +9,64 @@ use Illuminate\Support\Facades\Auth;
 
 class Patient extends Model
 {
-    protected $table="patients";
+    protected $table = "patients";
     public $timestamps = true;
 
- 
-    public function sessions(){
+
+    public function sessions()
+    {
         return $this->hasMany("App\Models\Session", "SSHN_PTNT_ID", "id");
     }
- 
-    public function services(){
+
+    public function services()
+    {
         return $this->hasManyThrough(SessionItem::class, "App\Models\Session", "SSHN_PTNT_ID", "SHIT_SSHN_ID");
     }
 
-    public function pricelist(){
+    public function pricelist()
+    {
         return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
     }
 
-    public function totalPaid(){
+    public function totalPaid()
+    {
         return 0;
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)
-                ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
-                ->get()->first();
+            ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
+            ->get()->first();
     }
 
-    public function totalDiscount(){
+    public function totalDiscount()
+    {
         return 0;
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)
-                ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
-                ->get()->first();
+            ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
+            ->get()->first();
     }
 
-    public function servicesTaken(){
+    public function servicesTaken()
+    {
         return [];
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS_ID', 4)
-        ->join('service_items', "SRVC_SSHN_ID", '=', 'orders.id')
-        ->join('inventory', "SRVC_INVT_ID", '=', 'inventory.id')
-        ->join('products', "INVT_PROD_ID", '=', 'products.id')
-        ->selectRaw('SUM(SRVC_KGS) as SRVC_KGS, PROD_NAME, SRVC_PRCE')
-        ->groupBy('order_items.id')
-        ->get();
+            ->join('service_items', "SRVC_SSHN_ID", '=', 'orders.id')
+            ->join('inventory', "SRVC_INVT_ID", '=', 'inventory.id')
+            ->join('products', "INVT_PROD_ID", '=', 'products.id')
+            ->selectRaw('SUM(SRVC_KGS) as SRVC_KGS, PROD_NAME, SRVC_PRCE')
+            ->groupBy('order_items.id')
+            ->get();
     }
     ///////stats
 
-    public static function getPatientsCountCreatedThisMonth() {
+    public static function getPatientsCountCreatedThisMonth()
+    {
         $startOfMonth = (new DateTime('now'))->format('Y-m-01');
         $endOfMonth = (new DateTime('now'))->format('Y-m-t');
         return DB::table('patients')->whereBetween("created_at", [$startOfMonth, $endOfMonth])->count();
     }
 
-    public function deductBalance($moneyToDeducted, $sessionID){
-        $this->pay(-1*$moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
+    public function deductBalance($moneyToDeducted, $sessionID)
+    {
+        $this->pay(-1 * $moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
     }
 
     ///////transactions
@@ -68,9 +76,9 @@ class Patient extends Model
         return $this->hasMany('App\Models\PatientPayment', 'PTPY_PTNT_ID');
     }
 
-    public function pay($amount, $comment=null, $addCashEntry=true, $isVisa=false)
+    public function pay($amount, $comment = null, $addEntry = true, $isVisa = false)
     {
-        DB::transaction(function () use ($amount, $comment, $addCashEntry, $isVisa) {
+        DB::transaction(function () use ($amount, $comment, $addEntry, $isVisa) {
             $this->PTNT_BLNC += $amount;
             $payment =  new PatientPayment();
             $payment->PTPY_PAID = $amount;
@@ -80,13 +88,15 @@ class Patient extends Model
             $payment->PTPY_DASH_ID = Auth::user()->id;
 
             $this->payments()->save($payment);
-            if($addCashEntry && !$isVisa){
-                $cashTitle = "Recieved from " . $this->PTNT_NAME;
-                Cash::entry($cashTitle, $amount, 0, $comment);
+            if ($addEntry) {
+                $entryTitle = "Recieved from " . $this->PTNT_NAME;
+                if (!$isVisa) {
+                    Cash::entry($entryTitle, $amount, 0, $comment);
+                } else {
+                    Visa::entry($entryTitle, $amount, 0, $comment);
+                }
             }
             $this->save();
         });
     }
 }
-
-

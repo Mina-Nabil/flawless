@@ -138,7 +138,7 @@ class Session extends Model
     }
 
     ///services
-    public function addService($pricelistID, $unit, $note=null, $recalculateTotal = true)
+    public function addService($pricelistID, $unit, $note = null, $recalculateTotal = true)
     {
         if ($this->canEditServices())
             DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal) {
@@ -197,8 +197,12 @@ class Session extends Model
                 }
                 $transTitle = "Recieved from " . $this->patient->PTNT_NAME;
                 if ($isCash) {
+                    $this->SSHN_PYMT_TYPE = "Cash";
+                    $this->save();
                     Cash::entry($transTitle, $amount, 0, "Automated Cash Entry for Session#{$this->id}");
                 } else {
+                    $this->SSHN_PYMT_TYPE = "Visa";
+                    $this->save();
                     Visa::entry($transTitle, $amount, 0, "Automated Visa Entry for Session#{$this->id}");
                 }
             });
@@ -240,6 +244,26 @@ class Session extends Model
         }
         $this->SSHN_TOTL = $total;
         $this->save();
+    }
+
+    public function deleteSession()
+    {
+        DB::transaction(function () {
+            $this->items()->delete();
+            $this->logs()->delete();
+
+            if ($this->SSHN_PAID > 0)
+                if ($this->SSHN_PYMT_TYPE == "Cash") {
+                    Cash::entry("Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
+                } elseif ($this->SSHN_PYMT_TYPE == "Visa") {
+                    Visa::entry("Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
+                }
+
+            if ($this->SSHN_PTNT_BLNC > 0)
+                $this->patient->pay($this->SSHN_PTNT_BLNC, "Money Refund after Session delete", false);
+
+            $this->delete();
+        });
     }
 
     public function assignTo($doctorID)
