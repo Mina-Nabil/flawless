@@ -93,6 +93,7 @@ class SettingsController extends Controller
 
     function syncPricelist(Request $request)
     {
+        return;
         $request->validate([
             "id"   => "required",
         ]);
@@ -116,8 +117,16 @@ class SettingsController extends Controller
                 $pricelistItem["PLIT_AREA_ID"] = $request->service[$key];
             }
 
+            foreach($pricelist->pricelistItems as $savedItem){
+                if($savedItem->PLIT_DVIC_ID == $pricelistItem["PLIT_DVIC_ID"]){
+                    //device mawgood
+                }else {
+                    $pricelist->pricelistItems()->create($pricelistItem);
+                }
+            }
+
             dd([$pricelist->pricelistItems, $pricelistItem]);
-            $pricelist->pricelistItems()->create($pricelistItem);
+        
         }
 
        return redirect("settings/pricelists");
