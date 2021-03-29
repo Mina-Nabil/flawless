@@ -27,7 +27,7 @@ class SessionsController extends Controller
         $this->data['title'] = "FLAWLESS Dashboard";
 
         //dates
-        $startOfMonth = (new DateTime())->sub(new DateInterval("P1M"))->format('Y-m-01');
+        $startOfMonth = (new DateTime())->sub(new DateInterval("P2M"))->format('Y-m-01');
         $endOfMonth = (new DateTime())->format('Y-m-t');
 
         //counts
