@@ -251,7 +251,7 @@ class Session extends Model
         DB::transaction(function () {
             $this->items()->delete();
             $this->logs()->delete();
-            $this->feedback()()->delete();
+            $this->feedback()->delete();
 
             if ($this->SSHN_PAID > 0)
                 if ($this->SSHN_PYMT_TYPE == "Cash") {
