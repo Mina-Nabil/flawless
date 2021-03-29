@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Device;
 use App\Models\PriceList;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -93,46 +94,92 @@ class SettingsController extends Controller
 
     function syncPricelist(Request $request)
     {
-        return;
-        $request->validate([
-            "id"   => "required",
-        ]);
+        try {
 
-        $pricelist = PriceList::findOrFail($request->id);
-        $pricelist->pricelistItems;
-        
-        foreach ($request->device as $key => $deviceID) {
-            $pricelistItem = [
-                "PLIT_DVIC_ID"  =>  $deviceID,
-                "PLIT_PRCE"     =>  $request->price[$key],
-            ];
-            if ($request->service[$key] == -1) {
-                $pricelistItem["PLIT_TYPE"] = "Pulse";
-                $pricelistItem["PLIT_AREA_ID"] = NULL;
-            } elseif ($request->service[$key] == 0) {
-                $pricelistItem["PLIT_TYPE"] = "Session";
-                $pricelistItem["PLIT_AREA_ID"] = NULL;
-            } elseif ($request->service[$key] > 0) {
-                $pricelistItem["PLIT_TYPE"] = "Area";
-                $pricelistItem["PLIT_AREA_ID"] = $request->service[$key];
-            }
 
-            foreach($pricelist->pricelistItems as $savedItem){
-                if($savedItem->PLIT_DVIC_ID == $pricelistItem["PLIT_DVIC_ID"]){
-                    //device mawgood
-                }else {
+            $request->validate([
+                "id"   => "required",
+            ]);
+
+            $pricelist = PriceList::findOrFail($request->id);
+            $pricelist->pricelistItems;
+
+            $itemsArr = [];
+
+            foreach ($request->device as $key => $deviceID) {
+                $create = true;
+                $pricelistItem = [
+                    "PLIT_DVIC_ID"  =>  $deviceID,
+                    "PLIT_PRCE"     =>  $request->price[$key],
+                ];
+                if ($request->service[$key] == -1) {
+                    $pricelistItem["PLIT_TYPE"] = "Pulse";
+                    $pricelistItem["PLIT_AREA_ID"] = NULL;
+                } elseif ($request->service[$key] == 0) {
+                    $pricelistItem["PLIT_TYPE"] = "Session";
+                    $pricelistItem["PLIT_AREA_ID"] = NULL;
+                } elseif ($request->service[$key] > 0) {
+                    $pricelistItem["PLIT_TYPE"] = "Area";
+                    $pricelistItem["PLIT_AREA_ID"] = $request->service[$key];
+                }
+
+                array_push($itemsArr, $pricelistItem);
+
+
+                foreach ($pricelist->pricelistItems as $savedItem) {
+                    if ($savedItem->PLIT_DVIC_ID == $pricelistItem["PLIT_DVIC_ID"]) {
+                        //device mawgood
+                        if ($savedItem->PLIT_TYPE == $pricelistItem["PLIT_TYPE"]) {
+                            //same type
+                            if ($savedItem->PLIT_TYPE == "Area") {
+                                if ($savedItem->PLIT_AREA_ID == $pricelistItem["PLIT_AREA_ID"]) {
+                                    $savedItem->PLIT_PRCE =  $request->price[$key];
+                                    $savedItem->save();
+                                    $create = false;
+                                }
+                            } else {
+                                $savedItem->PLIT_PRCE =  $request->price[$key];
+                                $savedItem->save();
+                                $create = false;
+                            }
+                        }
+                    }
+                }
+                if ($create)
                     $pricelist->pricelistItems()->create($pricelistItem);
+            }
+            $pricelist->load('pricelistItems');
+            ///delete check
+            $deleteCount = $pricelist->pricelistItems->count() - count($itemsArr);
+
+            if ($deleteCount > 0) {
+                foreach ($pricelist->pricelistItems as $itemToDelete) {
+                    $delete = true;
+                    foreach ($itemsArr as $itemToCheck) {
+                        if (
+                            ($itemToDelete->PLIT_DVIC_ID == $itemToCheck["PLIT_DVIC_ID"]) &&
+                            ($itemToDelete->PLIT_TYPE == $itemToCheck["PLIT_TYPE"] &&
+                                ($itemToDelete->PLIT_TYPE != "Area" || $itemToDelete->PLIT_AREA_ID == $itemToCheck["PLIT_AREA_ID"]))
+                        ) {
+                            $delete = false;
+                            break;
+                        }
+                    }
+                    if ($delete) {
+                        $itemToDelete->delete();
+                        $deleteCount--;
+                    }
+                    if ($deleteCount == 0) break;
                 }
             }
-
-            dd([$pricelist->pricelistItems, $pricelistItem]);
-        
+        } catch (Exception $e) {
         }
 
-       return redirect("settings/pricelists");
+        return redirect("settings/pricelists");
     }
 
-    function getPricelistItems(Request $request){
+    function getPricelistItems(Request $request)
+    {
         $request->validate([
             "id" => "required"
         ]);
@@ -140,13 +187,13 @@ class SettingsController extends Controller
         $items = $pricelist->pricelistItems;
         $ret = [];
         foreach ($items as $item) {
-            array_push( $ret,  [
+            array_push($ret,  [
                 "PLIT_DVIC_ID" => $item->PLIT_DVIC_ID,
                 "PLIT_AREA_ID" => ($item->PLIT_TYPE == "Session") ? 0 : (($item->PLIT_TYPE == "Pulse") ? -1 : $item->PLIT_AREA_ID),
                 "PLIT_PRCE" => $item->PLIT_PRCE,
             ]);
         }
-    
+
         echo json_encode($ret);
     }
 
