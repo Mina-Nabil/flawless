@@ -98,7 +98,8 @@ class SettingsController extends Controller
         ]);
 
         $pricelist = PriceList::findOrFail($request->id);
-        $pricelist->pricelistItems()->delete();
+        $pricelist->pricelistItems;
+        
         foreach ($request->device as $key => $deviceID) {
             $pricelistItem = [
                 "PLIT_DVIC_ID"  =>  $deviceID,
@@ -114,6 +115,8 @@ class SettingsController extends Controller
                 $pricelistItem["PLIT_TYPE"] = "Area";
                 $pricelistItem["PLIT_AREA_ID"] = $request->service[$key];
             }
+
+            dd([$pricelist->pricelistItems, $pricelistItem]);
             $pricelist->pricelistItems()->create($pricelistItem);
         }
 
