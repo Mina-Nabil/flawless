@@ -251,6 +251,7 @@ class Session extends Model
         DB::transaction(function () {
             $this->items()->delete();
             $this->logs()->delete();
+            $this->feedback()()->delete();
 
             if ($this->SSHN_PAID > 0)
                 if ($this->SSHN_PYMT_TYPE == "Cash") {
@@ -399,6 +400,11 @@ class Session extends Model
     function accepter()
     {
         return $this->belongsTo("App\Models\DashUser", "SSHN_ACPT_ID");
+    }
+
+    function feedback()
+    {
+        return $this->hasOne("App\Models\Feedback", "FDBK_SSHN_ID");
     }
 
     function items()
