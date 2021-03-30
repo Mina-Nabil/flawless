@@ -18,8 +18,10 @@
                 <h6>{{$patient->PTNT_ADRS}}</h6>
                 <small class="text-muted p-t-30 db">Since</small>
                 <h6>{{$patient->created_at->format("Y-M-d")}}</h6>
-                <small class="text-muted p-t-30 db">Channe;</small>
-                <h6>{{$patient->channel->CHNL_NAME}}</h6>
+                <small class="text-muted p-t-30 db">Pricelist</small>
+                <h6>{{$patient->pricelist->PRLS_NAME ?? ""}}</h6>
+                <small class="text-muted p-t-30 db">Channel</small>
+                <h6>{{$patient->channel->CHNL_NAME ?? ""}}</h6>
             </div>
         </div>
         <div class="card">
@@ -196,7 +198,7 @@
 
                             <div class="form-group">
                                 <label>Pricelist*</label>
-                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listID>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=listID>
                                     @foreach($allPricelists as $list)
                                     <option value="{{$list->id}}" @if($list->id == $patient->PTNT_PRLS_ID) selected @endif >
                                         {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
@@ -207,7 +209,7 @@
 
                             <div class="form-group">
                                 <label>Channel</label>
-                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=channelID>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=channelID>
                                     @foreach($channels as $channel)
                                     <option value="{{$channel->id}}" @if($channel->id == $patient->PTNT_CHNL_ID) selected @endif > {{$channel->CHNL_NAME}} </option>
                                     @endforeach

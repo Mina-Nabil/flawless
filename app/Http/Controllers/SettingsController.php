@@ -51,10 +51,10 @@ class SettingsController extends Controller
 
         $pricelist = new PriceList();
         $pricelist->PRLS_NAME = $request->name;
-        $pricelist->PRLS_DFLT = $request->isDefault ? 1 : 0;
+        $pricelist->PRLS_DFLT = $request->isDefault===true ? 1 : 0;
 
         $pricelist->save();
-        if ($pricelist->PRLS_DFLT)
+        if ($request->isDefault)
             PriceList::setDefaultPriceList($pricelist->id);
         return $pricelist->id;
     }
@@ -76,8 +76,9 @@ class SettingsController extends Controller
         $pricelist->PRLS_DFLT = $request->isDefault ? 1 : 0;
 
         $pricelist->save();
-        if ($pricelist->PRLS_DFLT)
+        if ($pricelist->PRLS_DFLT){
             PriceList::setDefaultPriceList($pricelist->id);
+        }
         return $pricelist->id;
     }
 

@@ -713,7 +713,7 @@
                 var mobn = $('#patientMobn').val();
                 var balance = $('#patientBlnc').val();
                 var listID = $('#listID').val();
-                var listID = $('#channelID').val();
+                var channelID = $('#channelID').val();
             }
 
             var formData = new FormData();
