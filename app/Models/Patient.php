@@ -28,6 +28,11 @@ class Patient extends Model
         return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
     }
 
+    public function channel()
+    {
+        return $this->belongsTo("App\Models\Channel", "PTNT_CHNL_ID");
+    }
+
     public function totalPaid()
     {
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)

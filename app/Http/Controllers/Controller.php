@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Channel;
 use App\Models\DashUser;
 use App\Models\Patient;
 use App\Models\PriceList;
@@ -34,6 +35,7 @@ class Controller extends BaseController
         $this->data['addFollowupURL']    = url('followups/insert');
 
         $this->data['allPricelists']        =   PriceList::all();
+        $this->data['channels']             =   Channel::all();
         $this->data['doctors']              =   DashUser::where("DASH_TYPE_ID", 2)->get();
         $this->data['patients']             =   Patient::orderByDesc('id')->get();
     }

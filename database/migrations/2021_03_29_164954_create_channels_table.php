@@ -15,7 +15,11 @@ class CreateChannelsTable extends Migration
     {
         Schema::create('channels', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string("CHNL_NAME");
+        });
+
+        Schema::table('patients', function (Blueprint $table){
+            $table->foreignId("PTNT_CHNL_ID")->nullable()->constrained("channels");
         });
     }
 

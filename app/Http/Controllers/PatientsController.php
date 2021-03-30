@@ -146,6 +146,7 @@ class PatientsController extends Controller
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
+        $patient->PTNT_CHNL_ID = $request->channelID;
         $patient->save();
         
         return $patient->id;
@@ -168,7 +169,8 @@ class PatientsController extends Controller
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
-
+        $patient->PTNT_CHNL_ID = $request->channelID;
+        
         $patient->save();
 
         return redirect("patients/profile/" . $patient->id);

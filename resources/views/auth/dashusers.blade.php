@@ -23,7 +23,7 @@
                                 <span class="input-group-text" id="basic-addon11"><i class="ti-user"></i></span>
                             </div>
                             <input type="text" class="form-control" placeholder="Username" name=name aria-label="Username" aria-describedby="basic-addon11"
-                                value="{{ (isset($user)) ? $user->DASH_USNM : old('username')}}" required>
+                                value="{{ (isset($user)) ? $user->DASH_USNM : old('name')}}" required>
                         </div>
                         <small class="text-danger">{{$errors->first('name')}}</small>
                     </div>

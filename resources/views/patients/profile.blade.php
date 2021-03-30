@@ -18,6 +18,8 @@
                 <h6>{{$patient->PTNT_ADRS}}</h6>
                 <small class="text-muted p-t-30 db">Since</small>
                 <h6>{{$patient->created_at->format("Y-M-d")}}</h6>
+                <small class="text-muted p-t-30 db">Channe;</small>
+                <h6>{{$patient->channel->CHNL_NAME}}</h6>
             </div>
         </div>
         <div class="card">
@@ -117,7 +119,8 @@
                         <h4 class="card-title">Patient's Services</h4>
                         <h6 class="card-subtitle">All Services applied to the Patient</h6>
                         <div class="col-12">
-                            <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" />
+                            <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts"
+                                :cardTitle="false" />
                         </div>
                     </div>
                 </div>
@@ -139,7 +142,7 @@
                                     <form class="form pt-3" method="post" action="{{ url($payFormURL) }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type=hidden name=patientID value="{{(isset($patient)) ? $patient->id : ''}}">
-                                        <input type="hidden" name="goToHome" value="0" >
+                                        <input type="hidden" name="goToHome" value="0">
 
                                         <div class="form-group">
                                             <label>Amount*</label>
@@ -193,11 +196,20 @@
 
                             <div class="form-group">
                                 <label>Pricelist*</label>
-                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listIDModal>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=listID>
                                     @foreach($allPricelists as $list)
                                     <option value="{{$list->id}}" @if($list->id == $patient->PTNT_PRLS_ID) selected @endif >
                                         {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
                                     </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Channel</label>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=channelID>
+                                    @foreach($channels as $channel)
+                                    <option value="{{$channel->id}}" @if($channel->id == $patient->PTNT_CHNL_ID) selected @endif > {{$channel->CHNL_NAME}} </option>
                                     @endforeach
                                 </select>
                             </div>

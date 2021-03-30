@@ -95,16 +95,6 @@
                     </li>
 
 
-
-                    {{-- <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-calendar-alt"></i><span
-                                    class="hide-menu">Calendars</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="{{url('suppliers/trans/prepare')}}">All</a></li>
-                    <li><a href="{{url('suppliers/trans/quick')}}">Doctors</a></li>
-                    <li><a href="{{url('suppliers/show')}}">Sessions</a></li>
-                    <li><a href="{{url('suppliers/add')}}">Equipment</a></li>
-                    </ul>
-                    </li> --}}
                     <li>
                         <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
                         <ul aria-expanded="false" class="collapse">
@@ -137,6 +127,7 @@
                             <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
                             <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
                             <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                            <li><a href="{{url('channels/home')}}">Channels</a></li>
 
                         </ul>
                     </li>
@@ -203,8 +194,8 @@
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
                             @if(Auth::user()->isAdmin())
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal"
-                                class="btn btn-info m-b-5 m-l-15 addSessionButton"><i class="fa fa-plus-circle"></i> Book a Session</a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal" class="btn btn-info m-b-5 m-l-15 addSessionButton"><i
+                                    class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add Patient</a>
                             <a style="font-family: 'Oswald'" href="{{url('cash/home')}}" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
@@ -260,6 +251,15 @@
                                         <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
                                             {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
                                         </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Channels*</label>
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id=channelIDModal>
+                                        @foreach($channels as $channel)
+                                        <option value="{{$channel->id}}">{{$channel->CHNL_NAME}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -656,6 +656,10 @@
                 dropdownParent: $("#add-patient-modal")
             });
 
+            $("#channelIDModal").select2({
+                dropdownParent: $("#add-patient-modal")
+            });
+
             $(".ajax").select2({
                 ajax: {
                     url: "https://api.github.com/search/repositories",
@@ -702,12 +706,14 @@
                 var mobn = $('#patientMobnModal').val();
                 var balance = $('#patientBlncModal').val();
                 var listID = $('#listIDModal').val();
+                var channelID = $('#channelIDModal').val();
             } else {
                 var name = $('#patientName').val();
                 var adrs = $('#patientAdrs').val();
                 var mobn = $('#patientMobn').val();
                 var balance = $('#patientBlnc').val();
                 var listID = $('#listID').val();
+                var listID = $('#channelID').val();
             }
 
             var formData = new FormData();
@@ -717,6 +723,7 @@
             formData.append("balance", balance)
             formData.append("mobn", mobn)
             formData.append("listID", listID)
+            formData.append("channelID", channelID)
 
             var url = "{{$addPatientFormURL}}";
 

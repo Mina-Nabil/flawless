@@ -86,6 +86,14 @@ Route::post("cash/insert", 'CashController@insert');
 Route::get("visa/home", 'VisaController@home');
 Route::post("visa/insert", 'VisaController@insert');
 
+
+//Channels
+Route::get("channels/home", 'ChannelsController@index');
+Route::post("channels/insert", 'ChannelsController@insert');
+Route::get("channels/edit/{id}", 'ChannelsController@edit');
+Route::post("channels/update", 'ChannelsController@update');
+Route::get("channels/delete/{id}", 'ChannelsController@delete');
+
 //Dashboard users
 Route::get("dash/users/{userType}", 'DashUsersController@index');
 Route::post("dash/users/insert", 'DashUsersController@insert');
