@@ -296,15 +296,18 @@
                                     <div class="form-group">
                                         <label>Payment</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" step=.01 class="form-control amount" placeholder="Items Count" min=0 name=amount value="0" required>
+                                            <input type="number" step=.01 class="form-control amount" placeholder="Items Count" min=0.01 name=amount value="0" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-3 d-flex align-items-center">
-                                    <div class="bt-switch">
-                                        <div>
-                                            <input type="checkbox" data-size="medium" data-on-color="info" data-off-color="warning" data-on-text="Cash" data-off-text="Visa" name="isCash" checked>
-                                        </div>
+                                    <div class="custom-control custom-radio mr-5">
+                                        <input type="radio" id="customRadio1" name="cashRadio" class="custom-control-input" value=cash required>
+                                        <label class="custom-control-label" for="customRadio1"  >Cash</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="customRadio2" name="cashRadio" class="custom-control-input" value=visa required>
+                                        <label class="custom-control-label" for="customRadio2" >Visa</label>
                                     </div>
                                 </div>
                             </div>

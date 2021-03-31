@@ -170,7 +170,7 @@ class SessionsController extends Controller
         ]);
 
         $session = Session::findOrFail($request->id);
-        $isCash = (isset($request->isCash) && $request->isCash == "on");
+        $isCash = $request->cashRadio == "cash";
         $session->addPayment($request->amount, $isCash);
 
         return $this->redirectToDetails($session->id);
