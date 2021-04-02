@@ -348,7 +348,7 @@ class Session extends Model
 
     public function canEditServices()
     {
-        return ($this->SSHN_STTS == "New");
+        return ($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment");
     }
 
     public function canEditDoctor()
