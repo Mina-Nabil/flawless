@@ -83,19 +83,14 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <ul>
-                                                    @foreach ($session->items as $item)
-                                                    <li>
-                                                        <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}}
-                                                            @if($item->pricelistItem->PLIT_TYPE=="Area")
-                                                            ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
-                                                    </li>
-
-                                                    @endforeach
-                                                </ul>
+                                                @foreach ($session->items as $item)
+                                                <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}}
+                                                    @if($item->pricelistItem->PLIT_TYPE=="Area")
+                                                    ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
+                                                @endforeach
                                             </td>
 
-                                            <td>{{$session->SSHN_TOTL}}</td>
+                                            <td>{{$session->getTotalAfterDiscount()}}</td>
                                         </tr>
                                     </a>
                                     @endforeach

@@ -13,6 +13,7 @@ class Session extends Model
 {
     public $timestamps = false;
     private $remainingMoney;
+    private $totalAfterDisc;
     protected $dates = ['SSHN_DATE'];
 
     //Query functions
@@ -23,6 +24,14 @@ class Session extends Model
 
         $this->remainingMoney = $this->SSHN_TOTL - $this->SSHN_DISC - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC;
         return $this->remainingMoney;
+    }
+
+    public function getTotalAfterDiscount()
+    {
+        if (isset($this->totalAfterDisc)) return $this->totalAfterDisc;
+
+        $this->totalAfterDisc = $this->SSHN_TOTL - $this->SSHN_DISC ;
+        return $this->totalAfterDisc;
     }
 
     public static function getNewSessions($startDate, $endDate)
