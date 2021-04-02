@@ -47,7 +47,7 @@
 
                         <hr>
                         <div class="table-responsive m-t-5">
-                            <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                            <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='10' data-order="[]">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -107,7 +107,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Attendance Report</h4>
                         <div class="table-responsive m-t-5">
-                            <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                            <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='10' data-order="[]">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
