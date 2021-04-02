@@ -20,7 +20,7 @@ class ReportsController extends Controller
         $this->data['formTitle']            =   'Doctors Performance Query';
         $this->data['formSubtitle']            =   'Set Dates';
 
-        return view("sessions.query", $this->data);
+        return view("doctors.query", $this->data);
     }
 
     public function loadDoctorData(Request $request)
