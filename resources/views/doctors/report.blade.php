@@ -36,136 +36,136 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="col-lg-9">
-    <div class=row>
-        <div class="card">
-            <h4 class="card-title">{{$tableTitle}}</h4>
-            <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
-            <div class="card-body">
 
-                <hr>
-                <div class="table-responsive m-t-5">
-                    <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Patient</th>
-                                <th>Status</th>
-                                <th>Services</th>
-                                <th>Paid</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sessionTableBody">
-                            @foreach ($sessions as $session)
-                            <a href="javascript:void(0)">
-                                <tr>
-                                    <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
-                                    <td>{{$session->patient->PTNT_NAME}}</td>
-                                    <td>
-                                        <a href="{{ url('sessions/details/' . $session->id)}}">
-                                            @switch($session->SSHN_STTS)
-                                            @case("New")
-                                            <?php $class="label label-info" ?>
-                                            @break
-                                            @case("Pending Payment")
-                                            <?php $class="label label-warning" ?>
-                                            @break
-                                            @case("Cancelled")
-                                            <?php $class="label label-danger" ?>
-                                            @break
-                                            @case("Done")
-                                            <?php $class="label label-success" ?>
-                                            @break
-                                            @endswitch
-                                            <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            @foreach ($session->items as $item)
-                                            <li>
-                                                <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
-                                                    ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
-                                            </li>
-
-                                            @endforeach
-                                        </ul>
-                                    </td>
-
-                                    <td>{{$session->SSHN_TOTL}}</td>
-                                </tr>
-                            </a>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
+    <div class="col-lg-9">
+        <div class=row>
             <div class="card">
+                <h4 class="card-title">{{$tableTitle}}</h4>
+                <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
                 <div class="card-body">
-                    <h4 class="card-title">Attendance Report</h4>
+
+                    <hr>
                     <div class="table-responsive m-t-5">
-                        <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                        <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
                             <thead>
                                 <tr>
                                     <th>Date</th>
+                                    <th>Patient</th>
                                     <th>Status</th>
-                                    <th>Shifts</th>
-                                    <th>Comment</th>
+                                    <th>Services</th>
+                                    <th>Paid</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($attendance as $attendaya)
-                                <tr>
-                                    <td>{{$attendaya->ATND_DATE->format('d-M-Y')}}</td>
-                                    <td>{{$attendaya->doctor->DASH_USNM}}</td>
-                                    <td>
-                                        <button id="attendanceState{{$attendaya->id}}" @switch($attendaya->ATND_STTS)
-                                            @case("New")
-                                            <?php $class="label label-info " ?>
-                                            @break
-                                            @case("Confirmed")
-                                            <?php $class="label label-success " ?>
-                                            @break
-                                            @case("Cancelled")
-                                            <?php $class="label label-danger " ?>
-                                            @break
-                                            @endswitch
-                                            class="{{$class}} open-setAttendance"
-                                            @if($canChange)
-                                            href="javascript:void(0)" data-toggle="modal" data-target="#set-status-modal"
-                                            data-id="{{$attendaya->id}}"
-                                            @else
-                                            disabled
-                                            @endif
-                                            >{{ $attendaya->ATND_STTS }}
-                                        </button>
+                            <tbody id="sessionTableBody">
+                                @foreach ($sessions as $session)
+                                <a href="javascript:void(0)">
+                                    <tr>
+                                        <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
+                                        <td>{{$session->patient->PTNT_NAME}}</td>
+                                        <td>
+                                            <a href="{{ url('sessions/details/' . $session->id)}}">
+                                                @switch($session->SSHN_STTS)
+                                                @case("New")
+                                                <?php $class="label label-info" ?>
+                                                @break
+                                                @case("Pending Payment")
+                                                <?php $class="label label-warning" ?>
+                                                @break
+                                                @case("Cancelled")
+                                                <?php $class="label label-danger" ?>
+                                                @break
+                                                @case("Done")
+                                                <?php $class="label label-success" ?>
+                                                @break
+                                                @endswitch
+                                                <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <ul>
+                                                @foreach ($session->items as $item)
+                                                <li>
+                                                    <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
+                                                        ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
+                                                </li>
 
-                                    </td>
-                                    <td>{{$attendaya->ATND_SHFT}}</td>
-                                    <td>
-                                        <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
-                                            data-content="{{$attendaya->ATND_CMNT }}" data-original-title="Comment">
-                                            <div style="display: none">{{$attendaya->ATND_CMNT }}</div><i class="far fa-list-alt"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                                @endforeach
+                                            </ul>
+                                        </td>
+
+                                        <td>{{$session->SSHN_TOTL}}</td>
+                                    </tr>
+                                </a>
                                 @endforeach
-                                </body>
-
+                            </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Attendance Report</h4>
+                        <div class="table-responsive m-t-5">
+                            <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Shifts</th>
+                                        <th>Comment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($attendance as $attendaya)
+                                    <tr>
+                                        <td>{{$attendaya->ATND_DATE->format('d-M-Y')}}</td>
+                                        <td>{{$attendaya->doctor->DASH_USNM}}</td>
+                                        <td>
+                                            <button id="attendanceState{{$attendaya->id}}" @switch($attendaya->ATND_STTS)
+                                                @case("New")
+                                                <?php $class="label label-info " ?>
+                                                @break
+                                                @case("Confirmed")
+                                                <?php $class="label label-success " ?>
+                                                @break
+                                                @case("Cancelled")
+                                                <?php $class="label label-danger " ?>
+                                                @break
+                                                @endswitch
+                                                class="{{$class}} open-setAttendance"
+                                                @if($canChange)
+                                                href="javascript:void(0)" data-toggle="modal" data-target="#set-status-modal"
+                                                data-id="{{$attendaya->id}}"
+                                                @else
+                                                disabled
+                                                @endif
+                                                >{{ $attendaya->ATND_STTS }}
+                                            </button>
 
+                                        </td>
+                                        <td>{{$attendaya->ATND_SHFT}}</td>
+                                        <td>
+                                            <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
+                                                data-content="{{$attendaya->ATND_CMNT }}" data-original-title="Comment">
+                                                <div style="display: none">{{$attendaya->ATND_CMNT }}</div><i class="far fa-list-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    </body>
+
+                            </table>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 </div>
 <script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
