@@ -133,13 +133,8 @@
                                                 <?php $class="label label-danger " ?>
                                                 @break
                                                 @endswitch
-                                                class="{{$class}} open-setAttendance"
-                                                @if($canChange)
-                                                href="javascript:void(0)" data-toggle="modal" data-target="#set-status-modal"
-                                                data-id="{{$attendaya->id}}"
-                                                @else
+                                                class="{{$class}} "
                                                 disabled
-                                                @endif
                                                 >{{ $attendaya->ATND_STTS }}
                                             </button>
 
