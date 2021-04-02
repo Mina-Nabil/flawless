@@ -103,7 +103,7 @@
                                                 </td>
                                                 <td>{{$session->SSHN_STRT_TIME}}</td>
                                                 <td>{{$session->SSHN_END_TIME}}</td>
-                                                <td>{{$session->SSHN_TOTL}}</td>
+                                                <td>{{$session->SSHN_PAID}}</td>
                                             </tr>
                                         </a>
                                         @endforeach

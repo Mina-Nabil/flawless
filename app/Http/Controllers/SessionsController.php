@@ -46,6 +46,8 @@ class SessionsController extends Controller
         //cash data
         $this->data['paidToday'] = Cash::paidToday();
         $this->data['collectedToday'] = Cash::collectedToday();
+        $this->data['cashBalance'] = Cash::currentBalance();
+
 
         //followups
 
