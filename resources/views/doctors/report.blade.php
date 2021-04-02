@@ -4,8 +4,6 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-3">
-
-
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Sessions</h5>
@@ -40,66 +38,70 @@
 
     <div class="col-lg-9">
         <div class=row>
-            <div class="card">
-                <h4 class="card-title">{{$tableTitle}}</h4>
-                <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
-                <div class="card-body">
+            <div class="col-lg-12">
 
-                    <hr>
-                    <div class="table-responsive m-t-5">
-                        <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Patient</th>
-                                    <th>Status</th>
-                                    <th>Services</th>
-                                    <th>Paid</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sessionTableBody">
-                                @foreach ($sessions as $session)
-                                <a href="javascript:void(0)">
+                <div class="card">
+                    <h4 class="card-title">{{$tableTitle}}</h4>
+                    <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
+                    <div class="card-body">
+
+                        <hr>
+                        <div class="table-responsive m-t-5">
+                            <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
+                                <thead>
                                     <tr>
-                                        <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
-                                        <td>{{$session->patient->PTNT_NAME}}</td>
-                                        <td>
-                                            <a href="{{ url('sessions/details/' . $session->id)}}">
-                                                @switch($session->SSHN_STTS)
-                                                @case("New")
-                                                <?php $class="label label-info" ?>
-                                                @break
-                                                @case("Pending Payment")
-                                                <?php $class="label label-warning" ?>
-                                                @break
-                                                @case("Cancelled")
-                                                <?php $class="label label-danger" ?>
-                                                @break
-                                                @case("Done")
-                                                <?php $class="label label-success" ?>
-                                                @break
-                                                @endswitch
-                                                <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <ul>
-                                                @foreach ($session->items as $item)
-                                                <li>
-                                                    <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
-                                                        ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
-                                                </li>
-
-                                                @endforeach
-                                            </ul>
-                                        </td>
-
-                                        <td>{{$session->SSHN_TOTL}}</td>
+                                        <th>Date</th>
+                                        <th>Patient</th>
+                                        <th>Status</th>
+                                        <th>Services</th>
+                                        <th>Paid</th>
                                     </tr>
-                                </a>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody id="sessionTableBody">
+                                    @foreach ($sessions as $session)
+                                    <a href="javascript:void(0)">
+                                        <tr>
+                                            <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
+                                            <td>{{$session->patient->PTNT_NAME}}</td>
+                                            <td>
+                                                <a href="{{ url('sessions/details/' . $session->id)}}">
+                                                    @switch($session->SSHN_STTS)
+                                                    @case("New")
+                                                    <?php $class="label label-info" ?>
+                                                    @break
+                                                    @case("Pending Payment")
+                                                    <?php $class="label label-warning" ?>
+                                                    @break
+                                                    @case("Cancelled")
+                                                    <?php $class="label label-danger" ?>
+                                                    @break
+                                                    @case("Done")
+                                                    <?php $class="label label-success" ?>
+                                                    @break
+                                                    @endswitch
+                                                    <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    @foreach ($session->items as $item)
+                                                    <li>
+                                                        <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}}
+                                                            @if($item->pricelistItem->PLIT_TYPE=="Area")
+                                                            ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
+                                                    </li>
+
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+
+                                            <td>{{$session->SSHN_TOTL}}</td>
+                                        </tr>
+                                    </a>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
