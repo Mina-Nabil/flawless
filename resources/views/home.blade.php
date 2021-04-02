@@ -68,12 +68,13 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Cash Balance</h5>
-                <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                <div class="d-flex m-30 no-block align-items-center">
                     <span class="display-6 text-primary"><i class="ti-money"></i></span>
-                    <a href="javscript:void(0)" class="link display-6 ml-auto">{{number_format($cashBalance)}}</a>
+                    <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{$cashBalance}}</a>
                 </div>
             </div>
         </div>
+    
     </div>
     @endif
     <div class="col-lg-9">
