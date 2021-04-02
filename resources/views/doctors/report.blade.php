@@ -41,9 +41,9 @@
             <div class="col-lg-12">
 
                 <div class="card">
-                    <h4 class="card-title">{{$tableTitle}}</h4>
-                    <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
                     <div class="card-body">
+                        <h4 class="card-title">{{$tableTitle}}</h4>
+                        <h6 class="card-subtitle">{{$tableSubtitle}}</h6>
 
                         <hr>
                         <div class="table-responsive m-t-5">
