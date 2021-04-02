@@ -37,7 +37,7 @@
         </div>
     </div>
 </div>
-@endif
+
 <div class="col-lg-9">
     <div class=row>
         <div class="card">
