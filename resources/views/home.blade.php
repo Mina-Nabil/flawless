@@ -67,10 +67,10 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Cash Balance</h5>
+                <h5 class="card-title">Today's Balance</h5>
                 <div class="d-flex m-30 no-block align-items-center">
                     <span class="display-6 text-primary"><i class="ti-money"></i></span>
-                    <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{$cashBalance}}</a>
+                    <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
                 </div>
             </div>
         </div>
