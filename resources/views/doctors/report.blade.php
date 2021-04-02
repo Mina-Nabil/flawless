@@ -120,7 +120,6 @@
                                     @foreach ($attendance as $attendaya)
                                     <tr>
                                         <td>{{$attendaya->ATND_DATE->format('d-M-Y')}}</td>
-                                        <td>{{$attendaya->doctor->DASH_USNM}}</td>
                                         <td>
                                             <button id="attendanceState{{$attendaya->id}}" @switch($attendaya->ATND_STTS)
                                                 @case("New")
