@@ -31,8 +31,8 @@ class ReportsController extends Controller
             "doctorID"  =>  "required|exists:dash_users,id"
         ]);
 
-        $startDate = (new DateTime($request->from))->format('Y-m-d 00:00:00');
-        $endDate = (new DateTime($request->from))->format('Y-m-d 23:59:59');
+        $startDate = $request->from;
+        $endDate = $request->to;
         $doctor = DashUser::findOrFail($request->doctorID);
 
         $this->data['sessions']         =   Session::getSessions('asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, null, true);
