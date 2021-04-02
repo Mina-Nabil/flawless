@@ -30,11 +30,12 @@
 
                     <div class="col-12 form-group">
                         <label>Doctor</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctorID>
+                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctorID required>
                             @foreach($doctors as $doctor)
                             <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}</option>
                             @endforeach
                         </select>
+                        <small class="text-danger">{{$errors->first('doctorID')}}</small>
                     </div>
 
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
