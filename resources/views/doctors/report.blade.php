@@ -20,8 +20,8 @@
             <div class="card-body">
                 <h6 class="card-title">Paid</h6>
                 <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
-                    <span class="display-7 text-danger"><i class="fas fa-hand-holding-usd"></i></span>
-                    <a href="javascript:void(0)" class="link display-7 ml-auto">{{number_format($totalPaid)}}</a>
+                    <span class="display-6 text-danger"><i class="fas fa-hand-holding-usd"></i></span>
+                    <a href="javascript:void(0)" class="link display-6 ml-auto">{{number_format($totalPaid)}}</a>
                 </div>
             </div>
         </div>
@@ -30,8 +30,8 @@
             <div class="card-body">
                 <h5 class="card-title">Shifts</h5>
                 <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
-                    <span class="display-7 text-success"><i class=" far fa-calendar-plus"></i></span>
-                    <a href="javascript:void(0)" class="link display-7 ml-auto">{{$totalShifts}}</a>
+                    <span class="display-6 text-success"><i class=" far fa-calendar-plus"></i></span>
+                    <a href="javascript:void(0)" class="link display-6 ml-auto">{{$totalShifts}}</a>
                 </div>
             </div>
         </div>
