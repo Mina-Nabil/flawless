@@ -12,7 +12,7 @@ class Attendance extends Model
         'ATND_DATE',
     ];
 
-    public function setAttendance($type, $shifts=1, $comment = null)
+    public function setAttendance($type, $shifts = 1, $comment = null)
     {
         $this->ATND_STTS = $type;
         $this->ATND_USER_ID = Auth::user()->id;
@@ -22,7 +22,7 @@ class Attendance extends Model
         return $this->save();
     }
 
-    public static function createAttendance($doctor, $date, $comment = null, $shifts=1)
+    public static function createAttendance($doctor, $date, $comment = null, $shifts = 1)
     {
         $prevAttendance = self::hasAttendance($doctor, $date);
         if (is_null($prevAttendance)) {
@@ -32,7 +32,7 @@ class Attendance extends Model
                 "ATND_SHFT"     =>  $shifts,
                 "ATND_CMNT"     =>  $comment,
             ];
-            if (Auth::user()->isAdmin()){
+            if (Auth::user()->isAdmin()) {
                 $insertArr['ATND_STTS'] = 'Confirmed';
                 $insertArr['ATND_USER_ID'] = Auth::user()->id;
             }
@@ -60,14 +60,14 @@ class Attendance extends Model
     public static function getAttendanceData($type = null, $from = null, $to = null, $doctor = null)
     {
         $query = Attendance::with('doctor');
-        if (!is_null($type) && $type!='All') {
-            $query = $query->where("ATND_STTS", $type);
-        }
-        if (!is_null($type) && $type =='NotCancelled') {
-            $query = $query->where("ATND_STTS", "!=", "Cancelled");
-        }
+        if (!is_null($type))
+            if ($type == 'NotCancelled') {
+                $query = $query->where("ATND_STTS", "!=", "Cancelled");
+            } elseif ($type == 'NotCancelled') {
+                $query = $query->where("ATND_STTS", $type);
+            }
 
-        if (!is_null($doctor) && $doctor>0) {
+        if (!is_null($doctor) && $doctor > 0) {
             $query = $query->where("ATND_DCTR_ID", $doctor);
         }
 
