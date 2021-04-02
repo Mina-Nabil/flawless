@@ -252,6 +252,7 @@ class Session extends Model
             $this->items()->delete();
             $this->logs()->delete();
             $this->feedback()->delete();
+            $this->followUp()->delete();
 
             if ($this->SSHN_PAID > 0)
                 if ($this->SSHN_PYMT_TYPE == "Cash") {
@@ -405,6 +406,11 @@ class Session extends Model
     function feedback()
     {
         return $this->hasOne("App\Models\Feedback", "FDBK_SSHN_ID");
+    }
+
+    function followUp()
+    {
+        return $this->hasOne("App\Models\FollowUp", "FLUP_SSHN_ID");
     }
 
     function items()
