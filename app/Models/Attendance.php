@@ -63,6 +63,9 @@ class Attendance extends Model
         if (!is_null($type) && $type!='All') {
             $query = $query->where("ATND_STTS", $type);
         }
+        if (!is_null($type) && $type =='NotCancelled') {
+            $query = $query->where("ATND_STTS", "!=", "Cancelled");
+        }
 
         if (!is_null($doctor) && $doctor>0) {
             $query = $query->where("ATND_DCTR_ID", $doctor);

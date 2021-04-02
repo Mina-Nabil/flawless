@@ -202,6 +202,7 @@ class SessionsController extends Controller
         return $this->redirectToDetails($session->id);
     }
 
+    //Sessions Queries
     public function prepareQuery()
     {
         //page info
@@ -229,7 +230,7 @@ class SessionsController extends Controller
         //query
         $this->data['items'] = Session::getSessions("asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
 
-        $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Paid To", "Comment"];
+        $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
         $this->data['atts'] = [
             ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
@@ -254,6 +255,7 @@ class SessionsController extends Controller
             ],
             ["foreign"  =>  ["rel"  =>  "creator",  "att"   =>  "DASH_USNM"]],
             ["number"   =>  ["att"  =>  "SSHN_TOTL"]],
+            ["number"   =>  ["att"  =>  "SSHN_DISC"]],
             ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
             ["comment"  =>  ["att"  =>  "SSHN_TEXT"]],
 

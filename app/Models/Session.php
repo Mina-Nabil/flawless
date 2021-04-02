@@ -45,9 +45,12 @@ class Session extends Model
         return self::getSessions("desc", "Done", $startDate, $endDate);
     }
 
-    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = null)
+    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = null, $loadServices = false)
     {
-        $query = self::with("doctor", "patient", "creator", "accepter");
+        $rels = ["doctor", "patient", "creator", "accepter"];
+        if ($loadServices)
+            array_push($rels, "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area");
+        $query = self::with($rels);
 
 
         if ($state != null && $state != "All")
@@ -85,9 +88,31 @@ class Session extends Model
         return  $query->get();
     }
 
-    public static function getDoneCount($startDate, $endDate)
+    public static function getDoneCount($startDate, $endDate, $doctorID = null)
     {
-        return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done")->count();
+        $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
+        if ($doctorID != null) {
+            $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
+        }
+        return $query->count();
+    }
+
+    public static function getPaidSum($startDate, $endDate, $doctorID = null)
+    {
+        $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
+        if ($doctorID != null) {
+            $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
+        }
+        return $query->sum("SSHN_PAID");
+    }
+
+    public static function getTotalSum($startDate, $endDate, $doctorID = null)
+    {
+        $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
+        if ($doctorID != null) {
+            $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
+        }
+        return $query->sum("SSHN_TOTL");
     }
 
     public static function getPendingPaymentCount()
