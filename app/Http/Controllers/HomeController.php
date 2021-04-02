@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,6 +41,30 @@ class HomeController extends Controller
         } else {
             redirect("login");
         }
+    }
+
+    public function search(Request $request){
+
+        $request->validate([
+            "searchVal" => "required"
+        ]);
+
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['items'] = Patient::orderByDesc('id')->whereRaw("PTNT_NAME LIKE '%{$request->searchVal}%' OR PTNT_MOBN LIKE '%{$request->searchVal}%' ")->get();
+        $this->data['allCount'] = $this->data['patients']->count();
+
+        $this->data['tableTitle'] = "Search Results";
+        $this->data['tableSubtitle'] = "Showing Results for '{$request->searchVal}'";
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since'];
+        $this->data['atts'] = [
+            'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            ['number' => ['att' => 'PTNT_BLNC']],
+            ['comment' => ['att' => 'PTNT_ADRS']],
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+        return view('layouts.table', $this->data);
     }
 
     public function logout()

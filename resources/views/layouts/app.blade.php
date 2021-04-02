@@ -133,8 +133,9 @@
                     </li>
                     @endif
                     <li class="ml-auto" style="width: 320px">
-                        <form class="app-search d-none d-md-block d-lg-block">
-                            <input type="text" class="form-control" placeholder="Find patients by their Name or Mobile #">
+                        <form class="app-search d-none d-md-block d-lg-block" action="{{$searchURL}}" method="POST">
+                            @csrf
+                            <input type="text" name=searchVal class="form-control" placeholder="Find patients by their Name or Mobile #">
                         </form>
                     </li>
 

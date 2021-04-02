@@ -33,6 +33,7 @@ class Controller extends BaseController
         $this->data['addSessionFormURL']    = url('sessions/insert');
         $this->data['addAttendanceURL']    = url('attendance/insert');
         $this->data['addFollowupURL']    = url('followups/insert');
+        $this->data['searchURL']    = url('search');
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
