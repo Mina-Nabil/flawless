@@ -30,7 +30,7 @@
 
                     <div class="col-12 form-group">
                         <label>Doctor</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
+                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctorID>
                             @foreach($doctors as $doctor)
                             <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}</option>
                             @endforeach

@@ -28,7 +28,7 @@ class ReportsController extends Controller
         $request->validate([
             "from"      =>  "required",
             "to"        =>  "required",
-            "doctorID"  =>  "required|exists:doctors,id"
+            "doctorID"  =>  "required|exists:dash_users,id"
         ]);
 
         $startDate = (new DateTime($request->from))->format('Y-m-d 00:00:00');
