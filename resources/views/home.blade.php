@@ -113,6 +113,7 @@
                             </div>
                         </a>
                     </div>
+                    @if(Auth::user()->isAdmin())
                     <div class="col-lg-3 col-xlg-3 col-6 ">
                         <a href="{{$doneSessionsURL}}">
                             <div class="card m-b-0">
@@ -123,6 +124,7 @@
                             </div>
                         </a>
                     </div>
+                    @endif
                 </div>
                 <hr>
                 <div class="table-responsive m-t-5">
@@ -135,7 +137,9 @@
                                 <th>Start</th>
                                 <th>End</th>
                                 <th>Doctor</th>
+                                @if(Auth::user()->isAdmin())
                                 <th>Total</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody id="sessionTableBody">
@@ -166,7 +170,9 @@
                                     <td>{{$session->SSHN_STRT_TIME}}</td>
                                     <td>{{$session->SSHN_END_TIME}}</td>
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
+                                    @if(Auth::user()->isAdmin())
                                     <td>{{$session->SSHN_TOTL}}</td>
+                                    @endif
                                 </tr>
                             </a>
                             @endforeach
