@@ -171,7 +171,7 @@
                                     <td>{{$session->SSHN_END_TIME}}</td>
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
                                     @if(Auth::user()->isAdmin())
-                                    <td>{{$session->SSHN_TOTL}}</td>
+                                    <td>{{$session->getTotalAfterDiscount()}}</td>
                                     @endif
                                 </tr>
                             </a>
