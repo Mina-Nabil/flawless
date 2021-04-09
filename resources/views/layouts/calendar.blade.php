@@ -13,29 +13,8 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="card-body">
-                            <h4 class="card-title m-t-10">Drag & Drop Event</h4>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div id="calendar-events" class="">
-                                        <div class="calendar-events" data-class="bg-info">
-                                            <i class="fa fa-circle text-info"></i> My Event One</div>
-                                        <div class="calendar-events" data-class="bg-success">
-                                            <i class="fa fa-circle text-success"></i> My Event Two</div>
-                                        <div class="calendar-events" data-class="bg-danger">
-                                            <i class="fa fa-circle text-danger"></i> My Event Three</div>
-                                        <div class="calendar-events" data-class="bg-warning">
-                                            <i class="fa fa-circle text-warning"></i> My Event Four</div>
-                                    </div>
-                                    <!-- checkbox -->
-                                    <div class="custom-control custom-checkbox m-l-10 m-t-10">
-                                        <input type="checkbox" class="custom-control-input" id="drop-remove">
-                                        <label class="custom-control-label" for="drop-remove">Remove after drop</label>
-                                    </div>
-                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#add-new-event" class="btn m-t-10 btn-info btn-block waves-effect waves-light">
-                                        <i class="ti-plus"></i> Add New Event
-                                    </a>
-                                </div>
-                            </div>
+                            <h4 class="card-title m-t-10">Sessions Calendar</h4>
+                          
                         </div>
                     </div>
                     <div class="col-lg-9">
