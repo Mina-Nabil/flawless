@@ -107,6 +107,7 @@ Route::get("dash/users/toggle/{id}", 'DashUsersController@toggle');
 Route::get("dash/users/delete/{id}", 'DashUsersController@delete');
 
 
+Route::get('calendar', 'SessionsController@calendar')->name('calendar');
 Route::post('search', 'HomeController@search')->name('search');
 Route::get('logout', 'HomeController@logout')->name('logout');
 Route::get('/login', 'HomeController@login')->name('login');

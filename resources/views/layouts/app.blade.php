@@ -91,6 +91,8 @@
                     </ul> --}}
                     </li>
                     @if(Auth::user()->isAdmin())
+                    <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
+                    </li>
                     <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
                     </li>
 

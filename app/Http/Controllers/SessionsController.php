@@ -78,6 +78,15 @@ class SessionsController extends Controller
         return view("home", $this->data);
     }
 
+    public function calendar()
+    {
+        $this->data['title']    =   "Calendar";
+        $startOfYear = (new DateTime())->format('Y-01-01');
+        $endOfYear = (new DateTime())->format('Y-12-31');
+        $this->data['sessions'] =   Session::getSessions('desc', null, $startOfYear, $endOfYear);
+        return view('layouts.calendar', $this->data);
+    }
+
     //////Single Session Functions
     public function details($id)
     {
