@@ -44,7 +44,7 @@
         channel.bind('my-event-' + '{{Auth::user()->id}}', function(data) {
          
             Swal.fire({
-                title: "Message From " data.from,
+                title: "Message From " + data.from,
                 text: JSON.stringify(data.message)});
         });
     </script>
