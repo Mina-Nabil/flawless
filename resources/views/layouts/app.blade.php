@@ -42,11 +42,10 @@
         var channel = pusher.subscribe('flawless-channel');
 
         channel.bind('my-event-' + '{{Auth::user()->id}}', function(data) {
-            resala = JSON.parse(data);
-            console.log(resala)
+         
             Swal.fire({
-                title: "Message From ",
-                text: JSON.stringify(resala)});
+                title: "Message From " data.from,
+                text: JSON.stringify(data.message)});
         });
     </script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
