@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\DashUser;
 use App\Models\Patient;
+use App\Models\PushMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,7 +45,8 @@ class HomeController extends Controller
         }
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
 
         $request->validate([
             "searchVal" => "required"
@@ -71,5 +74,17 @@ class HomeController extends Controller
     {
         Auth::logout();
         return redirect('login');
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $request->validate([
+            "userID"    =>  "required",
+            "from"      =>  "required",
+            "message"   =>  "required"
+        ]);
+        $userFrom = DashUser::findOrFail($request->from);
+        event(new PushMessage($request->userID, $userFrom->DASH_USNM, $request->message));
+        echo 1;
     }
 }

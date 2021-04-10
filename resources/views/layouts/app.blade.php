@@ -31,6 +31,24 @@
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oswald" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Signika" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script>
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('a5d146a0877f34f3f89d', {
+            cluster: 'eu'
+        });
+
+        var channel = pusher.subscribe('flawless-channel');
+
+        channel.bind('my-event-' + '{{Auth::user()->id}}', function(data) {
+            resala = JSON.parse(data);
+            console.log(resala)
+            Swal.fire({
+                title: "Message From ",
+                text: JSON.stringify(resala)});
+        });
+    </script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -111,16 +129,17 @@
                             {{-- <li>
                                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Revenue</a>
                                 <ul aria-expanded="false" class="collapse">
-                                    <li><a href="{{url('models/show')}}">Overall</a></li>
-                                    <li><a href="{{url('types/show')}}">By Doctor</a></li>
-                                    <li><a href="{{url('types/show')}}">By Equipment</a></li>
-                                </ul>
-                            </li> --}}
-                            <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
-                            <li><a href="{{url('attendance/query')}}">Attendance</a></li>
-                            <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
-                            <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
-                        </ul>
+                                    <li><a href="{{url('models/show')}}">Overall</a>
+                    </li>
+                    <li><a href="{{url('types/show')}}">By Doctor</a></li>
+                    <li><a href="{{url('types/show')}}">By Equipment</a></li>
+                    </ul>
+                    </li> --}}
+                    <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
+                    <li><a href="{{url('attendance/query')}}">Attendance</a></li>
+                    <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
+                    <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
+                    </ul>
                     </li>
                     @endif
                     @if(Auth::user()->isAdmin())
@@ -202,7 +221,8 @@
                                     class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add Patient</a>
-                            <a style="font-family: 'Oswald'" href="{{url('cash/home')}}" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Cash Trans. </a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i
+                                    class="fa fa-plus-circle"></i> Send Msg. </a>
                             @endif
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Attendance </a>
@@ -341,147 +361,141 @@
                     </div>
                 </div>
 
-
-                {{-- <div id="add-followup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div id="send-message" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Add Followup</h4>
+                                <h4 class="modal-title">Send Message</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body">
 
                                 <div class="form-group">
-                                    <label>Patient</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id="followupModalPatient">
-                                        @foreach($patients as $patient)
-                                        <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} ({{$patient->PTNT_MOBN}}) </option>
-                @endforeach
-                </select>
-            </div>
+                                    <label>User</label>
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id="msgModalUser">
+                                        @foreach($allUsers as $user)
+                                        <option value="{{$user->id}}"> {{$user->DASH_USNM}} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-            <div class="form-group">
-                <label>Date</label>
-                <div class="input-group mb-3">
-                    <input type="date" value="{{date('Y-m-d')}}" id="followupModalDate" class="form-control" placeholder="Followup Call Date" required>
+
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" id="msgModalMessage"></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="sendMessage()" class="btn btn-success mr-2">Send Message</button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>Comment</label>
-                <div class="input-group mb-3">
-                    <textarea class="form-control" rows="2" id="followupModalComment"></textarea>
+                <!-- ============================================================== -->
+                <!-- ADD NEW SESSION -->
+                <!-- ============================================================== -->
+                <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Book a Session</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group col-md-12 m-t-0">
+                                    <h5>Patients</h5>
+                                    <select class="select2 form-control modalSelect2" style="width:100%" name=patientID id=patientSel>
+
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Date*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Start Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>End Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Extra Notes</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment"></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="addNewSession()" class="btn btn-success mr-2">Add Session</button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <div class="right-sidebar">
+                    <div class="slimscrollright">
+                        <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span>
+                        </div>
+                        <div class="r-panel-body">
+                            <ul id="themecolors" class="m-t-20">
+                                <li><b>With Light sidebar</b></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
+                                <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme ">7</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
+                                </li>
+                                <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme working">10</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme ">12</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
             </div>
-
-            <button type="button" onclick="addFollowup()" class="btn btn-success mr-2">Add Follow-Up</button>
-
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
         </div>
-    </div>
-    </div>
-    </div> --}}
-    <!-- ============================================================== -->
-    <!-- ADD NEW SESSION -->
-    <!-- ============================================================== -->
-    <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Book a Session</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="form-group col-md-12 m-t-0">
-                        <h5>Patients</h5>
-                        <select class="select2 form-control modalSelect2" style="width:100%" name=patientID id=patientSel>
-
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Date*</label>
-                        <div class="input-group mb-3">
-                            <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Start Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>End Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Extra Notes</label>
-                        <div class="input-group mb-3">
-                            <textarea class="form-control" rows="2" name="sessionComment" id="sessionComment"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="button" onclick="addNewSession()" class="btn btn-success mr-2">Add Session</button>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ============================================================== -->
-    <!-- Right sidebar -->
-    <!-- ============================================================== -->
-    <!-- .right-sidebar -->
-    <div class="right-sidebar">
-        <div class="slimscrollright">
-            <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span>
-            </div>
-            <div class="r-panel-body">
-                <ul id="themecolors" class="m-t-20">
-                    <li><b>With Light sidebar</b></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                    <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme ">7</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
-                    </li>
-                    <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme working">10</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
-                    <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme ">12</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Right sidebar -->
-    <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Container fluid  -->
-    <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
-    <footer class="footer">
-        © 2021 {{config('app.name', 'Flawless')}} by mSquareApps
-    </footer>
-    <!-- ============================================================== -->
-    <!-- End footer -->
-    <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <footer class="footer">
+            © 2021 {{config('app.name', 'Flawless')}} by mSquareApps
+        </footer>
+        <!-- ============================================================== -->
+        <!-- End footer -->
+        <!-- ============================================================== -->
     </div>
     <!-- ============================================================== -->
     <!-- End Wrapper -->
@@ -959,6 +973,69 @@
                  
                     errorMesage = errorMesage.replace('date', 'Attendance Date')
                     errorMesage = errorMesage.replace('doctorID', 'Doctor ID')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+        function sendMessage(){
+            var user    =   $('#msgModalUser').val();
+            var msg     =   $('#msgModalMessage').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("userID", user)
+            formData.append("from", '{{Auth::user()->id}}')
+            formData.append("message", msg)
+
+            var url = "{{$sendMessageURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Message sent successfully",
+                    icon: "success"
+                }) 
+           
+            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["userID"]){
+                        errorMesage += errors.errors.userID + " " ;
+                    }
+                    if(errors.errors["message"]){
+                        errorMesage += errors.errors["message"] + " " ;
+                    }
+                 
+                    errorMesage = errorMesage.replace('message', 'Message')
+                    errorMesage = errorMesage.replace('userID', 'User')
 
                     Swal.fire({
                         title: "Error!",

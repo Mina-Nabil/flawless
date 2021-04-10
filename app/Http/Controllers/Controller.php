@@ -31,13 +31,15 @@ class Controller extends BaseController
         $this->data['addPatientFormURL']    = url('patients/insert');
         $this->data['getPatientsURL']       = url('patients/get/json');
         $this->data['addSessionFormURL']    = url('sessions/insert');
-        $this->data['addAttendanceURL']    = url('attendance/insert');
-        $this->data['addFollowupURL']    = url('followups/insert');
-        $this->data['searchURL']    = url('search');
+        $this->data['addAttendanceURL']     = url('attendance/insert');
+        $this->data['addFollowupURL']       = url('followups/insert');
+        $this->data['searchURL']            = url('search');
+        $this->data['sendMessageURL']       = url('message');
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
         $this->data['doctors']              =   DashUser::where("DASH_TYPE_ID", 2)->get();
+        $this->data['allUsers']             =   DashUser::all();
         $this->data['patients']             =   Patient::orderByDesc('id')->get();
     }
 
