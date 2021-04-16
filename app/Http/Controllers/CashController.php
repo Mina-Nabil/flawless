@@ -83,8 +83,8 @@ class CashController extends Controller
             "to"    =>  "required"
         ]);
 
-        $startDate  = (new DateTime($request->from))->format('d-M-Y 00:00:00');
-        $endDate    = (new DateTime($request->to))->format('d-M-Y 23:59:59');
+        $startDate  = (new DateTime($request->from))->format('Y-m-d 00:00:00');
+        $endDate    = (new DateTime($request->to))->format('Y-m-d 23:59:59');
 
         //query
         $this->data['items'] = Cash::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
