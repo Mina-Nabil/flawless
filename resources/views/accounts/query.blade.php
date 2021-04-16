@@ -10,30 +10,6 @@
                 <h6 class="card-subtitle">{{$formSubtitle}}</h6>
                 <form class="form pt-3" method="post" >
                     @csrf
-                    <div class="form-group">
-                        <label>Attendance State*</label>
-                        <div class="input-group mb-3">
-                            <select name=type class="select form-control custom-select" style="width: 100%; height:36px;" required>
-                                <option value="All" selected>All</option>
-                                <option value="New">New</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <small class="text-danger">{{$errors->first('gender')}}</small>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label>Doctor</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
-                            <option value="0" >All</option>
-                            @foreach($doctors as $doctor)
-                            <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}  </option>
-                            @endforeach
-                        </select>
-                    </div>
-
 
                     <div class=row>
                         <div class="col-6 form-group">

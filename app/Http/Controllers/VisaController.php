@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Visa;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 
 class VisaController extends Controller
@@ -20,7 +21,7 @@ class VisaController extends Controller
         $this->data['todayCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
         $this->data['todayAtts'] = [
             ['date' => ['att' => 'created_at']],
-            ['foreign' => [ 'rel' => 'dash_user', 'att' => 'DASH_USNM']],
+            ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'VISA_DESC',
             ["number" => ['att' => 'VISA_IN', 'nums' => 2]],
             ["number" => ['att' => 'VISA_OUT', 'nums' => 2]],
@@ -65,5 +66,47 @@ class VisaController extends Controller
         ]);
         Visa::entry($request->title, $request->in, $request->out, $request->comment);
         return redirect("visa/home");
+    }
+
+    public function query()
+    {
+        $this->data['title']        = "Visa Report";
+        $this->data['formTitle']    = "Prepare Visa Report";
+        $this->data['formSubtitle']      = 'View Visa Transactions from Start Date till End Date';
+
+        return view('accounts.query', $this->data);
+    }
+
+    public function loadQuery(Request $request)
+    {
+        $request->validate([
+            "from"  =>  "required",
+            "to"    =>  "required"
+        ]);
+
+        $startDate  = (new DateTime($request->from))->format('d-M-Y 00:00:00');
+        $endDate    = (new DateTime($request->to))->format('d-M-Y 23:59:59');
+
+        //query
+        $this->data['items'] = Visa::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
+
+        $this->data['cols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+
+        $this->data['atts'] = [
+            ['date' => ['att' => 'created_at']],
+            ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
+            'VISA_DESC',
+            ["number" => ['att' => 'VISA_IN', 'nums' => 2]],
+            ["number" => ['att' => 'VISA_OUT', 'nums' => 2]],
+            ["number" => ['att' => 'VISA_BLNC', 'nums' => 2]],
+            ["comment" => ['att' => 'VISA_CMNT']],
+        ];
+
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Visa Report";
+        $this->data['tableSubtitle'] = "Showing Visa Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
+
+        return view("layouts.table", $this->data);
     }
 }

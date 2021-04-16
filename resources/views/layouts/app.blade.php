@@ -125,20 +125,19 @@
                     @if(Auth::user()->isAdmin())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
                         <ul aria-expanded="false" class="collapse">
-                            {{-- <li>
-                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Revenue</a>
+                            <li><a href="{{url('reports/revenue')}}">Revenue</a></li>
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Accounts</a>
                                 <ul aria-expanded="false" class="collapse">
-                                    <li><a href="{{url('models/show')}}">Overall</a>
-                    </li>
-                    <li><a href="{{url('types/show')}}">By Doctor</a></li>
-                    <li><a href="{{url('types/show')}}">By Equipment</a></li>
-                    </ul>
-                    </li> --}}
-                    <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
-                    <li><a href="{{url('attendance/query')}}">Attendance</a></li>
-                    <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
-                    <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
-                    </ul>
+                                    <li><a href="{{url('reports/cash')}}">Cash</a></li>
+                                    <li><a href="{{url('reports/visa')}}">Visa</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
+                            <li><a href="{{url('attendance/query')}}">Attendance</a></li>
+                            <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
+                            <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
+                        </ul>
                     </li>
                     @endif
                     @if(Auth::user()->isAdmin())

@@ -35,6 +35,10 @@ Route::get('sessions/delete/{id}', "SessionsController@delete");
 //reports
 Route::get('reports/doctors', "ReportsController@prepareDoctorQuery");
 Route::post('reports/doctors', "ReportsController@loadDoctorData");
+Route::get('reports/cash', "CashController@query");
+Route::post('reports/cash', "CashController@loadQuery");
+Route::get('reports/visa', "VisaController@query");
+Route::post('reports/visa', "VisaController@loadQuery");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');
