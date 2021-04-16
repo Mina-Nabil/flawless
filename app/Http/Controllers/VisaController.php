@@ -106,7 +106,7 @@ class VisaController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Visa Report";
-        $this->data['tableSubtitle'] = "Showing Visa Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- Total Out: ' . $totalOut;
+        $this->data['tableSubtitle'] = "Showing Visa Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- Total Spent: ' . $totalOut;
 
         return view("layouts.table", $this->data);
     }
