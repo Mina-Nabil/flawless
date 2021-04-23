@@ -46,12 +46,6 @@
                     <div class="card-body">
                         <div class="vtabs">
                             <ul class="nav nav-tabs tabs-vertical" role="tablist">
-                                <li class="nav-item ">
-                                    <a class="nav-link active" data-toggle="tab" href="#year" role="tab" aria-selected="false">
-                                        <span class="hidden-sm-up"><i class="ti-calendar"></i></span>
-                                        <span class="hidden-xs-down">Last Year</span>
-                                    </a>
-                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#sessions" role="tab" aria-selected="false">
                                         <span class="hidden-sm-up">
@@ -59,17 +53,15 @@
                                         <span class="hidden-xs-down">Sessions</span>
                                     </a>
                                 </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link active" data-toggle="tab" href="#year" role="tab" aria-selected="false">
+                                        <span class="hidden-sm-up"><i class="ti-calendar"></i></span>
+                                        <span class="hidden-xs-down">Last Year</span>
+                                    </a>
+                                </li>
                             </ul>
                             <div class="tab-content">
-                                <div class="tab-pane active" id="year" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <x-line-chart chartTitle="{{$chartTitle}}" chartSubtitle="{{$chartSubtitle}}" :graphs="$graphData" :max="$graphMax" :labels="$graphLabels"
-                                                :totals="$graphTotal" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane" id="sessions" role="tabpanel">
+                                <div class="tab-pane active" id="sessions" role="tabpanel">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="card-body">
@@ -131,6 +123,14 @@
                                                     </table>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="year" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <x-line-chart chartTitle="{{$chartTitle}}" chartSubtitle="{{$chartSubtitle}}" :graphs="$graphData" :max="$graphMax" :labels="$graphLabels"
+                                                :totals="$graphTotal" />
                                         </div>
                                     </div>
                                 </div>
