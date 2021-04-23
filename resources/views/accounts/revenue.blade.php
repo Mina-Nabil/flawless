@@ -6,7 +6,6 @@
     <div class="col-lg-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Totals from {{$from}} to {{$to}}</h5>
                 <h5 class="card-title">Total In</h5>
                 <div class="d-flex m-b-20  no-block align-items-center">
                     <span class="display-6 text-primary"><i class="fas fa-dollar-sign"></i></span>
@@ -45,6 +44,7 @@
 
                 <div class="card">
                     <div class="card-body">
+                        <h5 class="card-title">Revenue Report starting date from {{$from}} to {{$to}}</h5>
                         <div class="vtabs">
                             <ul class="nav nav-tabs tabs-vertical" role="tablist">
                                 <li class="nav-item ">
