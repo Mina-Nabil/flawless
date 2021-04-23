@@ -73,7 +73,7 @@ class ReportsController extends Controller
 
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
-        $this->data['tableTitle'] = "Revenue Report";
+        $this->data['tableTitle'] = "Sessions Table";
         $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
 
 
