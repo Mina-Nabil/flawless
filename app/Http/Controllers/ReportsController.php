@@ -70,36 +70,6 @@ class ReportsController extends Controller
         ]);
 
         $this->data['sessions'] = Session::getSessions("asc", Session::STATE_DONE, $request->from, $request->to);
-        $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
-
-        $this->data['atts'] = [
-            ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
-            ["verifiedRel"  =>  ["rel"  =>  "doctor",   "relAtt"   =>  "DASH_USNM", 'isVerified' => 'SSHN_CMSH', 'iconTitle' => "Commission"]],
-            ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_NAME"]],
-            [
-                'state'     => [
-                    "att"   =>  "SSHN_STTS",
-                    "text" => [
-                        "New" => "New",
-                        "Pending Payment" => "Pending Payment",
-                        "Cancelled" => "Cancelled",
-                        "Done" => "Done",
-                    ],
-                    "classes" => [
-                        "New" => "label-info",
-                        "Pending Payment" => "label-dark",
-                        "Cancelled" => "label-danger",
-                        "Done" => "label-success",
-                    ],
-                ]
-            ],
-            ["foreign"  =>  ["rel"  =>  "creator",  "att"   =>  "DASH_USNM"]],
-            ["number"   =>  ["att"  =>  "SSHN_TOTL"]],
-            ["number"   =>  ["att"  =>  "SSHN_DISC"]],
-            ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
-            ["comment"  =>  ["att"  =>  "SSHN_TEXT"]],
-
-        ];
 
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
@@ -120,7 +90,7 @@ class ReportsController extends Controller
         $max = 0;
         $sum = 0;
         for ($i = 1; $i < 13; $i++) {
-            $monthDate = (new DateTime())->sub(new DateInterval("P" . (13 - $i) . "M"));
+            $monthDate = (new DateTime())->sub(new DateInterval("P" . (12 - $i) . "M"));
             $this->data['graphLabels'][$i] =  $monthDate->format('M-y');
             $from = $monthDate->format('Y-m-01');
             $to = $monthDate->format('Y-m-t');
