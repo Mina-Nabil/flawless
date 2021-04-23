@@ -72,7 +72,7 @@ class ReportsController extends Controller
         $this->data['sessions'] = Session::getSessions("asc", Session::STATE_DONE, $request->from, $request->to);
 
         //table info
-        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['title'] = "Revenue from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
         $this->data['tableTitle'] = "Sessions Table";
         $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
 
