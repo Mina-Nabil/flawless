@@ -1168,7 +1168,7 @@
     </script>
 
     @yield('js_content')
-
+    @stack('scripts')
 </body>
 
 </html>

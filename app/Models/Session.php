@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class Session extends Model
 {
+    public const STATE_DONE = "Done";
+
+
+
     public $timestamps = false;
     private $remainingMoney;
     private $totalAfterDisc;
@@ -112,7 +116,7 @@ class Session extends Model
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
         }
-        return $query->sum("SSHN_PAID");
+        return ($query->sum("SSHN_PAID") + $query->sum("SSHN_PTNT_BLNC"));
     }
 
     public static function getTotalSum($startDate, $endDate, $doctorID = null)
@@ -121,7 +125,7 @@ class Session extends Model
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
         }
-        return $query->sum("SSHN_TOTL");
+        return ($query->sum("SSHN_TOTL") - $query->sum('SSHN_DISC'));
     }
 
     public static function getPendingPaymentCount()
