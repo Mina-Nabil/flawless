@@ -47,14 +47,14 @@
                         <div class="vtabs">
                             <ul class="nav nav-tabs tabs-vertical" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#sessions" role="tab" aria-selected="false">
+                                    <a class="nav-link active" data-toggle="tab" href="#sessions" role="tab" aria-selected="false">
                                         <span class="hidden-sm-up">
                                             <i class="ti-book"></i></span>
                                         <span class="hidden-xs-down">Sessions</span>
                                     </a>
                                 </li>
                                 <li class="nav-item ">
-                                    <a class="nav-link active" data-toggle="tab" href="#year" role="tab" aria-selected="false">
+                                    <a class="nav-link" data-toggle="tab" href="#year" role="tab" aria-selected="false">
                                         <span class="hidden-sm-up"><i class="ti-calendar"></i></span>
                                         <span class="hidden-xs-down">Last Year</span>
                                     </a>
