@@ -41,6 +41,8 @@ Route::get('reports/visa', "VisaController@query");
 Route::post('reports/visa', "VisaController@loadQuery");
 Route::get('reports/revenue', "ReportsController@prepareRevenue");
 Route::post('reports/revenue', "ReportsController@loadRevenue");
+Route::get('reports/devices', "ReportsController@prepareDevicesRevenue");
+Route::post('reports/devices', "ReportsController@loadDevicesRevenue");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');

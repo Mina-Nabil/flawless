@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\DashUser;
+use App\Models\Device;
 use App\Models\Session;
+use App\Models\SessionItem;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -89,7 +91,7 @@ class ReportsController extends Controller
         $this->data['chartSubtitle'] = "Showing Revenue for the latest 12 months";
 
 
-   
+
         $max = 0;
         $sum = 0;
         for ($i = 1; $i < 13; $i++) {
@@ -101,12 +103,36 @@ class ReportsController extends Controller
             $sum += $this->data['graphData'][0][$i];
             $max = max($max, $this->data['graphData'][0][$i]);
         }
-       
+
         $this->data['graphMax'] = $max;
 
         $this->data['graphTotal'] = [
             ["title" => "Total In", "value" => $sum,],
         ];
         return view('accounts.revenue', $this->data);
+    }
+
+    public function prepareDevicesRevenue()
+    {
+        //page info
+        $this->data['title']           =   'Revenue Report';
+        $this->data['formTitle']       =   'Load Device Revenue Total';
+        $this->data['formSubtitle']    =   'Calculate Revenue from Start Date till End Date';
+
+        $this->data['devices']         =   Device::all();
+        $this->data['getDeviceTotal']  =   url("reports/devices");
+
+        return view("accounts.device", $this->data);
+    }
+
+    public function loadDevicesRevenue(Request $request)
+    {
+        $request->validate([
+            "deviceID" => "required|exists:devices,id",
+            "from"  => "required",
+            "to"    =>  "required"
+        ]);
+        $res = SessionItem::getDeviceTotal($request->deviceID, $request->from, $request->to);
+        return json_encode((object) ["total" => $res]);
     }
 }

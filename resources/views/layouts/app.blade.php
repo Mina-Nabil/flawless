@@ -33,7 +33,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script>
-        Pusher.logToConsole = true;
+        Pusher.logToConsole = false;
 
         var pusher = new Pusher('a5d146a0877f34f3f89d', {
             cluster: 'eu'
@@ -137,6 +137,7 @@
                             <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                             <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
                             <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
+                            <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
                         </ul>
                     </li>
                     @endif
@@ -757,7 +758,7 @@
                     addPatientToTable(this.responseText, name, mobn, balance, adrs);  
                     resetPatientForm();  
                     $('#add-patient-modal').modal('toggle');   
-            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
                     var errorMesage = "" ;
@@ -784,7 +785,7 @@
                         icon: "error"
                     })
                 }
-                } else {
+                } else if(this.readyState==4) {
                     Swal.fire({
                         title: "Error!",
                         text: "Oops Something went wrong! Please try again",
@@ -856,7 +857,7 @@
                 })
                 // append sessions table   
                 resetSessionsForm()
-            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
                     var errorMesage = "" ;
@@ -891,7 +892,7 @@
                         icon: "error"
                     })
                 }
-                } else {
+                } else if(this.readyState==4){
                     Swal.fire({
                         title: "Error!",
                         text: "Oops Something went wrong! Please try again",
@@ -958,7 +959,7 @@
                     icon: "success"
                 }) 
            
-            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
                     var errorMesage = "" ;
@@ -985,7 +986,7 @@
                         icon: "error"
                     })
                 }
-                } else {
+                } else if(this.readyState==4){
                     Swal.fire({
                         title: "Error!",
                         text: "Oops Something went wrong! Please try again",
@@ -1021,7 +1022,7 @@
                     icon: "success"
                 }) 
            
-            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
                     var errorMesage = "" ;
@@ -1048,7 +1049,7 @@
                         icon: "error"
                     })
                 }
-                } else {
+                } else if(this.readyState==4) {
                     Swal.fire({
                         title: "Error!",
                         text: "Oops Something went wrong! Please try again",
@@ -1086,7 +1087,7 @@
                     icon: "success"
                 }) 
            
-            } else if(this.readyState=4 && this.status == 422 && isJson(this.responseText)) {
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
                 try {
                     var errors = JSON.parse(this.responseText)
                     var errorMesage = "" ;
@@ -1113,7 +1114,7 @@
                         icon: "error"
                     })
                 }
-                } else {
+                } else if(this.readyState==4) {
                     Swal.fire({
                         title: "Error!",
                         text: "Oops Something went wrong! Please try again",
