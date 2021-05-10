@@ -40,7 +40,8 @@ class SessionItem extends Model
     static public function getDeviceTotal($deviceID, $from, $to)
     {
         return self::join("pricelist_items", "SHIT_PLIT_ID", "=", "pricelist_items.id")->where("PLIT_DVIC_ID", $deviceID)
-            ->join("sessions", "sessions.id", "=", "SHIT_SSHN_ID")->whereBetween("SSHN_DATE", [$from, $to])
+            ->join("sessions", "sessions.id", "=", "SHIT_SSHN_ID")->where("SSHN_STTS", "Done")
+            ->whereBetween("SSHN_DATE", [$from, $to])
             ->selectRaw("SUM(SHIT_TOTL) as toto")->get()->first()->toto ?? 0;
     }
 }
