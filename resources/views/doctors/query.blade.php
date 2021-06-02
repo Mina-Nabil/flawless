@@ -27,7 +27,9 @@
                             </div>
                         </div>
                     </div>
-
+                    @if(Auth::user()->isDoctor())
+                    <input type="hidden" name="doctorID" value="{{Auth::id()}}" >
+                    @else
                     <div class="col-12 form-group">
                         <label>Doctor</label>
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctorID required>
@@ -37,7 +39,7 @@
                         </select>
                         <small class="text-danger">{{$errors->first('doctorID')}}</small>
                     </div>
-
+                    @endif
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 
                 </form>

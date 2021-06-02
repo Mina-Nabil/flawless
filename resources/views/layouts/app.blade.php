@@ -140,6 +140,8 @@
                             <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
                         </ul>
                     </li>
+                    @elseif(Auth::user()->isDoctor())
+                    <li> <a class="waves-effect waves-dark" href="{{url('reports/doctors')}}" aria-expanded="false"><i class="fas fa-chart-bar"></i>Doctor Report</a>
                     @endif
                     @if(Auth::user()->isAdmin())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
