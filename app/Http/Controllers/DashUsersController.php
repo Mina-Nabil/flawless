@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\DashType;
 use App\Models\DashUser;
 use Exception;
@@ -131,6 +132,7 @@ class DashUsersController extends Controller
     public function delete($userID){
         $dashUser = DashUser::findOrFail($userID);
         try {
+            Attendance::where("ATND_DCTR_ID", $userID)->delete();
             $dashUser->delete();
         } catch (Exception $e) { }
         return redirect("dash/users/" . $dashUser->DASH_TYPE_ID);

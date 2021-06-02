@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     @if(Auth::user()->isDoctor())
-                    <input type="hidden" name="doctorID" value="{{Auth::id()}}" >
+                    <input type="hidden" name="doctorID" value="{{Auth::id()}}">
                     @else
                     <div class="col-12 form-group">
                         <label>Doctor</label>
