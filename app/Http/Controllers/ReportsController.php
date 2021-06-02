@@ -38,7 +38,7 @@ class ReportsController extends Controller
         $endDate = $request->to;
         $doctor = DashUser::findOrFail($request->doctorID);
 
-        $this->data['sessions']         =   Session::getSessions('asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, null, true);
+        $this->data['sessions']         =   Session::getSessions('asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
         $this->data['totalPaid']        =   Session::getPaidSum($startDate, $endDate, $doctor->id);
         $this->data['sessionsCount']    =   $this->data['sessions']->count();
 
