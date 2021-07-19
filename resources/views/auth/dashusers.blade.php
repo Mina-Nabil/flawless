@@ -52,7 +52,7 @@
 
                     @if($userType==2) <!-- doctors only -->
                     <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type">
-                    @else
+                    @elseif(Auth::user()->isOwner())
                     <div class="form-group">
                         <label for="input-file-now-custom-1">User Type</label>
                         <div class="input-group mb-3">
@@ -62,6 +62,8 @@
                             </select>
                         </div>
                     </div>
+                    @else
+                    <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type">
                     @endif
 
                     <div class="form-group">
