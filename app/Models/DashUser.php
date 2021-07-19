@@ -37,7 +37,7 @@ class DashUser extends Authenticatable
     }
 
     public function isAdmin(){
-        return ($this->DASH_TYPE_ID == 1);
+        return ($this->DASH_TYPE_ID == 1 || $this->DASH_TYPE_ID == 3);
     }
 
     public function isDoctor(){
