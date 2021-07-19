@@ -38,7 +38,7 @@ class Controller extends BaseController
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
-        $this->data['doctors']              =   DashUser::where("DASH_TYPE_ID", 2)->get();
+        $this->data['doctors']              =   DashUser::doctors();
         $this->data['allUsers']             =   DashUser::all();
         $this->data['patients']             =   Patient::orderByDesc('id')->get();
     }

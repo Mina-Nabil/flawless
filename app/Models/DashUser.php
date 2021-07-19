@@ -44,9 +44,17 @@ class DashUser extends Authenticatable
         return ($this->DASH_TYPE_ID == 2);
     }
 
+    public function isOwner(){
+        return ($this->DASH_TYPE_ID == 3);
+    }
+
     public function toggle(){
         $this->DASH_ACTV = ($this->DASH_ACTV + 1) % 2;
         $this->save();
+    }
+
+    public static function owners(){
+        return self::where("DASH_TYPE_ID", 3)->get();
     }
 
     public static function admins(){

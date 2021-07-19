@@ -49,16 +49,21 @@
                         </div>
                         <small class="text-danger">{{$errors->first('mobn')}}</small>
                     </div>
+
+                    @if($userType==2) <!-- doctors only -->
                     <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type">
-                    <!-- <div class="form-group">
-                        <label for="exampleInputEmail1">Mobile Number</label>
+                    @else
+                    <div class="form-group">
+                        <label for="input-file-now-custom-1">User Type</label>
                         <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon22"><i class="mdi mdi-cellphone-iphone"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name=mobNumber placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="basic-addon22" value="{{ (isset($user)) ? $user->mobNumber : old('mobNumber')}}" >
+                            <select  name=type class="form-control" >
+                                <option value=1 {{ (isset($user) && $user->DASH_TYPE_ID==1) ? "selected" : "" }} >Admin</option>
+                                <option value=3 {{ (isset($user) && $user->DASH_TYPE_ID==3) ? "selected" : "" }} >Owner</option>
+                            </select>
                         </div>
-                    </div> -->
+                    </div>
+                    @endif
+
                     <div class="form-group">
                         <label for="input-file-now-custom-1">User Photo</label>
                         <div class="input-group mb-3">

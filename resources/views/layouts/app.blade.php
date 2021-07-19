@@ -107,7 +107,7 @@
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
                     </ul> --}}
                     </li>
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->isOwner())
                     <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
                     </li>
                     <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
@@ -122,7 +122,7 @@
                         </ul>
                     </li>
                     @endif
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->isOwner())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="{{url('reports/revenue')}}">Revenue</a></li>
@@ -143,7 +143,7 @@
                     @elseif(Auth::user()->isDoctor())
                     <li> <a class="waves-effect waves-dark" href="{{url('reports/doctors')}}" aria-expanded="false"><i class="fas fa-chart-bar"></i>Doctor Report</a>
                     @endif
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->isOwner())
                     <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>

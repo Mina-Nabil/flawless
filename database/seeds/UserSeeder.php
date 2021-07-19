@@ -18,6 +18,9 @@ class UserSeeder extends Seeder
         DB::table("dash_types")->insert([
             "id" => 2, "DHTP_NAME" => "doctor"
         ]);
+        DB::table("dash_types")->insert([
+            "id" => 3, "DHTP_NAME" => "owner"
+        ]);
 
         DB::table('dash_users')->insert([
             "DASH_USNM" => "mina",
