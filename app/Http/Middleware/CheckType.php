@@ -20,13 +20,7 @@ class CheckType
             if (request()->is('dash/*')) {
                 return abort(404);
             } 
-            if (request()->is('patients/*')) {
-                return abort(404);
-            } 
             if (request()->is('cash/*')) {
-                return abort(404);
-            } 
-            if (request()->is('attendance/*')) {
                 return abort(404);
             } 
             if (request()->is('visa/*')) {
@@ -59,6 +53,12 @@ class CheckType
                 return abort(404);
             } 
             if (request()->is('followups/*')) {
+                return abort(404);
+            } 
+            if (request()->is('attendance/*')) {
+                return abort(404);
+            } 
+            if (request()->is('patients/*')) {
                 return abort(404);
             } 
         }
