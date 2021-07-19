@@ -148,6 +148,7 @@
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
                             <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
+                            <li><a href="{{url('dash/users/3')}}">Owners</a></li>
                             <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
                             <li><a href="{{url('dash/users/1')}}">Admins</a></li>
                             <li><a href="{{url('channels/home')}}">Channels</a></li>
