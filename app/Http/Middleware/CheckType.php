@@ -32,12 +32,6 @@ class CheckType
             if (request()->is('visa/*')) {
                 return abort(404);
             } 
-            if (request()->is('feedbacks/*')) {
-                return abort(404);
-            } 
-            if (request()->is('followups/*')) {
-                return abort(404);
-            } 
             if (request()->is('*/pricelist/*')) {
                 return abort(404);
             } 
@@ -57,6 +51,14 @@ class CheckType
                 return abort(404);
             } 
             if (request()->is('settings/*')) {
+                return abort(404);
+            } 
+        }
+        if (!Auth::user()->isAdmin()) {
+            if (request()->is('feedbacks/*')) {
+                return abort(404);
+            } 
+            if (request()->is('followups/*')) {
                 return abort(404);
             } 
         }
