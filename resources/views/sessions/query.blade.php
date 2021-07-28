@@ -71,7 +71,7 @@
                         <div class="col-3 form-group">
                             <label>Commission?</label>
                             <div class="input-group mb-3">
-                                <select name=type class="select form-control custom-select">
+                                <select name=isCommission class="select form-control custom-select">
                                     <option value="0">All</option>
                                     <option value="true">Comission Only</option>
                                     <option value="false">No Comission</option>
