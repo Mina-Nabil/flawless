@@ -274,7 +274,11 @@ class SessionsController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Sessions Report";
-        $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
+        $this->data['totalSum'] = $this->data['items']->sum('SSHN_TOTL');
+        $this->data['totalDisc'] = $this->data['items']->sum('SSHN_DISC');
+        $this->data['totalDiff'] =$this->data['totalSum'] - $this->data['totalDisc'] ;
+        $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- ' . 
+        'Total Sum: ' . $this->data['totalSum'] . ' Total Discount: ' . $this->data['totalDisc'] . ' Sum-Disc: ' . $this->data['totalDiff'] ;
 
         return view('layouts.table', $this->data);
     }
