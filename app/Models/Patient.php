@@ -75,7 +75,7 @@ class Patient extends Model
     public static function loadMissingPatients($days)
     {
         $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$days} DAY) ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
-        return self::whereNotIn('id', $recentPatientsIDs)->get();   
+        return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('id', $recentPatientsIDs)->get();   
     }
 
     ///////transactions

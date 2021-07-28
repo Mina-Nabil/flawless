@@ -158,7 +158,7 @@ class ReportsController extends Controller
         $this->data['tableTitle'] = "Missing Patients Report";
         $this->data['tableSubtitle'] = "Showing Patients who didn't visit {$request->days} days ago";
         
-        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since'];
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
         $this->data['atts'] = [
             'id',
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
@@ -166,6 +166,7 @@ class ReportsController extends Controller
             ['number' => ['att' => 'PTNT_BLNC']],
             ['comment' => ['att' => 'PTNT_ADRS']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+            'sessionCount',
         ];
 
         return view("layouts.table", $this->data);
