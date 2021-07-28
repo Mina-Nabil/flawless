@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\DashUser;
 use App\Models\Device;
+use App\Models\Patient;
 use App\Models\Session;
 use App\Models\SessionItem;
 use DateInterval;
@@ -134,5 +135,40 @@ class ReportsController extends Controller
         ]);
         $res = SessionItem::getDeviceTotal($request->deviceID, $request->from, $request->to);
         return json_encode((object) ["total" => $res]);
+    }
+
+    public function prepareMissingPatients()
+    {
+        //page info
+        $this->data['title']           =   'Patients Report';
+        $this->data['formTitle']       =   'Load All Missing Patients since the provided days';
+        $this->data['formSubtitle']    =   'Search for patients who didn\'t visit since the supplied days';
+
+        return view("patients.loadMissing", $this->data);
+    }
+
+    public function loadMissingPatients(Request $request)
+    {
+        $request->validate([
+            "days"      =>  "required",
+        ]);
+        $this->data['items'] = Patient::loadMissingPatients($request->days);
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Missing Patients Report";
+        $this->data['tableSubtitle'] = "Showing Patients who didn't visit {$request->days} days ago";
+        
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since'];
+        $this->data['atts'] = [
+            'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            ['number' => ['att' => 'PTNT_BLNC']],
+            ['comment' => ['att' => 'PTNT_ADRS']],
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+
+        return view("layouts.table", $this->data);
+
     }
 }

@@ -72,6 +72,12 @@ class Patient extends Model
         $this->pay(-1 * $moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
     }
 
+    public static function loadMissingPatients($days)
+    {
+        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "id")->whereRaw("SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$days} DAY) ")->get()->pluck('id');
+        return self::whereNotIn('id', $recentPatientsIDs)->get();   
+    }
+
     ///////transactions
 
     public function payments()

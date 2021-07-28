@@ -7,6 +7,7 @@ use App\Models\DashType;
 use App\Models\DashUser;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DashUsersController extends Controller
 {
@@ -69,7 +70,7 @@ class DashUsersController extends Controller
         $dashUser = new DashUser;
 
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:dash_users,DASH_USNM',
             'fullname' => "required",
             'type' => 'required',
             'password' => 'required'
@@ -92,10 +93,11 @@ class DashUsersController extends Controller
 
     public function update(Request $request)
     {
+        $dashUser = DashUser::findOrFail($request->id);
 
         $request->validate([
             'id' => 'required',
-            'name' => 'required',
+            "name" => ["required", Rule::unique('dash_users', "DASH_USNM")->ignore($dashUser->DASH_USNM, "DASH_USNM"),],
             'fullname' => "required",
             'type' => 'required'
         ]);
