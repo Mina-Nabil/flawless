@@ -91,7 +91,7 @@ class Session extends Model
             $query = $query->where("SSHN_ACPT_ID", $patient);
 
         if ($isCommision !== null )
-            $query = $query->where("SSHN_CMSH", $isCommision);
+            $query = $query->where("SSHN_CMSH", $isCommision ? 1 : 0);
 
         if ($totalBegin != null && is_numeric($totalBegin) && $totalEnd != null && is_numeric($totalEnd))
             $query = $query->whereBetween("SSHN_TOTL", [$totalBegin, $totalEnd]);
