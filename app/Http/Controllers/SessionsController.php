@@ -237,7 +237,7 @@ class SessionsController extends Controller
             "to"    =>  "required"
         ]);
 
-
+        dd($request->isCommission);
         //query
         $this->data['items'] = Session::getSessions("asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
 

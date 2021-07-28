@@ -107,7 +107,7 @@
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
                     </ul> --}}
                     </li>
-                    @if(Auth::user()->isOwner())
+                    @if(Auth::user()->isAdmin())
                     <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
                     </li>
                     @endif
