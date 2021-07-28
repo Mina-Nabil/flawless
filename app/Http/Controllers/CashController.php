@@ -89,6 +89,8 @@ class CashController extends Controller
         //query
         $this->data['items'] = Cash::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
         $totalOut = $this->data['items']->sum('CASH_OUT');
+        $totalIn = $this->data['items']->sum('CASH_IN');
+        $diff = $totalIn - $totalOut;
 
         $this->data['cols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
 
@@ -105,7 +107,7 @@ class CashController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Cash Report";
-        $this->data['tableSubtitle'] = "Showing Cash Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . " -- Total Spent: " .   $totalOut;
+        $this->data['tableSubtitle'] = "Showing Cash Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . " -- Total Spent: " .   $totalOut . " Total In: " . $totalIn . " (In-Out) : " . $diff;
 
         return view("layouts.table", $this->data);
     }

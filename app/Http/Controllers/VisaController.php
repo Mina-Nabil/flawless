@@ -90,6 +90,8 @@ class VisaController extends Controller
         //query
         $this->data['items'] = Visa::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
         $totalOut = $this->data['items']->sum('VISA_OUT');
+        $totalIn = $this->data['items']->sum('VISA_IN');
+        $diff = $totalIn - $totalOut;
 
         $this->data['cols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
 
@@ -106,7 +108,7 @@ class VisaController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Visa Report";
-        $this->data['tableSubtitle'] = "Showing Visa Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- Total Spent: ' . $totalOut;
+        $this->data['tableSubtitle'] = "Showing Visa Transactions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- Total Spent: ' . $totalOut . " Total In: " . $totalIn . " (In-Out) : " . $diff;
 
         return view("layouts.table", $this->data);
     }
