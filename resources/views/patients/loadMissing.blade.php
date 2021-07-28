@@ -14,7 +14,7 @@
                     <div class="col-6 form-group">
                         <label>Days*</label>
                         <div class="input-group">
-                            <input type="date" class="form-control" name=days value=45 required>
+                            <input type="number" class="form-control" name=days value=45 required>
                         </div>
                     </div>
 
