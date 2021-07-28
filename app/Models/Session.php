@@ -90,7 +90,7 @@ class Session extends Model
         if ($moneyBy != null && $moneyBy > 0)
             $query = $query->where("SSHN_ACPT_ID", $patient);
 
-        if ($isCommision != null && $isCommision != 0)
+        if ($isCommision !== null )
             $query = $query->where("SSHN_CMSH", $isCommision);
 
         if ($totalBegin != null && is_numeric($totalBegin) && $totalEnd != null && is_numeric($totalEnd))
