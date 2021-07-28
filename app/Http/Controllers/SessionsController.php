@@ -278,7 +278,7 @@ class SessionsController extends Controller
         $this->data['totalDisc'] = $this->data['items']->sum('SSHN_DISC');
         $this->data['totalDiff'] =$this->data['totalSum'] - $this->data['totalDisc'] ;
         $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- ' . 
-        'Total Sum: ' . $this->data['totalSum'] . ' Total Discount: ' . $this->data['totalDisc'] . ' Sum-Disc: ' . $this->data['totalDiff'] ;
+        'Total Sum: ' . number_format($this->data['totalSum']) . ' Total Discount: ' . number_format($this->data['totalDisc']) . ' Sum-Disc: ' . number_format($this->data['totalDiff']) ;
 
         return view('layouts.table', $this->data);
     }
