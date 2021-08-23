@@ -50,21 +50,22 @@
                         <small class="text-danger">{{$errors->first('mobn')}}</small>
                     </div>
 
-                    {{-- @if($userType==2) <!-- doctors only -->
+                    @if($userType==2)
+                    <!-- doctors only -->
                     <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type"> --}}
-                    {{-- @elseif(Auth::user()->isOwner()) --}}
+                    @elseif(Auth::user()->isOwner())
                     <div class="form-group">
                         <label for="input-file-now-custom-1">User Type</label>
                         <div class="input-group mb-3">
-                            <select  name=type class="form-control" >
-                                <option value=1 {{ (isset($user) && $user->DASH_TYPE_ID==1) ? "selected" : "" }} >Admin</option>
-                                <option value=3 {{ (isset($user) && $user->DASH_TYPE_ID==3) ? "selected" : "" }} >Owner</option>
+                            <select name=type class="form-control">
+                                <option value=1 {{ (isset($user) && $user->DASH_TYPE_ID==1) ? "selected" : "" }}>Admin</option>
+                                <option value=3 {{ (isset($user) && $user->DASH_TYPE_ID==3) ? "selected" : "" }}>Owner</option>
                             </select>
                         </div>
                     </div>
-                    {{-- @else
+                    @else
                     <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type">
-                    @endif --}}
+                    @endif
 
                     <div class="form-group">
                         <label for="input-file-now-custom-1">User Photo</label>
