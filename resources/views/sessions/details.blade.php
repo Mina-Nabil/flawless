@@ -119,7 +119,8 @@
                             @if(isset($session->doctor))
                             <li>
                                 <p class="text-muted">Managed by Dr. {{$session->doctor->DASH_USNM}}
-                                    <i class="fas fa-check-circle" style="color:lightgreen"></i> </p>
+                                    <i class="fas fa-check-circle" style="color:lightgreen"></i>
+                                </p>
                             </li>
                             @else
                             <li>
@@ -190,7 +191,7 @@
                                     <div class="bt-switch">
                                         <div>
                                             <input type="checkbox" data-size="medium" data-on-color="success" data-off-color="danger" data-on-text="Commission" {{($session->SSHN_CMSH) ?'checked':''}}
-                                                data-off-text="No Commission" name="isCommission" @if(!$session->canEditServices()) disabled @endif>
+                                            data-off-text="No Commission" name="isCommission" @if(!$session->canEditServices()) disabled @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -227,12 +228,14 @@
                                             @if(!$session->canEditServices()) disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Type</option>
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)
-                                            <option value="{{$service['id']}}" <?php if($service['id'] == $item->SHIT_PLIT_ID ) { ?> selected <?php  
+                                            <option value="{{$service['id']}}" <?php if($service['id']==$item->SHIT_PLIT_ID ) { ?> selected
+                                                <?php  
                                             if($service['serviceName'] != "Pulse") { 
                                             $readOnly=true;
                                             } else {
                                             $readOnly=false;  
-                                            } }?>> {{$service['serviceName']}} </option>
+                                            } }?>> {{$service['serviceName']}}
+                                            </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -246,11 +249,11 @@
 
                                 <div class="col-3">
                                     <div class="input-group mb-3">
-                                        <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]
-                                            {{(isset($readOnly) && $readOnly) ? 'readonly' : ''}}>
+                                        <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[] {{((isset($readOnly) &&
+                                            $readOnly)||!$session->canEditServices()) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
-                                            <button class="btn btn-danger"  type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
+                                            <button class="btn btn-danger" type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
                                                     class="fa fa-minus"></i></button>
                                         </div>
 
@@ -286,7 +289,8 @@
                     <div class="card-body">
                         <h4 class="card-title">Session Payments</h4>
                         <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->SSHN_DISC}} -
-                            <strong>Remaining: {{$session->getRemainingMoney()}}</strong></h6>
+                            <strong>Remaining: {{$session->getRemainingMoney()}}</strong>
+                        </h6>
                         @if($session->canEditMoney())
                         <form class="form pt-3" method="post" action="{{ url($paymentURL) }}">
                             <input type="hidden" name=id value='{{$session->id}}'>
@@ -303,11 +307,11 @@
                                 <div class="col-3 d-flex align-items-center">
                                     <div class="custom-control custom-radio mr-5">
                                         <input type="radio" id="customRadio1" name="cashRadio" class="custom-control-input" value=cash required>
-                                        <label class="custom-control-label" for="customRadio1"  >Cash</label>
+                                        <label class="custom-control-label" for="customRadio1">Cash</label>
                                     </div>
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="customRadio2" name="cashRadio" class="custom-control-input" value=visa required>
-                                        <label class="custom-control-label" for="customRadio2" >Visa</label>
+                                        <label class="custom-control-label" for="customRadio2">Visa</label>
                                     </div>
                                 </div>
                             </div>
@@ -430,7 +434,7 @@
                             <hr>
 
                             <input type="hidden" value="{{$session->id}}">
-                            <button type="button" class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($deleteSessionURL)}}', 'delete this session and all its info')" >Delete Session</button>
+                            <button type="button" class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($deleteSessionURL)}}', 'delete this session and all its info')">Delete Session</button>
 
                         </div>
                     </div>
