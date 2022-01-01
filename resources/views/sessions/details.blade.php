@@ -247,7 +247,7 @@
                                 <div class="col-3">
                                     <div class="input-group mb-3">
                                         <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]
-                                            {{($readOnly) ? 'readonly' : ''}}>
+                                            {{(isset($readOnly) && $readOnly) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
                                             <button class="btn btn-danger"  type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
