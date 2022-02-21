@@ -41,7 +41,7 @@
         </div>
 
         <div class=row>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h6 class="card-title">Paid</h6>
