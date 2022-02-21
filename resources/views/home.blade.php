@@ -35,7 +35,7 @@
                 <h5 class="card-title">Unconfirmed Attendance</h5>
                 <div class="d-flex m-30 no-block align-items-center">
                     <span class="display-6 text-primary"><i class="far fa-calendar-plus"></i></span>
-                    <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{$unconfirmedCount}}</a>
+                    <a class="link display-6 ml-auto">{{$unconfirmedCount}}</a>
                 </div>
             </div>
         </div>
