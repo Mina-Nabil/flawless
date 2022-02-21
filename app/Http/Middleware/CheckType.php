@@ -23,12 +23,12 @@ class CheckType
             if (request()->is('visa/*')) {
                 return abort(404);
             }
-        }
-
-        if (!Auth::user()->isAdmin()) {
             if (request()->is('dash/*')) {
                 return abort(404);
             }
+        }
+
+        if (!Auth::user()->isAdmin()) {
             if (request()->is('*/pricelist/*')) {
                 return abort(404);
             }
@@ -50,8 +50,6 @@ class CheckType
             if (request()->is('settings/*')) {
                 return abort(404);
             }
-        }
-        if (!Auth::user()->isAdmin()) {
             if (request()->is('feedbacks/*')) {
                 return abort(404);
             }
