@@ -20,12 +20,6 @@ class CheckType
             if (request()->is('dash/*')) {
                 return abort(404);
             } 
-            if (request()->is('cash/*')) {
-                return abort(404);
-            } 
-            if (request()->is('visa/*')) {
-                return abort(404);
-            } 
             if (request()->is('*/pricelist/*')) {
                 return abort(404);
             } 

@@ -20,7 +20,7 @@
             <div class=col-6>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Feedbacks </h5>
+                        <h5 class="card-title">Feedbacks</h5>
                         <div class="d-flex m-30 no-block align-items-center">
                             <span class="display-7 text-success"><i class="fas fa-phone"></i></span>
                             <a href="{{url('feedbacks/home')}}" class="link display-7 ml-auto">{{$feedbacksCount}}</a>
