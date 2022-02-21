@@ -44,7 +44,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Paid Today</h6>
+                        <h6 class="card-title">Paid</h6>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                             <span class="display-7 text-danger"><i class="fas fa-hand-holding-usd"></i></span>
                             <a href="{{url('cash/home')}}" class="link display-7 ml-auto">{{number_format($paidToday)}}</a>
@@ -56,7 +56,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Cash In</h5>
+                        <h5 class="card-title">Cash</h5>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                             <span class="display-7 text-success"><i class=" far fa-money-bill-alt"></i></span>
                             <a href="{{url('cash/home')}}" class="link display-7 ml-auto">{{number_format($cashIn)}}</a>
@@ -67,7 +67,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Visa In</h5>
+                        <h5 class="card-title">Visa</h5>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                             <span class="display-7 text-success"><i class=" far fa-money-bill-alt"></i></span>
                             <a href="{{url('visa/home')}}" class="link display-7 ml-auto">{{number_format($visaIn)}}</a>
