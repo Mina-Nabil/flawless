@@ -69,7 +69,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Visa</h5>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
-                            <span class="display-7 text-success"><i class=" far fa-credit-card-alt"></i></span>
+                            <span class="display-7 text-success"><i class=" fa fa-credit-card"></i></span>
                             <a href="{{url('visa/home')}}" class="link display-7 ml-auto">{{number_format($visaIn)}}</a>
                         </div>
                     </div>
