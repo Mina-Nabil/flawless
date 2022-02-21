@@ -69,7 +69,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Today's Balance</h5>
+                        <h5 class="card-title">Balance</h5>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                             <span class="display-7 text-primary"><i class="ti-money"></i></span>
                             <a href="{{url('attendance/home')}}" class="link display-7 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
