@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Cash</h5>
@@ -64,10 +64,23 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Visa</h5>
+                        <h5 class="card-title">Today's Balance</h5>
+                        <div class="d-flex m-30 no-block align-items-center">
+                            <span class="display-6 text-primary"><i class="ti-money"></i></span>
+                            <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Visa In</h5>
                         <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                             <span class="display-7 text-success"><i class=" fa fa-credit-card"></i></span>
                             <a href="{{url('visa/home')}}" class="link display-7 ml-auto">{{number_format($visaIn)}}</a>
@@ -76,17 +89,8 @@
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Today's Balance</h5>
-                <div class="d-flex m-30 no-block align-items-center">
-                    <span class="display-6 text-primary"><i class="ti-money"></i></span>
-                    <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
-                </div>
-            </div>
-        </div>
-   
-    
+
+
     </div>
     @endif
     <div class="col-lg-9">
