@@ -71,8 +71,10 @@
                     <div class="card-body">
                         <h5 class="card-title">Today's Balance</h5>
                         <div class="d-flex m-30 no-block align-items-center">
-                            <span class="display-6 text-primary"><i class="ti-money"></i></span>
-                            <a href="{{url('attendance/home')}}" class="link display-6 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
+                            <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                                <span class="display-7 text-success"><i class=" fa fa-credit-card"></i></span>
+                                <a href="{{url('attendance/home')}}" class="link display-7 ml-auto">{{number_format($collectedToday-$paidToday)}}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
