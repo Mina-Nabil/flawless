@@ -11,6 +11,7 @@ use App\Models\Feedback;
 use App\Models\FollowUp;
 use App\Models\Patient;
 use App\Models\Session;
+use App\Models\Visa;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -45,7 +46,8 @@ class SessionsController extends Controller
 
         //cash data
         $this->data['paidToday'] = Cash::paidToday();
-        $this->data['collectedToday'] = Cash::collectedToday();
+        $this->data['cashIn'] = Cash::collectedToday();
+        $this->data['visaIn'] = Visa::collectedToday();
         $this->data['cashBalance'] = Cash::currentBalance();
 
 
