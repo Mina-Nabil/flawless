@@ -46,7 +46,7 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLog", "balanceLog.user")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
 
