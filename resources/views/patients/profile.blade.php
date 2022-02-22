@@ -55,6 +55,7 @@
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add Payment</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Info</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#log" role="tab">Balance Log</a> </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
@@ -287,6 +288,29 @@
 
                             <button type="submit" class="btn btn-success mr-2">Submit</button>
                         </form>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="log" role="tabpanel">
+                    <div class="card-body">
+                        <h4 class="card-title">Balance Logs</h4>
+                        <h6 class="card-subtitle">Check all balance changes</h6>
+                        <ul class="list-group">
+                            @foreach($patient->balanceLogs as $log)
+                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$log->user->DASH_USNM}}</h5>
+                                    <small>{{$log->created_at}}</small>
+                                </div>
+                                <p class="mb-1">{{$log->BLLG_TTLE}}</p><small>
+                                    {{$log->BLLG_CMNT}}
+                                </small>
+                                </div>
+
+                                <small>{{$log->created_at}}</small>
+                            </a>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
 
