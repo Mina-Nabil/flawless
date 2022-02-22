@@ -120,12 +120,13 @@ class PatientsController extends Controller
     public function pay(Request $request)
     {
         $request->validate([
-            "amount"         => "required|numeric",
-            "patientID"             => "required|exists:patients,id",
+            "amount"        => "required|numeric",
+            "patientID"     => "required|exists:patients,id",
         ]);
 
         $patient = Patient::findOrFail($request->patientID);
-        $patient->pay($request->amount, $request->comment);
+        $isVisa = (isset($request->isVisa) &&  $request->isVisa == "on") ? true : false;
+        $patient->pay($request->amount, $request->comment, true, $isVisa);
         if($request->goToHome){
             return redirect($this->homeURL);
         } else {

@@ -153,6 +153,15 @@
                                             </div>
                                             <small class="text-danger">{{$errors->first('amount')}}</small>
                                         </div>
+                                        <div class="form-group">
+                                            <div class="ml-10 col-9 d-flex justify-content-end">
+                                                <div class="bt-switch">
+                                                    <div>
+                                                        <input type="checkbox" data-size="medium" data-on-color="success" data-off-color="primary" data-on-text="Visa" data-off-text="Cash" name="isVisa">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="form-group">
                                             <label>Comment</label>
