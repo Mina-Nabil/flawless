@@ -53,6 +53,7 @@
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#services" role="tab">Services</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paid" role="tab">Account</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add Payment</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Info</a> </li>
             </ul>
             <!-- Tab panes -->
@@ -169,6 +170,49 @@
                                                 <textarea class="form-control" rows="2" name="comment"></textarea>
                                             </div>
 
+                                            <small class="text-danger">{{$errors->first('comment')}}</small>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-success mr-2">Add Payment</button>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="addBalance" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ $addBalanceTitle }}</h4>
+                                    <form class="form pt-3" method="post" action="{{ url($addBalanceURL) }}" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type=hidden name=patientID value="{{(isset($patient)) ? $patient->id : ''}}">
+                                
+                                        <div class="form-group">
+                                            <label>Title*</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Title" name=title required>
+                                            </div>
+                                            <small class="text-danger">{{$errors->first('title')}}</small>
+                                        </div>
+                                
+                                        <div class="form-group">
+                                            <label>Amount*</label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" step=0.01 class="form-control" placeholder="Balance Amount" name=amount value="0" required>
+                                            </div>
+                                            <small class="text-danger">{{$errors->first('amount')}}</small>
+                                        </div>
+                                    
+                                        <div class="form-group">
+                                            <label>Comment</label>
+                                            <div class="input-group mb-3">
+                                                <textarea class="form-control" rows="2" name="comment"></textarea>
+                                            </div>
                                             <small class="text-danger">{{$errors->first('comment')}}</small>
                                         </div>
 

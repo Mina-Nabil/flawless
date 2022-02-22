@@ -15,9 +15,11 @@ class CreateBalanceLoggerTable extends Migration
     {
         Schema::create('balance_logger', function (Blueprint $table) {
             $table->id();
+            $table->string("BLLG_TTLE");
             $table->double("BLLG_IN")->default(0);
             $table->double("BLLG_OUT")->default(0);
             $table->foreignId('BLLG_DASH_ID')->constrained('dash_users');
+            $table->foreignId('BLLG_PTNT_ID')->constrained('patients');
             $table->string("BLLG_CMNT")->nullable();
             $table->timestamps();
         });

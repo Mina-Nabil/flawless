@@ -17,7 +17,7 @@ class PatientsController extends Controller
 {
     protected $homeURL = "patients/home";
 
-    private function initHomeArr() 
+    private function initHomeArr()
     {
 
         $this->data['title'] = "All Registered Patients";
@@ -48,19 +48,19 @@ class PatientsController extends Controller
     {
         $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
-        $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile" ;
-    
+        $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
+
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
         $this->data['cardTitle'] = false;
-        $this->data['servicesCols'] = [ 'Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit', 'Comment'];
+        $this->data['servicesCols'] = ['Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit', 'Comment'];
         $this->data['servicesAtts'] = [
             ['foreignDate' => ['rel' => 'session', 'att' => 'SSHN_DATE', 'format' => 'd-M-Y']],
             ['attUrl' => ['url' => "sessions/details", "shownAtt" => 'SHIT_SSHN_ID', "urlAtt" => 'SHIT_SSHN_ID']],
-            ['foreignForeign' => ['rel1' => 'session' , 'rel2' => 'doctor' , 'att' => 'DASH_USNM' ]],
-            ['foreignForeign' => ['rel1' => 'pricelistItem' , 'rel2' => 'device' , 'att' => 'DVIC_NAME' ]],
-            ['foreign' => ['rel' => 'pricelistItem' , 'att' => 'PLIT_TYPE' ]],
-            ['foreignForeign' => ['rel1' => 'pricelistItem' , 'rel2' => 'area' , 'att' => 'AREA_NAME' ]],
+            ['foreignForeign' => ['rel1' => 'session', 'rel2' => 'doctor', 'att' => 'DASH_USNM']],
+            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'device', 'att' => 'DVIC_NAME']],
+            ['foreign' => ['rel' => 'pricelistItem', 'att' => 'PLIT_TYPE']],
+            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
             'SHIT_QNTY',
             ['comment' => ['att' => "SHIT_NOTE"]]
         ];
@@ -95,8 +95,12 @@ class PatientsController extends Controller
         ];
 
         //payment form
-        $this->data['payFormTitle'] = "Add New Patient Payment for " .  $this->data['patient']->PTNT_NAME;
+        $this->data['payFormTitle'] = "Add New Patient Payment for " . $this->data['patient']->PTNT_NAME;
         $this->data['payFormURL'] = url('patients/pay');
+
+        //balance form
+        $this->data['addBalanceTitle'] = "Add Direct Balance for " . $this->data['patient']->PTNT_NAME;
+        $this->data['addBalanceURL'] = url('patients/addbalance');
     }
 
     public function home()
@@ -127,11 +131,24 @@ class PatientsController extends Controller
         $patient = Patient::findOrFail($request->patientID);
         $isVisa = (isset($request->isVisa) &&  $request->isVisa == "on") ? true : false;
         $patient->pay($request->amount, $request->comment, true, $isVisa);
-        if($request->goToHome){
+        if ($request->goToHome) {
             return redirect($this->homeURL);
         } else {
             return redirect("patients/profile/" . $patient->id);
         }
+    }
+
+    public function addBalance(Request $request)
+    {
+        $request->validate([
+            "title"         => "required",
+            "amount"        => "required|numeric",
+            "patientID"     => "required|exists:patients,id",
+        ]);
+
+        $patient = Patient::findOrFail($request->patientID);
+        $patient->addBalance($request->title, $request->amount, $request->comment);
+        return redirect("patients/profile/" . $patient->id);
     }
 
     public function insert(Request $request)
@@ -149,9 +166,8 @@ class PatientsController extends Controller
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;
         $patient->save();
-        
-        return $patient->id;
 
+        return $patient->id;
     }
 
     public function update(Request $request)
@@ -171,7 +187,7 @@ class PatientsController extends Controller
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;
-        
+
         $patient->save();
 
         return redirect("patients/profile/" . $patient->id);
@@ -180,7 +196,8 @@ class PatientsController extends Controller
 
     //////?API function
 
-    public function getJSONPatients(){
-        return json_encode( Patient::orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
+    public function getJSONPatients()
+    {
+        return json_encode(Patient::orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
     }
 }

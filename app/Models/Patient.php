@@ -75,14 +75,19 @@ class Patient extends Model
     public static function loadMissingPatients($days)
     {
         $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$days} DAY) ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
-        return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();   
+        return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
     ///////transactions
 
     public function payments()
     {
-        return $this->hasMany('App\Models\PatientPayment', 'PTPY_PTNT_ID');
+        return $this->hasMany(PatientPayment::class, 'PTPY_PTNT_ID');
+    }
+
+    public function balanceLogs()
+    {
+        return $this->hasMany(BalanceLog::class, 'BLLG_PTNT_ID');
     }
 
     public function pay($amount, $comment = null, $addEntry = true, $isVisa = false)
@@ -105,6 +110,22 @@ class Patient extends Model
                     Visa::entry($entryTitle, $amount, 0, $comment);
                 }
             }
+            $this->save();
+        });
+    }
+
+    public function addBalance($title, $amount, $comment = null)
+    {
+        $userID = Auth::user()->id;
+        DB::transaction(function () use ($title, $amount, $comment, $userID) {
+            $this->PTNT_BLNC += $amount;
+            $this->balanceLogs()->create([
+                "BLLG_TTLE"     =>  $title,
+                "BLLG_DASH_ID"  =>  $userID,
+                "BLLG_IN"       => ($amount >= 0) ? $amount : 0,
+                "BLLG_OUT"      => ($amount < 0) ? -1*$amount : 0,
+                "BLLG_CMNT"     =>  $comment,
+            ]);
             $this->save();
         });
     }

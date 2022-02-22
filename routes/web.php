@@ -88,6 +88,7 @@ Route::get('patients/home','PatientsController@home');
 Route::get('patients/add', 'PatientsController@add');
 Route::get('patients/profile/{id}', 'PatientsController@profile');
 Route::post('patients/pay', 'PatientsController@pay');
+Route::post('patients/addbalance', 'PatientsController@addBalance');
 Route::post('patients/insert', 'PatientsController@insert');
 Route::post('patients/update', 'PatientsController@update');
 Route::get('patients/get/json', 'PatientsController@getJSONPatients');
