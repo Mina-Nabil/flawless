@@ -12,9 +12,16 @@
                     @csrf
 
                     <div class="col-6 form-group">
-                        <label>Days*</label>
+                        <label>Load Patients who didn't visit From*</label>
                         <div class="input-group">
-                            <input type="number" class="form-control" name=days value=45 required>
+                            <input type="number" class="form-control" name=daysFrom value=45 required>
+                        </div>
+                    </div>
+
+                    <div class="col-6 form-group">
+                        <label>To*</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name=daysTo value=90 required>
                         </div>
                     </div>
 

@@ -72,9 +72,9 @@ class Patient extends Model
         $this->pay(-1 * $moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
     }
 
-    public static function loadMissingPatients($days)
+    public static function loadMissingPatients($daysFrom, $daysTo)
     {
-        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$days} DAY) ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
+        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE < DATE_SUB(NOW() , INTERVAL {$daysFrom} DAY) AND SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$daysTo} DAY ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
@@ -88,6 +88,11 @@ class Patient extends Model
     public function balanceLogs()
     {
         return $this->hasMany(BalanceLog::class, 'BLLG_PTNT_ID');
+    }
+
+    function followUp()
+    {
+        return $this->hasOne(FollowUp::class, "FLUP_PTNT_ID");
     }
 
     public function pay($amount, $comment = null, $addEntry = true, $isVisa = false)

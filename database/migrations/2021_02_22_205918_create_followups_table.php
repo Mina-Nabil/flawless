@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\FollowUp;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,7 @@ class CreateFollowupsTable extends Migration
             $table->id();
             $table->foreignId("FLUP_SSHN_ID")->constrained("sessions");
             $table->foreignId("FLUP_DASH_ID")->nullable()->constrained("dash_users"); //caller
-            $table->enum("FLUP_STTS",["New", "Cancelled", "Confirmed"])->default("New");
+            $table->enum("FLUP_STTS",FollowUp::$STATES)->default("New");
             $table->date("FLUP_DATE");
             $table->dateTime("FLUP_CALL")->nullable(); //last call
             $table->text("FLUP_TEXT")->nullable();

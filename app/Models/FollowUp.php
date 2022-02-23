@@ -18,6 +18,14 @@ class FollowUp extends Model
         'FLUP_DATE',
     ];
 
+    public const NEW_STATE = "New";
+    public const CANCELLED = "Cancelled";
+    public const CONFIRMED = "Confirmed";
+
+    public static $STATES = [
+        self::NEW_STATE, self::CANCELLED, self::CONFIRMED
+    ];
+
     //followup functions
     public function cancelSession($comment = null)
     {
@@ -26,7 +34,8 @@ class FollowUp extends Model
     }
 
 
-    public function setCalled($state, $comment=null){
+    public function setCalled($state, $comment = null)
+    {
         $this->FLUP_STTS = $state;
         $this->FLUP_TEXT = $comment;
         $this->FLUP_DASH_ID = Auth::user()->id;
@@ -54,10 +63,10 @@ class FollowUp extends Model
         return $query->get();
     }
 
-    public static function createFollowup($sessionID, $date, $comment = null)
+    public static function createFollowup($patientID, $date, $comment = null)
     {
         return self::insert([
-            "FLUP_SSHN_ID"  =>  $sessionID,
+            "FLUP_PTNT_ID"  =>  $patientID,
             "FLUP_DATE"     =>  $date,
             "FLUP_TEXT"     =>  $comment
         ]);
@@ -72,11 +81,11 @@ class FollowUp extends Model
     ///relations
     function caller()
     {
-        return $this->belongsTo("App\Models\DashUser", "FLUP_DASH_ID");
+        return $this->belongsTo(DashUser::class, "FLUP_DASH_ID");
     }
 
-    function session()
+    function patient()
     {
-        return $this->belongsTo("App\Models\Session", "FLUP_SSHN_ID");
+        return $this->belongsTo(Patient::class, "FLUP_SSHN_ID");
     }
 }

@@ -150,9 +150,10 @@ class ReportsController extends Controller
     public function loadMissingPatients(Request $request)
     {
         $request->validate([
-            "days"      =>  "required",
+            "daysFrom"      =>  "required",
+            "daysTo"      =>  "required",
         ]);
-        $this->data['items'] = Patient::loadMissingPatients($request->days);
+        $this->data['items'] = Patient::loadMissingPatients($request->daysFrom, $request->daysTo);
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Missing Patients Report";

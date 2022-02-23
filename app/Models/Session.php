@@ -357,7 +357,7 @@ class Session extends Model
 
     public function createFollowup($comment = null)
     {
-        FollowUp::createFollowup($this->id, $this->SSHN_DATE->sub(new DateInterval('P2D'))->format('Y-m-d'), $comment);
+        FollowUp::createFollowup($this->patient->id, $this->SSHN_DATE, $comment);
     }
 
     public function createFeedback()
@@ -444,11 +444,6 @@ class Session extends Model
     function feedback()
     {
         return $this->hasOne("App\Models\Feedback", "FDBK_SSHN_ID");
-    }
-
-    function followUp()
-    {
-        return $this->hasOne("App\Models\FollowUp", "FLUP_SSHN_ID");
     }
 
     function items()

@@ -523,6 +523,7 @@ class ComposerStaticInitcfae452444c363191299d935bc3d4916
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Models\\Area' => __DIR__ . '/../..' . '/app/Models/Area.php',
         'App\\Models\\Attendance' => __DIR__ . '/../..' . '/app/Models/Attendance.php',
+        'App\\Models\\BalanceLog' => __DIR__ . '/../..' . '/app/Models/BalanceLog.php',
         'App\\Models\\Cash' => __DIR__ . '/../..' . '/app/Models/Cash.php',
         'App\\Models\\Channel' => __DIR__ . '/../..' . '/app/Models/Channel.php',
         'App\\Models\\DashType' => __DIR__ . '/../..' . '/app/Models/DashType.php',

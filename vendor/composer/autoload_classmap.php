@@ -39,6 +39,7 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Models\\Area' => $baseDir . '/app/Models/Area.php',
     'App\\Models\\Attendance' => $baseDir . '/app/Models/Attendance.php',
+    'App\\Models\\BalanceLog' => $baseDir . '/app/Models/BalanceLog.php',
     'App\\Models\\Cash' => $baseDir . '/app/Models/Cash.php',
     'App\\Models\\Channel' => $baseDir . '/app/Models/Channel.php',
     'App\\Models\\DashType' => $baseDir . '/app/Models/DashType.php',
