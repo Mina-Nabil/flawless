@@ -15,7 +15,7 @@
                         <div class="input-group mb-3">
                             <select name=type class="select form-control custom-select" style="width: 100%; height:36px;" required>
                                 <option value="All" selected>All</option>
-                                @foreach(FollowUp::STATES as $state)
+                                @foreach($states as $state)
                                 <option value="{{$state}}">{{$state}}</option>
                                 @endforeach
                             </select>

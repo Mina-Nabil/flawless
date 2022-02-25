@@ -78,6 +78,7 @@ class FollowupsController extends Controller
         $this->data['formSubtitle']     =   'Filter Follow-ups report by';
         // $this->data['patients']         =   Patient::all(); loaded by default
         $this->data['admins']           =   DashUser::admins();
+        $this->data['states']           = FollowUp::$STATES;
 
         return view("followups.query", $this->data);
     }
