@@ -351,11 +351,6 @@ class Session extends Model
         }
     }
 
-    public function createFollowup($comment = null)
-    {
-        FollowUp::createFollowup($this->patient->id, $this->SSHN_DATE, $comment);
-    }
-
     public function createFeedback()
     {
         Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));

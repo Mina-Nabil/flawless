@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateInterval;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -12,15 +13,19 @@ class Patient extends Model
     protected $table = "patients";
     public $timestamps = true;
 
+    public function profileURL()
+    {
+        return url('patients/profile/' . $this->id);
+    }
 
     public function sessions()
     {
-        return $this->hasMany("App\Models\Session", "SSHN_PTNT_ID", "id");
+        return $this->hasMany(Session::class, "SSHN_PTNT_ID", "id");
     }
 
     public function services()
     {
-        return $this->hasManyThrough(SessionItem::class, "App\Models\Session", "SSHN_PTNT_ID", "SHIT_SSHN_ID");
+        return $this->hasManyThrough(SessionItem::class, Session::class, "SSHN_PTNT_ID", "SHIT_SSHN_ID");
     }
 
     public function pricelist()
@@ -78,6 +83,19 @@ class Patient extends Model
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
+    public function createAFollowUp($updateLatestIfExist = true)
+    {
+        if ($updateLatestIfExist)
+            $this->followUps()->updateOrCreate([], [
+                "FLUP_DATE" => (new DateTime())->add(new DateInterval("P3M"))->format('Y-m-d')
+            ]);
+        else {
+            $this->followUps()->create([], [
+                "FLUP_DATE" => (new DateTime())->add(new DateInterval("P3M"))->format('Y-m-d')
+            ]);
+        }
+    }
+
     ///////transactions
 
     public function payments()
@@ -90,9 +108,9 @@ class Patient extends Model
         return $this->hasMany(BalanceLog::class, 'BLLG_PTNT_ID');
     }
 
-    function followUp()
+    function followUps()
     {
-        return $this->hasOne(FollowUp::class, "FLUP_PTNT_ID");
+        return $this->hasMany(FollowUp::class, "FLUP_PTNT_ID");
     }
 
     public function pay($amount, $comment = null, $addEntry = true, $isVisa = false)
@@ -128,7 +146,7 @@ class Patient extends Model
                 "BLLG_TTLE"     =>  $title,
                 "BLLG_DASH_ID"  =>  $userID,
                 "BLLG_IN"       => ($amount >= 0) ? $amount : 0,
-                "BLLG_OUT"      => ($amount < 0) ? -1*$amount : 0,
+                "BLLG_OUT"      => ($amount < 0) ? -1 * $amount : 0,
                 "BLLG_CMNT"     =>  $comment,
             ]);
             $this->save();

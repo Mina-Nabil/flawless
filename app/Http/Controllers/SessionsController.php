@@ -12,6 +12,7 @@ use App\Models\FollowUp;
 use App\Models\Patient;
 use App\Models\Session;
 use App\Models\Visa;
+use App\Providers\SessionClosed;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -307,6 +308,7 @@ class SessionsController extends Controller
     {
         $session = Session::findOrFail($id);
         $session->setAsDone($date);
+        SessionClosed::dispatch();
         return $this->redirectToDetails($session->id);
     }
 

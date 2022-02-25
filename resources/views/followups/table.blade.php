@@ -12,12 +12,9 @@
                         <thead>
                             <tr>
                                 <th>Call On</th>
-                                <th>Session Date</th>
                                 <th>Patient</th>
-                                @if($showCaller)
                                 <th>Caller</th>
                                 <th>On</th>
-                                @endif
                                 <th>Status</th>
                                 <th>Comment</th>
                             </tr>
@@ -26,21 +23,18 @@
                             @foreach ($items as $item)
                             <tr>
                                 <td>{{$item->FLUP_DATE->format('d-M-Y')}}</td>
-                                <td>{{$item->session->SSHN_DATE->format('d-M-Y')}}</td>
-                                <td>{{$item->session->patient->PTNT_NAME}}</td>
-                                @if($showCaller)
+                                <td>{{$item->patient->profileURL()}}</td>
                                 <td>{{$item->caller->DASH_USNM ?? ""}}</td>
                                 <td>{{$item->FLUP_CALL ?? ""}}</td>
-                                @endif
                                 <td>
                                     <button id="status{{$item->id}}" @switch($item->FLUP_STTS)
-                                        @case("New")
+                                        @case(FollowUp::New_STATE)
                                         <?php $class="label label-info " ?>
                                         @break
-                                        @case("Confirmed")
+                                        @case(FollowUp::SATISFIED)
                                         <?php $class="label label-success " ?>
                                         @break
-                                        @case("Cancelled")
+                                        @case(FollowUp::NOT_SATISFIED)
                                         <?php $class="label label-danger " ?>
                                         @break
                                         @endswitch
@@ -91,37 +85,14 @@
                 <input type="hidden" name=id id="followupID">
 
                 <div class="form-group">
-                    <label>Confirm Session?</label>
+                    <label>Satisfied?</label>
                     <div class="bt-switch">
                         <div>
-                            <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isSessionSwitch" data-off-text="No" name="isCommission"
+                            <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isSatisfied" data-off-text="No" name="isCommission"
                                 onchange="switchChanged()" checked>
                         </div>
                     </div>
                 </div>
-                {{-- <div id="sessionDateDiv">
-                    <div class="form-group" style="display: block">
-                        <label>Session Date</label>
-                        <div class="input-group mb-3">
-                            <input type="date" class="form-control" id=sessionDate  name=sessionDate>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Start Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>End Time*</label>
-                        <div class="input-group mb-3">
-                            <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
-                        </div>
-                    </div>
-
-                </div> --}}
 
                 <div class="form-group">
                     <label>Comment</label>
@@ -148,7 +119,7 @@
     });
 
     function switchChanged(){
-        var isSet = $('#isSessionSwitch').is(':checked')
+        var isSet = $('#isSatisfied').is(':checked')
         console.log(isSet)
         if(isSet){
             $('#sessionDateDiv').css("display", "block")
@@ -159,7 +130,7 @@
 
     function setFollowup(){
         var id          =   $('#followupID').val();
-        var isSession   =   $('#isSessionSwitch').is(':checked');
+        var isSatisfied   =   $('#isSatisfied').is(':checked');
         var comment     =   $('#commentText').val();
 
         // var date        =   $('#sessionDate').val();
@@ -169,7 +140,7 @@
         var formData = new FormData();
         formData.append('_token','{{ csrf_token() }}');
         formData.append("id", id)
-        formData.append("status", isSession)
+        formData.append("status", isSatisfied)
         formData.append("comment", comment)
 
         // formData.append("sessionDate", date)
@@ -189,7 +160,7 @@
                 text: "Data Saved successfully",
                 icon: "success"
             });
-            if(isSession){
+            if(isSatisfied){
                 setFollowupConfirmed(id)
             } else {
                 setFollowupCancelled(id)
@@ -248,14 +219,14 @@
     function setFollowupConfirmed(id){
         $('#status' + id).attr("class", "label label-success")
         $('#status' + id).removeAttr("data-toggle")
-        $('#status' + id).html("Success")
+        $('#status' + id).html("Satisfied")
     }
 
 
     function setFollowupCancelled(id){
         $('#status' + id).attr("class", "label label-danger")
         $('#status' + id).removeAttr("data-toggle")
-        $('#status' + id).html("Failed")
+        $('#status' + id).html("7azeen")
     }
 
     $(function () {

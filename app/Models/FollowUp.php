@@ -16,23 +16,20 @@ class FollowUp extends Model
     protected $table = "followups";
     protected $dates = [
         'FLUP_DATE',
+        "FLUP_LAST_SSHN"
+    ];
+    protected $fillable = [
+        'FLUP_DATE',
+        "FLUP_LAST_SSHN"
     ];
 
     public const NEW_STATE = "New";
-    public const CANCELLED = "Cancelled";
-    public const CONFIRMED = "Confirmed";
+    public const SATISFIED = "Satified";
+    public const NOT_SATISFIED = "7azeen";
 
     public static $STATES = [
-        self::NEW_STATE, self::CANCELLED, self::CONFIRMED
+        self::NEW_STATE, self::SATISFIED, self::NOT_SATISFIED
     ];
-
-    //followup functions
-    public function cancelSession($comment = null)
-    {
-        $session = Session::findOrFail($this->FLUP_SSHN_ID);
-        return $session->setAsCancelled($comment);
-    }
-
 
     public function setCalled($state, $comment = null)
     {
@@ -46,7 +43,7 @@ class FollowUp extends Model
     //Query 
     public static function getFollowupsData($state = null, $from = null, $to = null, $caller = null)
     {
-        $query = self::with('caller', 'session.patient');
+        $query = self::with('caller', 'patient');
         if (!is_null($state) && $state != 'All') {
             $query = $query->where("FLUP_STTS", $state);
         }
@@ -71,7 +68,6 @@ class FollowUp extends Model
             "FLUP_TEXT"     =>  $comment
         ]);
     }
-
 
     static function getUnconfirmedCount()
     {

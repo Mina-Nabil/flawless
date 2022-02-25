@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\FollowUp;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,8 @@ class UpdateFollowupsTable extends Migration
             $table->dropForeign("followups_flup_sshn_id_foreign");
             $table->dropColumn("FLUP_SSHN_ID");
             $table->foreignId("FLUP_PTNT_ID")->constrained("patients");
+            $table->dropColumn("FLUP_STTS");
+            $table->enum("FLUP_STTS",FollowUp::$STATES)->default(FollowUp::NEW_STATE);
         });
     }
 

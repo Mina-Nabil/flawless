@@ -15,7 +15,7 @@ class FollowupsController extends Controller
     {
         $threeDaysAgo = ((new DateTime())->sub(new DateInterval('P3D')))->format('Y-m-d');
         //show unconfirmed attendace
-        $this->data['items'] = FollowUp::getFollowupsData("New", $threeDaysAgo, date('Y-m-d') );
+        $this->data['items'] = FollowUp::getFollowupsData("New", $threeDaysAgo, date('Y-m-d'));
         $this->data['title']            =   'Followup Sheet';
         $this->data['cardTitle']        =   'Pending Patients Follow-ups';
         $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';
@@ -39,12 +39,11 @@ class FollowupsController extends Controller
 
         if ($request->status && $request->status != "false") {
             if (
-                $followup->setCalled("Confirmed", $request->comment)
+                $followup->setCalled(FollowUp::SATISFIED, $request->comment)
             )
                 return 1;
         } else {
-            if ($followup->setCalled("Cancelled", $request->comment)) {
-                $followup->cancelSession($request->comment);
+            if ($followup->setCalled(FollowUp::NOT_SATISFIED, $request->comment)) {
                 return 1;
             }
         }
@@ -78,7 +77,7 @@ class FollowupsController extends Controller
         $this->data['formTitle']        =   'Follow-up Query';
         $this->data['formSubtitle']     =   'Filter Follow-ups report by';
         // $this->data['patients']         =   Patient::all(); loaded by default
-        $this->data['admins']           =   DashUser::admins(); 
+        $this->data['admins']           =   DashUser::admins();
 
         return view("followups.query", $this->data);
     }
@@ -88,7 +87,7 @@ class FollowupsController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            "sessionID" =>  "required",
+            "patientID" =>  "required",
             "date"      =>  "required"
         ]);
 
