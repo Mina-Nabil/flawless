@@ -139,9 +139,9 @@ class Session extends Model
         return self::where("SSHN_DATE", "=", $today)->count();
     }
 
-    public static function getNewCount($startDate, $endDate)
+    public static function getNewCount($untilDate)
     {
-        return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New")->count();
+        return self::where("SSHN_DATE", "<=", $untilDate)->where("SSHN_STTS", "New")->count();
     }
 
     public static function getMinTotal()
@@ -167,10 +167,6 @@ class Session extends Model
         if ($res) {
             $session = Session::findOrFail($res);
             $session->logEvent("Created Session");
-            $today = (new DateTime());
-            $twoDaysBeforeSession = (new DateTime($date))->sub(new DateInterval('P2D'));
-            if ($twoDaysBeforeSession > $today)
-                $session->createFollowup();
             return 1;
         } else return 0;
     }
