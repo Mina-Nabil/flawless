@@ -139,9 +139,9 @@ class Session extends Model
         return self::where("SSHN_DATE", "=", $today)->count();
     }
 
-    public static function getNewCount($untilDate)
+    public static function getNewCount($startDate, $endDate)
     {
-        return self::where("SSHN_DATE", "<=", $untilDate)->where("SSHN_STTS", "New")->count();
+        return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New")->count();
     }
 
     public static function getMinTotal()

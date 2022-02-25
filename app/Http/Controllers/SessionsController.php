@@ -29,10 +29,11 @@ class SessionsController extends Controller
 
         //dates
         $startOfMonth = (new DateTime())->format('Y-m-01');
+        $startOfLast2Month = (new DateTime())->sub(new DateInterval("P2M"))->format('Y-m-01');
         $endOfMonth = (new DateTime())->format('Y-m-t');
 
         //counts
-        $this->data['newSessionsCount']      = Session::getNewCount($startOfMonth, $endOfMonth);
+        $this->data['newSessionsCount']      = Session::getNewCount($startOfLast2Month, $endOfMonth);
         $this->data['doneSessionsCount']     = Session::getDoneCount($startOfMonth, $endOfMonth);
         $this->data['pendingPaymentCount']  = Session::getPendingPaymentCount();
         $this->data['todaySessionsCount']    = Session::getTodaySessionsCount();
@@ -58,7 +59,7 @@ class SessionsController extends Controller
 
 
         if ($items == null || $items == "new") {
-            $this->data['sessions'] = Session::getNewSessions($startOfMonth, $endOfMonth);
+            $this->data['sessions'] = Session::getNewSessions($startOfLast2Month, $endOfMonth);
         } else if ($items == "today") {
             $this->data['sessions'] = Session::getTodaySessions();
         } else if ($items == "pending") {
