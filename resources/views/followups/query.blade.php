@@ -8,16 +8,16 @@
             <div class="card-body">
                 <h4 class="card-title">{{$formTitle}}</h4>
                 <h6 class="card-subtitle">{{$formSubtitle}}</h6>
-                <form class="form pt-3" method="post" >
+                <form class="form pt-3" method="post">
                     @csrf
                     <div class="form-group">
                         <label>Followup State*</label>
                         <div class="input-group mb-3">
                             <select name=type class="select form-control custom-select" style="width: 100%; height:36px;" required>
                                 <option value="All" selected>All</option>
-                                <option value="New">New</option>
-                                <option value="Success">Success</option>
-                                <option value="Failed">Failed</option>
+                                @foreach(FollowUp::STATES as $state)
+                                <option value="{{$state}}">{{$state}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -25,9 +25,9 @@
                     <div class="form-group">
                         <label>Patient</label>
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
-                            <option value="0" >All</option>
+                            <option value="0">All</option>
                             @foreach($patients as $patient)
-                            <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}}  </option>
+                            <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} </option>
                             @endforeach
                         </select>
                     </div>
@@ -35,9 +35,9 @@
                     <div class="form-group">
                         <label>Caller</label>
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
-                            <option value="0" >All</option>
+                            <option value="0">All</option>
                             @foreach($admins as $admin)
-                            <option value="{{$admin->id}}"> {{$patient->DASH_USNM}}  </option>
+                            <option value="{{$admin->id}}"> {{$patient->DASH_USNM}} </option>
                             @endforeach
                         </select>
                     </div>
@@ -58,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 
                 </form>
@@ -67,5 +67,5 @@
     </div>
 
 </div>
-    
+
 @endsection
