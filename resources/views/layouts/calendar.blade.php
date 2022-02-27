@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('header')
-      <!-- Calendar CSS -->
-      <link href="{{asset('assets/node_modules/calendar/dist/fullcalendar.css')}}" rel="stylesheet" />
+<!-- Calendar CSS -->
+<link href="{{asset('assets/node_modules/calendar/dist/fullcalendar.css')}}" rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -12,14 +12,23 @@
             <div class="">
                 <div class="row">
                     <div class="col-lg-3">
-                        <div class="card-body">
-                            <h4 class="card-title m-t-10">Sessions Calendar</h4>
-                          
+                        <div class=col>
+                            <div class="card-body">
+                                <h4 class="card-title m-t-10">Sessions Calendar</h4>
+
+                            </div>
+                            <div class="card-body">
+                                <h4>Add a Session</h4>
+                                <a target="_blank" href="https://calendar.google.com/event?action=TEMPLATE&amp;tmeid=NWxhaW9kNzNqbGM2a2V2ODExY3Q0Mmtxb3MgZmxhd2xlc3M3Y2xpbmljQG0&amp;tmsrc=flawless7clinic%40gmail.com"><img
+                                        border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en.gif"></a>
+                            </div>
                         </div>
+
                     </div>
                     <div class="col-lg-9">
                         <div class="card-body b-l calender-sidebar">
-                            <div id="calendar"></div>
+                            {{-- <div id="calendar"></div> --}}
+                            <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
                         </div>
                     </div>
                 </div>
@@ -36,9 +45,7 @@
 <script src="{{asset('assets/node_modules/moment/moment.js')}}"></script>
 <script src="{{asset('assets/node_modules/calendar/dist/fullcalendar.min.js')}}"></script>
 <script>
-
-
-!function($) {
+    !function($) {
     "use strict";
 
     var CalendarApp = function() {
@@ -89,7 +96,7 @@
                 title: '{{$session->patient->PTNT_NAME}}',
                 start: new Date('{{$session->SSHN_DATE->format("Y-m-d")}}'+'T'+'{{$session->SSHN_STRT_TIME}}'),
                 end: new Date('{{$session->SSHN_DATE->format("Y-m-d")}}'+'T'+'{{$session->SSHN_END_TIME}}'),
-                className: '{{($session->SSHN_STTS=="New") ? "bg-info" : ($session->SSHN_STTS=="Pending Payment") ? "bg-dark" : ($session->SSHN_STTS=="Cancelled") ? "bg-danger" : ($session->SSHN_STTS=="Done") ? "bg-success" : "bg-info"  }}'
+                className: '{{($session->SSHN_STTS=="New") ? "bg-info" : (($session->SSHN_STTS=="Pending Payment") ? "bg-dark" : (($session->SSHN_STTS=="Cancelled") ? "bg-danger" : (($session->SSHN_STTS=="Done") ? "bg-success" : "bg-info")))  }}'
             },
             @endforeach
             ];

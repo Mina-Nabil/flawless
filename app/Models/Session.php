@@ -286,7 +286,6 @@ class Session extends Model
             $this->items()->delete();
             $this->logs()->delete();
             $this->feedback()->delete();
-            $this->followUp()->forceDelete();
 
             if ($this->SSHN_PAID > 0)
                 if ($this->SSHN_PYMT_TYPE == "Cash") {
