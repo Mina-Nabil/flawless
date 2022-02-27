@@ -19,8 +19,7 @@
                             </div>
                             <div class="card-body">
                                 <h4>Add a Session</h4>
-                                <a target="_blank" href="https://calendar.google.com/event?action=TEMPLATE&amp;tmeid=NWxhaW9kNzNqbGM2a2V2ODExY3Q0Mmtxb3MgZmxhd2xlc3M3Y2xpbmljQG0&amp;tmsrc=flawless7clinic%40gmail.com"><img
-                                        border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en.gif"></a>
+                                <a target="_blank" href="https://calendar.google.com/event?action=TEMPLATE&amp;tmeid=NWxhaW9kNzNqbGM2a2V2ODExY3Q0Mmtxb3MgZmxhd2xlc3M3Y2xpbmljQG0&amp;tmsrc=flawless7clinic%40gmail.com"><img border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en.gif"></a>
                             </div>
                         </div>
 
