@@ -13,16 +13,16 @@ class FollowupsController extends Controller
 {
     public function index()
     {
-        $threeDaysAgo = ((new DateTime())->sub(new DateInterval('P3D')))->format('Y-m-d');
+        $yesterday = ((new DateTime())->sub(new DateInterval('P1D')))->format('Y-m-d');
         //show unconfirmed attendace
-        $this->data['items'] = FollowUp::getFollowupsData("New", $threeDaysAgo, date('Y-m-d'));
+        $this->data['items'] = FollowUp::getFollowupsData("New", $yesterday, date('Y-m-d'));
         $this->data['title']            =   'Followup Sheet';
         $this->data['cardTitle']        =   'Pending Patients Follow-ups';
         $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';
         $this->data['setFollowupsURL'] =   'followups/set/state';
 
         $this->data['canCall'] = true;
-        $this->data['showCaller'] = false;
+        $this->data['states']           = FollowUp::$STATES;
 
         return view("followups.table", $this->data);
     }

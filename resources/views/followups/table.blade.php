@@ -28,13 +28,13 @@
                                 <td>{{$item->FLUP_CALL ?? ""}}</td>
                                 <td>
                                     <button id="status{{$item->id}}" @switch($item->FLUP_STTS)
-                                        @case(FollowUp::New_STATE)
+                                        @case($states[0])
                                         <?php $class="label label-info " ?>
                                         @break
-                                        @case(FollowUp::SATISFIED)
+                                        @case($states[1])
                                         <?php $class="label label-success " ?>
                                         @break
-                                        @case(FollowUp::NOT_SATISFIED)
+                                        @case($states[2])
                                         <?php $class="label label-danger " ?>
                                         @break
                                         @endswitch
@@ -81,28 +81,29 @@
             </div>
             <div class="modal-body">
                 {{-- <form action="{{url($setFollowupsURL)}}" method="POST"> --}}
-                @csrf
-                <input type="hidden" name=id id="followupID">
+                    @csrf
+                    <input type="hidden" name=id id="followupID">
 
-                <div class="form-group">
-                    <label>Satisfied?</label>
-                    <div class="bt-switch">
-                        <div>
-                            <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isSatisfied" data-off-text="No" name="isCommission"
-                                onchange="switchChanged()" checked>
+                    <div class="form-group">
+                        <label>Satisfied?</label>
+                        <div class="bt-switch">
+                            <div>
+                                <input type="checkbox" data-size="large" data-on-color="success" data-off-color="danger" data-on-text="Yes" id="isSatisfied" data-off-text="No" name="isCommission"
+                                    onchange="switchChanged()" checked>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Comment</label>
-                    <div class="input-group mb-3">
-                        <textarea class="form-control" rows="2" id=commentText name="comment"></textarea>
+                    <div class="form-group">
+                        <label>Comment</label>
+                        <div class="input-group mb-3">
+                            <textarea class="form-control" rows="2" id=commentText name="comment"></textarea>
+                        </div>
                     </div>
-                </div>
 
-                <button type="button" onclick="setFollowup()" class="btn btn-success mr-2">Set Status</button>
-                {{-- </form> --}}
+                    <button type="button" onclick="setFollowup()" class="btn btn-success mr-2">Set Status</button>
+                    {{--
+                </form> --}}
             </div>
         </div>
     </div>

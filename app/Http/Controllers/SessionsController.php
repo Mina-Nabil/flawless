@@ -308,7 +308,7 @@ class SessionsController extends Controller
     {
         $session = Session::findOrFail($id);
         $session->setAsDone($date);
-        SessionClosed::dispatch();
+        SessionClosed::dispatch($session);
         return $this->redirectToDetails($session->id);
     }
 
