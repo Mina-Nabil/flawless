@@ -27,7 +27,7 @@
                     <div class="col-lg-9">
                         <div class="card-body b-l calender-sidebar">
                             {{-- <div id="calendar"></div> --}}
-                            <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                            <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0" scrolling="yes"></iframe>
                         </div>
                     </div>
                 </div>
