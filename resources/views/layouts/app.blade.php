@@ -1030,7 +1030,7 @@
                     errorMesage = errorMesage.replace('outModal', 'Patient ID')
                     errorMesage = errorMesage.replace('titleModal', 'Start Time')
                     errorMesage = errorMesage.replace('commentModal', 'End Time')
-opdjqpowjdl;asjdilsahlk
+
                     Swal.fire({
                         title: "Error!",
                         text: errorMesage ,
