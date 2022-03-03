@@ -118,6 +118,7 @@ Route::get("dash/users/toggle/{id}", 'DashUsersController@toggle');
 Route::get("dash/users/delete/{id}", 'DashUsersController@delete');
 
 
+Route::post('payments/modal/add', 'HomeController@addPayment');
 Route::post('message', 'HomeController@sendMessage')->name('sendMessage');
 Route::get('calendar', 'SessionsController@calendar')->name('calendar');
 Route::post('search', 'HomeController@search')->name('search');

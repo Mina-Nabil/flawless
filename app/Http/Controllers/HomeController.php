@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Cash;
 use App\Models\DashUser;
 use App\Models\Patient;
 use App\Models\PushMessage;
+use App\Models\Visa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -86,5 +88,27 @@ class HomeController extends Controller
         $userFrom = DashUser::findOrFail($request->from);
         event(new PushMessage($request->userID, $userFrom->DASH_USNM, $request->message));
         echo 1;
+    }
+
+    public function addPayment(Request $request)
+    {
+        $request->validate([
+            "type" => "required",
+            "in"    =>  "required",
+            "out"      =>  "required",
+            "title"   =>  "required"
+        ]);
+
+        switch ($request->type) {
+            case "cash":
+                Cash::entry($request->title, $request->in, $request->out, $request->comment);
+                break;
+
+            case "visa":
+                Visa::entry($request->title, $request->in, $request->out, $request->comment);
+                break;
+        }
+
+        return 1;
     }
 }

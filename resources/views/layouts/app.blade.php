@@ -11,7 +11,7 @@
     <meta name="csrf-token" content="{{ Session::token() }}">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/dark-logo.png') }}">
-    <title>{{  config('app.name', 'Flawless') }}</title>
+    <title>{{ config('app.name', 'Flawless') }}</title>
     <!-- Custom CSS -->
     <link href="{{asset('dist/css/style.min.css')}}" rel="stylesheet">
     <link href="{{asset('dist/css/style.min.css')}}" media=print rel="stylesheet">
@@ -101,92 +101,91 @@
 
                         <li class="ml-auto"> <a class="waves-effect waves-dark" href="{{url('sessions/query')}}" aria-expanded="false"><i class="fas fa-list"></i>Sessions</a>
 
-                            {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span
-                                    class="hide-menu">Sessions</span></a>
+                            {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
-                    </ul> --}}
-                    </li>
-                    @if(Auth::user()->isAdmin())
-                    <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
-                    </li>
-                    @endif
-                    @if(Auth::user()->isAdmin())
-                    <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
-                    </li>
-                    @endif
-                    @if(Auth::user()->isOwner())
-                    <li>
-                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{url('cash/home')}}">Cash</a></li>
-                            <li><a href="{{url('visa/home')}}">Visa</a></li>
-                        </ul>
-                    </li>
-                    @endif
-                    @if(Auth::user()->isOwner())
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{url('reports/revenue')}}">Revenue</a></li>
-                            <li>
-                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Accounts</a>
-                                <ul aria-expanded="false" class="collapse">
-                                    <li><a href="{{url('reports/cash')}}">Cash</a></li>
-                                    <li><a href="{{url('reports/visa')}}">Visa</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
-                            <li><a href="{{url('attendance/query')}}">Attendance</a></li>
-                            <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
-                            <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
-                            <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
-                            <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
-                        </ul>
-                    </li>
-                    @elseif(Auth::user()->isDoctor())
-                    <li> <a class="waves-effect waves-dark" href="{{url('reports/doctors')}}" aria-expanded="false"><i class="fas fa-chart-bar"></i>Doctor Report</a>
+                            </ul> --}}
+                        </li>
+                        @if(Auth::user()->isAdmin())
+                        <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
+                        </li>
                         @endif
                         @if(Auth::user()->isAdmin())
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
-                            <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
-                            @if(Auth::user()->isOwner())
-                            <li><a href="{{url('dash/users/3')}}">Owners</a></li>
-                            <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
-                            <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                        <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
+                        </li>
+                        @endif
+                        @if(Auth::user()->isOwner())
+                        <li>
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-newspaper"></i>Accounts</a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('cash/home')}}">Cash</a></li>
+                                <li><a href="{{url('visa/home')}}">Visa</a></li>
+                            </ul>
+                        </li>
+                        @endif
+                        @if(Auth::user()->isOwner())
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-chart-bar"></i><span class="hide-menu">Reports</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('reports/revenue')}}">Revenue</a></li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Accounts</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('reports/cash')}}">Cash</a></li>
+                                        <li><a href="{{url('reports/visa')}}">Visa</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
+                                <li><a href="{{url('attendance/query')}}">Attendance</a></li>
+                                <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
+                                <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
+                                <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
+                                <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
+                            </ul>
+                        </li>
+                        @elseif(Auth::user()->isDoctor())
+                        <li> <a class="waves-effect waves-dark" href="{{url('reports/doctors')}}" aria-expanded="false"><i class="fas fa-chart-bar"></i>Doctor Report</a>
                             @endif
-                            <li><a href="{{url('channels/home')}}">Channels</a></li>
+                            @if(Auth::user()->isAdmin())
+                        <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
+                                <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
+                                @if(Auth::user()->isOwner())
+                                <li><a href="{{url('dash/users/3')}}">Owners</a></li>
+                                <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
+                                <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                                @endif
+                                <li><a href="{{url('channels/home')}}">Channels</a></li>
 
-                        </ul>
-                    </li>
-                    @endif
-                    <li class="ml-auto" style="width: 320px">
-                        <form class="app-search d-none d-md-block d-lg-block" action="{{$searchURL}}" method="POST">
-                            @csrf
-                            <input type="text" name=searchVal class="form-control" placeholder="Find patients by their Name or Mobile #">
-                        </form>
-                    </li>
+                            </ul>
+                        </li>
+                        @endif
+                        <li class="ml-auto" style="width: 320px">
+                            <form class="app-search d-none d-md-block d-lg-block" action="{{$searchURL}}" method="POST">
+                                @csrf
+                                <input type="text" name=searchVal class="form-control" placeholder="Find patients by their Name or Mobile #">
+                            </form>
+                        </li>
 
-                    <li class="ml-auto  ">
-                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <li class="ml-auto  ">
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
 
-                            @if(isset(Auth::user()->DASH_IMGE))
-                            <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
-                            @else
-                            <img src="{{ asset('assets/images/users/def-user.png') }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
-                            @endif
+                                @if(isset(Auth::user()->DASH_IMGE))
+                                <img src="{{ asset( 'storage/'. Auth::user()->DASH_IMGE ) }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                @else
+                                <img src="{{ asset('assets/images/users/def-user.png') }} " class="img-circle" alt="user-img" style="height: 25px; width: 25px">
+                                @endif
 
 
-                            <span> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;</i></span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse">
-                            <!-- text-->
-                            <a href="{{route('logout')}}"><i class="fa fa-power-off"></i>
-                                Logout</a>
-                            <!-- text-->
-                        </ul>
-                    </li>
+                                <span> &nbsp;{{Auth::user()->DASH_USNM}} &nbsp;</i></span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <!-- text-->
+                                <a href="{{route('logout')}}"><i class="fa fa-power-off"></i>
+                                    Logout</a>
+                                <!-- text-->
+                            </ul>
+                        </li>
 
                     </ul>
 
@@ -226,13 +225,13 @@
                             @if(Auth::user()->isAdmin())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal" class="btn btn-info m-b-5 m-l-15 addSessionButton"><i
                                     class="fa fa-plus-circle"></i> Book a Session</a>
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i
-                                    class="fa fa-plus-circle"></i> Add Patient</a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Add
+                                Patient</a>
                             @endif
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i
-                                    class="fa fa-plus-circle"></i> Send Msg. </a>
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i
-                                    class="fa fa-plus-circle"></i> Attendance </a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-payment-modal" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Add
+                                Payment</a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Send Msg. </a>
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
 
                         </div>
                     </div>
@@ -250,6 +249,64 @@
                 <!-- ============================================================== -->
                 <!-- ADD NEW PATIENT -->
                 <!-- ============================================================== -->
+                <div id="add-payment-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Payment</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label>Account*</label>
+                                    <div class="input-group mb-3">
+                                        <select class="form-control  col-md-12 mb-3" style="width:100%" id=accountModal>
+                                            <option value="cash">Cash</option>
+                                            <option value="visa">Visa</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Title*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Transaction Title" id=titleModal required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>In*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" step=0.01 class="form-control" placeholder="In Amount" id=inModal value="0" required>
+                                    </div>
+                                    <small class="text-danger">{{$errors->first('in')}}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Out*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" step=0.01 class="form-control" placeholder="Out Amount" id=outModal value="0" required>
+                                    </div>
+                                    <small class="text-danger">{{$errors->first('out')}}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" id=commentModal></textarea>
+                                    </div>
+
+                                    <small class="text-danger">{{$errors->first('comment')}}</small>
+                                </div>
+
+                                <button type="button" onclick="addPayment(true)" class="btn btn-success mr-2">Add</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="add-patient-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -918,6 +975,93 @@
             $('#sessionStartTime').val("");
             $('#sessionEndTime').val("");
             $('#sessionComment').val("");
+
+        }
+
+
+        function addPayment(){
+            var accountType = $('#accountModal').val();
+            var title       = $('#titleModal').val();
+            var inAmount    = $('#inModal').val();
+            var outAmount    = $('#outModal').val();
+            var commentModal= $('#commentModal').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            formData.append("in", inAmount)
+            formData.append("out", outAmount)
+            formData.append("title", title)
+            formData.append("type", accountType)
+            formData.append("comment", commentModal)
+
+            var url = "{{$addPaymentModalURL}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Session added successfully",
+                    icon: "success"
+                })
+                // append sessions table   
+                resetPaymentForm()
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["inModal"]){
+                        errorMesage += errors.errors["inModal"] + " " ;
+                    }
+                    if(errors.errors["outModal"]){
+                        errorMesage += errors.errors["outModal"] + " " ;
+                    }
+                    if(errors.errors["titleModal"]){
+                        errorMesage += errors.errors["titleModal"] + " " ;
+                    }
+                    if(errors.errors["commentModal"]){
+                        errorMesage += errors.errors["commentModal"] + " " ;
+                    }
+
+                    errorMesage = errorMesage.replace('inModal', 'Session Date')
+                    errorMesage = errorMesage.replace('outModal', 'Patient ID')
+                    errorMesage = errorMesage.replace('titleModal', 'Start Time')
+                    errorMesage = errorMesage.replace('commentModal', 'End Time')
+opdjqpowjdl;asjdilsahlk
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else if(this.readyState==4){
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+
+        function resetPaymentForm(){
+            $('#inModal').val("0");
+            $('#outModal').val("0");
+            $('#titleModal').val("");
+            $('#commentModal').val("");
 
         }
 

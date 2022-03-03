@@ -74,6 +74,7 @@ class SessionsController extends Controller
         $this->data['paymentURL']    = url('sessions/add/payment');
         $this->data['editSessionURL']    = url('sessions/edit');
 
+        $this->data['addPaymentModalURL']    = url('payments/modal/add');
         $this->data['newSessionsURL']    = url('sessions/show/new');
         $this->data['todaySessionsURL']    = url('sessions/show/today');
         $this->data['pendingSessionsURL']    = url('sessions/show/pending');
