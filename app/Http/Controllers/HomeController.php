@@ -93,10 +93,10 @@ class HomeController extends Controller
     public function addPayment(Request $request)
     {
         $request->validate([
-            "type" => "required",
+            "type"  => "required",
             "in"    =>  "required",
-            "out"      =>  "required",
-            "title"   =>  "required"
+            "out"   =>  "required",
+            "title" =>  "required"
         ]);
 
         switch ($request->type) {

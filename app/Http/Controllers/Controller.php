@@ -35,6 +35,7 @@ class Controller extends BaseController
         $this->data['addFollowupURL']       = url('followups/insert');
         $this->data['searchURL']            = url('search');
         $this->data['sendMessageURL']       = url('message');
+        $this->data['addPaymentModalURL']    = url('payments/modal/add');
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
