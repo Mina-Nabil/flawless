@@ -200,7 +200,7 @@ class ReportsController extends Controller
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
             'PTNT_MOBN',
             'sessions_count',
-            "total_paid",
+            ["number" => "total_paid"],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
         ];
 
