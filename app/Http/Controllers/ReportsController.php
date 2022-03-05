@@ -158,7 +158,7 @@ class ReportsController extends Controller
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Missing Patients Report";
         $this->data['tableSubtitle'] = "Showing Patients who didn't visit {$request->days} days ago";
-        
+
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
         $this->data['atts'] = [
             'id',
@@ -171,6 +171,39 @@ class ReportsController extends Controller
         ];
 
         return view("layouts.table", $this->data);
+    }
 
+    public function prepareTopPayers()
+    {
+        //page info
+        $this->data['title']           =   'Top Payers Report';
+        $this->data['formTitle']       =   'Load All Patients Paying more than a payment limit';
+        $this->data['formSubtitle']    =   'Set a money limit to load all patients paying more than that limit!';
+
+        return view("patients.loadTopPayers", $this->data);
+    }
+
+    public function loadTopPayers(Request $request)
+    {
+        $request->validate([
+            "totalPaid"      =>  "required",
+        ]);
+        $this->data['items'] = Patient::getTopPayers($request->totalPaid);
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Top Payers Report";
+        $this->data['tableSubtitle'] = "Showing Patients who paid more than " . number_format($request->totalPaid);
+
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
+        $this->data['atts'] = [
+            'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            'sessions_count',
+            "total_paid",
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+
+        return view("layouts.table", $this->data);
     }
 }

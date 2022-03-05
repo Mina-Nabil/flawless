@@ -140,6 +140,7 @@
                                 <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
                                 <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
                                 <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
+                                <li><a href="{{url('reports/toppayers')}}">Top Payers</a></li>
                             </ul>
                         </li>
                         @elseif(Auth::user()->isDoctor())

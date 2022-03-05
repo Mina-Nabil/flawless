@@ -45,6 +45,8 @@ Route::get('reports/devices', "ReportsController@prepareDevicesRevenue");
 Route::post('reports/devices', "ReportsController@loadDevicesRevenue");
 Route::get('reports/missing', "ReportsController@prepareMissingPatients");
 Route::post('reports/missing', "ReportsController@loadMissingPatients");
+Route::get('reports/toppayers', "ReportsController@prepareTopPayers");
+Route::post('reports/toppayers', "ReportsController@loadTopPayers");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');

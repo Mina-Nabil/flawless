@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DateInterval;
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -81,6 +82,16 @@ class Patient extends Model
     {
         $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE < DATE_SUB(NOW() , INTERVAL {$daysFrom} DAY) AND SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$daysTo} DAY ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
+    }
+
+    public static function getTopPayers($limit){
+        return self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id") 
+        ->select("patients.*")
+        ->selectRaw("SUM(SSHN_TOTL) as total_paid")
+        ->selectRaw("COUNT(sessions.id) as sessions_count")
+        ->havingRaw("SUM(SSHN_TOTL) >= {$limit}")
+        ->groupBy("patients.id")
+        ->get();
     }
 
     public function createAFollowUp($updateLatestIfExist = true)
