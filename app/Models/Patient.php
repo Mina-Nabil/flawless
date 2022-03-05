@@ -89,6 +89,7 @@ class Patient extends Model
         ->select("patients.*")
         ->selectRaw("SUM(SSHN_TOTL) as total_paid")
         ->selectRaw("COUNT(sessions.id) as sessions_count")
+        ->where('SSHN_STTS', "Done")
         ->havingRaw("SUM(SSHN_TOTL) >= {$limit}")
         ->groupBy("patients.id")
         ->get();
