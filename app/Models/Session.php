@@ -67,7 +67,7 @@ class Session extends Model
         return self::getSessions("desc", "Done", $startDate, $endDate);
     }
 
-    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = null, $loadServices = false)
+    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
     {
         $rels = ["doctor", "patient", "creator", "accepter"];
         if ($loadServices)
