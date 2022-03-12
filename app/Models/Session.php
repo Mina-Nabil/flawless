@@ -39,7 +39,7 @@ class Session extends Model
 
     public function getRemainingDiscountAttribute()
     {
-        return 100 * round((($this->SSHN_TOTL - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC) / $this->SSHN_TOTL), 2);
+        return $this->SSHN_TOTL > 0 ? 100 * round((($this->SSHN_TOTL - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC) / $this->SSHN_TOTL), 2) : 0;
     }
 
     public function getTotalAfterDiscount()
