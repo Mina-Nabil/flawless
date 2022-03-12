@@ -16,26 +16,35 @@ class Session extends Model
 
 
     public $timestamps = false;
-    private $remainingMoney;
-    private $totalAfterDisc;
     protected $dates = ['SSHN_DATE'];
 
     //Query functions
-
-    public function getRemainingMoney()
+    public function getDiscountAttribute()
     {
-        if (isset($this->remainingMoney)) return $this->remainingMoney;
+        return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
+    }
+    public function getTotalAttribute()
+    {
+        return $this->SSHN_TOTL - $this->discount;
+    }
+    public function getDoctorTotalAttribute()
+    {
+        return round($this->SSHN_DCTR_TOTL * ((100 - $this->SSHN_DISC) / 100), 2);
+    }
 
-        $this->remainingMoney = $this->SSHN_TOTL - $this->SSHN_DISC - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC;
-        return $this->remainingMoney;
+    public function getRemainingMoneyAttribute()
+    {
+        return round($this->total - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC, 2);
+    }
+
+    public function getRemainingDiscountAttribute()
+    {
+        return 100 * round((($this->SSHN_TOTL - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC) / $this->SSHN_TOTL), 2);
     }
 
     public function getTotalAfterDiscount()
     {
-        if (isset($this->totalAfterDisc)) return $this->totalAfterDisc;
-
-        $this->totalAfterDisc = $this->SSHN_TOTL - $this->SSHN_DISC ;
-        return $this->totalAfterDisc;
+        return $this->total;
     }
 
     public static function getNewSessions($startDate, $endDate)
@@ -90,7 +99,7 @@ class Session extends Model
         if ($moneyBy != null && $moneyBy > 0)
             $query = $query->where("SSHN_ACPT_ID", $patient);
 
-        if ($isCommision !== null )
+        if ($isCommision !== null)
             $query = $query->where("SSHN_CMSH", $isCommision ? 1 : 0);
 
         if ($totalBegin != null && is_numeric($totalBegin) && $totalEnd != null && is_numeric($totalEnd))
@@ -110,6 +119,16 @@ class Session extends Model
         return $query->count();
     }
 
+    public static function getDoctorSum($startDate, $endDate, $doctorID = null)
+    {
+        $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done")->where("SSHN_CMSH", 1);
+        if ($doctorID != null) {
+            $query = $query->where("SSHN_DCTR_ID", $doctorID);
+        }
+        $query = $query->selectRaw("SUM(SSHN_DCTR_TOTL * ((100-SSHN_DISC)/100)) as totalSum")->get();
+        return $query->sum('totalSum');
+    }
+
     public static function getPaidSum($startDate, $endDate, $doctorID = null)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
@@ -125,7 +144,8 @@ class Session extends Model
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
         }
-        return ($query->sum("SSHN_TOTL") - $query->sum('SSHN_DISC'));
+        $sum = $query->selectRaw("SUM(SSHN_DCTR * (SSHN_DISC/100)) as totalSum")->first();
+        return $sum->totalSum;
     }
 
     public static function getPendingPaymentCount()
@@ -172,16 +192,17 @@ class Session extends Model
     }
 
     ///services
-    public function addService($pricelistID, $unit, $note = null, $recalculateTotal = true)
+    public function addService($pricelistID, $unit, $note = null, $recalculateTotal = true, $isDoctor = true)
     {
         if ($this->canEditServices())
-            DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal) {
+            DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal, $isDoctor) {
                 $pricelistItem = PriceListItem::findOrFail($pricelistID);
                 $this->items()->create([
                     "SHIT_PLIT_ID"  =>  $pricelistItem->id,
                     "SHIT_PRCE"     =>  $pricelistItem->PLIT_PRCE,
                     "SHIT_NOTE"     =>  $note,
                     "SHIT_QNTY"     =>  $unit,
+                    "SHIT_DCTR"     =>  $isDoctor ? 1 : 0,
                     "SHIT_TOTL"     =>  $unit * $pricelistItem->PLIT_PRCE,
                 ]);
                 if ($this->save()) {
@@ -196,14 +217,13 @@ class Session extends Model
     {
         if ($this->canEditMoney())
             DB::transaction(function () {
-                $remainingMoney = $this->getRemainingMoney();
-                $amountToDeduct = $remainingMoney;
 
-                $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $remainingMoney;
+
+                $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $this->remaining_money;;
                 $this->SSHN_ACPT_ID = Auth::user()->id;
-                $this->patient->deductBalance($amountToDeduct, $this->id);
+                $this->patient->deductBalance($this->remaining_money, $this->id);
                 if ($this->save()) {
-                    $this->logEvent("Settled Amount ({$amountToDeduct}) from client balance ");
+                    $this->logEvent("Settled Amount ({$this->remaining_money}) from client balance ");
                 }
             });
     }
@@ -211,7 +231,7 @@ class Session extends Model
     public function addPayment($amount, $isCash = true)
     {
 
-        $remainingMoney = $this->getRemainingMoney();
+        $remainingMoney = $this->remaining_money;
         if ($this->canEditMoney())
             DB::transaction(function () use ($amount, $remainingMoney, $isCash) {
                 if ($amount > $remainingMoney) {
@@ -273,10 +293,14 @@ class Session extends Model
     public function calculateTotal()
     {
         $total = 0;
+        $doctorTotal = 0;
         foreach ($this->items as $item) {
             $total += $item->SHIT_TOTL;
+            if ($item->is_doctor)
+                $doctorTotal += $item->SHIT_TOTL;
         }
         $this->SSHN_TOTL = $total;
+        $this->SSHN_DCTR_TOTL = $doctorTotal;
         $this->save();
     }
 
@@ -407,7 +431,7 @@ class Session extends Model
 
     public function canBeDone()
     {
-        return ($this->SSHN_STTS != "Done" && $this->SSHN_DCTR_ID != null && (($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment") && $this->SSHN_TOTL > 0 && $this->getRemainingMoney() <= 0));
+        return ($this->SSHN_STTS != "Done" && $this->SSHN_DCTR_ID != null && (($this->SSHN_STTS == "New" || $this->SSHN_STTS == "Pending Payment") && $this->SSHN_TOTL > 0 && $this->remaining_money <= 0));
     }
 
     /////relations

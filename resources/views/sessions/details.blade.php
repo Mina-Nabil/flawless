@@ -70,12 +70,18 @@
                     <div class="col-md-2">
                         @if(Auth::user()->isAdmin())
                         <div class="font-bold mb-2">
-                            Total {{($session->SSHN_DISC > 0) ? "(Discount)" : ""}}
+                            Total {{($session->discount > 0) ? "(Discount)" : ""}}
                         </div>
-                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->SSHN_DISC > 0) ? "(" .$session->SSHN_DISC. "EGP)" : ""}}</p>
+                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->discount > 0) ? "(" .$session->discount. "EGP)" : ""}}</p>
                         @endif
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
+                        <div class="font-bold mb-2">
+                            Doctor Total
+                        </div>
+                        <p class="text-muted">{{$session->doctor_total}}</p>
+                    </div>
+                    <div class="col-md-10">
                         <div class="font-bold mb-2">
                             Note
                         </div>
@@ -146,8 +152,8 @@
                             @endif
                             @if(Auth::user()->isAdmin())
                             <li>
-                                @if($session->getRemainingMoney() != 0)
-                                <p class="text-muted">Payment not yet fully collected please collect payment before setting Session as Done, {{$session->getRemainingMoney()}}EGP remaining
+                                @if($session->remaining_money != 0)
+                                <p class="text-muted">Payment not yet fully collected please collect payment before setting Session as Done, {{$session->remaining_money}}EGP remaining
                                     <i class=" fas fa-exclamation-triangle" style="color:#fec107"></i>
                                 </p>
                                 @elseif($session->SSHN_TOTL > 0)
@@ -203,13 +209,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <?php $i = 1?>
+                            <?php $i = 0?>
                             @foreach ($session->items as $item)
                             <div class="row removeclass{{$i}}">
+                                <div class="col-1">
+                                    <div class="bt-switch justify-content-end">
+                                        <input type="checkbox" name="isDoctor[{{$i}}]" data-size="medium" data-on-color="primary" data-off-color="info" data-on-text="Doctor" {{$item->is_doctor ?"checked":"off"}}
+                                        data-off-text="Clinic" id="isDoctor{{$i}}" @if(!$session->canEditServices())
+                                        disabled @endif @if(Auth::user()->isDoctor()) readonly @endif>
+                                    </div>
+                                </div>
                                 <div class="col-lg-3">
                                     <div class="input-group mb-2">
-                                        <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required
-                                            @if(!$session->canEditServices()) disabled @endif>
+                                        <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required @if(!$session->canEditServices())
+                                            disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Device</option>
                                             @foreach($devices as $device)
                                             <option value="{{ $device->id }}" @if($device->id == $item->deviceObj()->id) selected @endif>
@@ -224,8 +237,8 @@
 
                                 <div class="col-3">
                                     <div class="input-group mb-2">
-                                        <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required
-                                            @if(!$session->canEditServices()) disabled @endif>
+                                        <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required @if(!$session->canEditServices())
+                                            disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Type</option>
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)
                                             <option value="{{$service['id']}}" <?php if($service['id']==$item->SHIT_PLIT_ID ) { ?> selected
@@ -247,14 +260,14 @@
                                     </div>
                                 </div>
 
-                                <div class="col-3">
+
+                                <div class="col-2">
                                     <div class="input-group mb-3">
                                         <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[] {{((isset($readOnly) &&
                                             $readOnly)||!$session->canEditServices()) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
-                                            <button class="btn btn-danger" type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i
-                                                    class="fa fa-minus"></i></button>
+                                            <button class="btn btn-danger" type="button" onclick="removeService({{$i}});" @if(!$session->canEditServices()) disabled @endif><i class="fa fa-minus"></i></button>
                                         </div>
 
                                     </div>
@@ -288,8 +301,8 @@
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">
                         <h4 class="card-title">Session Payments</h4>
-                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->SSHN_DISC}} -
-                            <strong>Remaining: {{$session->getRemainingMoney()}}</strong>
+                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}} -
+                            <strong>Remaining: {{$session->remaining_money}}</strong>
                         </h6>
                         @if($session->canEditMoney())
                         <form class="form pt-3" method="post" action="{{ url($paymentURL) }}">
@@ -316,21 +329,22 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success mr-2">Collect Normal Payment</button>
-                            <button type="button" class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($settleSessionOnBalanceURL)}}', 'Settle Session on Client Balance')"
-                                @if($session->getRemainingMoney() <=0) disabled @endif>Settle Session on Client Balance</button>
-                            <p class="text-muted mt-2">Payments higher than <strong>{{$session->getRemainingMoney()}}</strong> will be added to the Patient Balance</p>
+                            <button type="button" class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($settleSessionOnBalanceURL)}}', 'Settle Session on Client Balance')" @if($session->remaining_money <=0)
+                                    disabled @endif>Settle Session on Client Balance</button>
+                            <p class="text-muted mt-2">Payments higher than <strong>{{$session->remaining_money}}</strong> will be added to the Patient Balance</p>
                         </form>
                         <hr>
                         <form class="form pt-3" method="post" action="{{ url($discountURL) }}" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name=id value={{$session->id}}>
                             <div class="form-group">
-                                <label>Discount</label>
+                                <label>Discount %</label>
                                 <div class="input-group mb-3">
-                                    <input type="number" step=.01 class="form-control amount" min=0 max={{$session->getRemainingMoney()}} name=discount value="{{$session->SSHN_DISC}}" required>
+                                    <input type="number" step=1 class="form-control amount" min=0 max={{$session->remaining_discount}} name=discount value="{{$session->SSHN_DISC}}" required>
                                 </div>
+                                <p class="text-muted mt-2">Enter discount percentage value (0-100)</p>
                             </div>
-                            <button type="submit" class="btn btn-success mr-2" @if($session->getRemainingMoney() <=0) disabled @endif>Set Discount</button>
+                            <button type="submit" class="btn btn-success mr-2" @if($session->remaining_money <=0) disabled @endif>Set Discount</button>
                         </form>
 
                         @else
@@ -592,6 +606,16 @@
         divtest.setAttribute("class", "row removeclass" + room);
 
         var concatString = "";
+
+        concatString += '<div class="col-1">\
+                            <div class="bt-switch justify-content-end">\
+                                <input type="checkbox" name=isDoctor[' + room + '] data-size="medium" data-on-color="primary" data-off-color="info"\
+                                data-on-text="Doctor" {{(Auth::user()->isDoctor()) ?"checked":""}}\
+                                data-off-text="Clinic" id="isDoctor' + room + '" @if(Auth::user()->isDoctor()) readonly @endif>\
+                            </div>\
+                        </div>'
+
+
         concatString +=   '<div class="col-lg-3">\
                                     <div class="input-group mb-2">\
                                         <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
@@ -599,35 +623,39 @@
                                                 @foreach($devices as $device)
                                                 concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
                                                 @endforeach
-                    concatString +=   '</select>\
+        concatString +=                 '</select>\
                                     </div>\
-                                </div>\
-                                <div class="col-3">\
-                                        <div class="input-group mb-2">\
-                                            <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
-                                            </select>\
-                                        </div>\
-                                    </div>'
-                    
-                    concatString += '<div class="col-3">\
-                                        <div class="input-group mb-3">\
-                                            <input id="note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[] >\
-                                        </div>\
-                                    </div>'
+                                </div>'
 
-                    concatString +='<div class="col-3">\
-                                        <div class="input-group mb-3">\
-                                            <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]>\
-                                                <div class="input-group-append">\
-                                                    <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
-                                                </div>\
-                                        </div>\
-                                    </div>'
+        concatString +=   '<div class="col-3">\
+                            <div class="input-group mb-2">\
+                                <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
+                                </select>\
+                            </div>\
+                        </div>'
+                        
+        concatString += '<div class="col-3">\
+                            <div class="input-group mb-3">\
+                                <input id="note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[] >\
+                            </div>\
+                        </div>'
+
+        concatString +='<div class="col-2">\
+                            <div class="input-group mb-3">\
+                                <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]>\
+                                    <div class="input-group-append">\
+                                        <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
+                                    </div>\
+                            </div>\
+                        </div>'
+
+   
         
         divtest.innerHTML = concatString;
         
         objTo.appendChild(divtest);
         $(".select2").select2()
+        $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
                                 
         room++
     }

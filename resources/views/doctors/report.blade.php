@@ -84,13 +84,15 @@
                                             </td>
                                             <td>
                                                 @foreach ($session->items as $item)
+                                                @if($item->is_doctor)
                                                 <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}}
                                                     @if($item->pricelistItem->PLIT_TYPE=="Area")
                                                     ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
+                                                @endif
                                                 @endforeach
                                             </td>
 
-                                            <td>{{$session->getTotalAfterDiscount()}}</td>
+                                            <td>{{$session->doctor_total}}</td>
                                         </tr>
                                     </a>
                                     @endforeach

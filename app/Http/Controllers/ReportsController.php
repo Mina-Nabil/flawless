@@ -11,7 +11,6 @@ use App\Models\SessionItem;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
-use PhpParser\Comment\Doc;
 
 class ReportsController extends Controller
 {
@@ -40,7 +39,7 @@ class ReportsController extends Controller
         $doctor = DashUser::findOrFail($request->doctorID);
 
         $this->data['sessions']         =   Session::getSessions('asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
-        $this->data['totalPaid']        =   Session::getPaidSum($startDate, $endDate, $doctor->id);
+        $this->data['totalPaid']        =   Session::getDoctorSum($startDate, $endDate, $doctor->id);
         $this->data['sessionsCount']    =   $this->data['sessions']->count();
 
         $this->data['attendance']       =   Attendance::getAttendanceData("NotCancelled", $startDate, $endDate, $doctor->id);
@@ -83,8 +82,8 @@ class ReportsController extends Controller
         $this->data['tableSubtitle'] = "Showing sessions and totals from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
 
 
-        $this->data['discountTotal'] = $this->data['sessions']->sum('SSHN_DISC');
-        $this->data['sessionsTotal'] = $this->data['sessions']->sum('SSHN_TOTL') - $this->data['discountTotal'];
+        $this->data['discountTotal'] = $this->data['sessions']->sum('discount');
+        $this->data['sessionsTotal'] = $this->data['sessions']->sum('total') ; //- $this->data['discountTotal'];
         $this->data['sessionsCount'] = $this->data['sessions']->count();
 
         //Charts

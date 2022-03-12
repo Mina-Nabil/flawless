@@ -15,7 +15,7 @@ class SessionClosed
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $session;
+    public $session;
 
     /**
      * Create a new event instance.

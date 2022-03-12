@@ -149,12 +149,11 @@ class SessionsController extends Controller
         $request->validate([
             "id" => "required"
         ]);
-
         $session = Session::findOrFail($request->id);
         $session->clearServices();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false);
+                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false, isset($request->isDoctor[$key]) ? true : false);
             }
 
         if (isset($request->isCommission) && $request->isCommission == "on")

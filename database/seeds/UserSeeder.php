@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             "DASH_USNM" => "mina",
             "DASH_FLNM" => "Mina Nabil",
             "DASH_PASS" => bcrypt('mina@flawless'),
-            "DASH_TYPE_ID" => 1,
+            "DASH_TYPE_ID" => 3,
         ]);
     }
 }

@@ -87,10 +87,10 @@ class Patient extends Model
     public static function getTopPayers($limit){
         return self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id") 
         ->select("patients.*")
-        ->selectRaw("SUM(SSHN_TOTL) as total_paid")
+        ->selectRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) as total_paid")
         ->selectRaw("COUNT(sessions.id) as sessions_count")
         ->where('SSHN_STTS', "Done")
-        ->havingRaw("SUM(SSHN_TOTL) >= {$limit}")
+        ->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
         ->groupBy("patients.id")
         ->get();
     }
