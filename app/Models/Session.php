@@ -218,12 +218,12 @@ class Session extends Model
         if ($this->canEditMoney())
             DB::transaction(function () {
 
-
-                $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $this->remaining_money;;
+                $remainingMoney = $this->remaining_money;
+                $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $remainingMoney;
                 $this->SSHN_ACPT_ID = Auth::user()->id;
-                $this->patient->deductBalance($this->remaining_money, $this->id);
+                $this->patient->deductBalance($remainingMoney, $this->id);
                 if ($this->save()) {
-                    $this->logEvent("Settled Amount ({$this->remaining_money}) from client balance ");
+                    $this->logEvent("Settled Amount ({$remainingMoney}) from client balance ");
                 }
             });
     }
