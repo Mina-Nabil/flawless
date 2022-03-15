@@ -253,6 +253,8 @@ class SessionsController extends Controller
             ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_NAME"]],
             [
                 'state'     => [
+                    "url"       => "sessions/details/",
+                    "urlAtt"    =>  "id",
                     "att"   =>  "SSHN_STTS",
                     "text" => [
                         "New" => "New",
