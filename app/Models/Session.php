@@ -21,7 +21,7 @@ class Session extends Model
     //Query functions
     public function getDiscountAttribute()
     {
-        return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2)*100;
+        return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
     }
     public function getTotalAttribute()
     {
