@@ -51,6 +51,7 @@
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#history" role="tab">Sessions</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#services" role="tab">Services</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#packages" role="tab">Packages</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paid" role="tab">Account</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add Payment</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li>
@@ -129,6 +130,48 @@
                     </div>
                 </div>
 
+                <!--Patient Packages tab-->
+                <div class="tab-pane" id="packages" role="tabpanel">
+                    <div class="card-body">
+                        <div class=row>
+                            <div class="mb-10 col-3 ">
+                                <button type="button" class="btn btn-success" onclick="addService()" @if(!Auth::user()->isAdmin()) disabled @endif>Add Service</button><br><br>
+                            </div>
+                        </div>
+                        <form class="form " method="post" action="{{ url($addPackagesURL) }}">
+                            @csrf
+                            <input name=id value="{{$patient->id}}" type="hidden">
+                            <div class="form-group">
+                                <div class="col-3 d-flex align-items-center">
+                                    <div class="custom-control custom-radio mr-5">
+                                        <input type="radio" id="customRadio1" name="cashRadio" class="custom-control-input" value=cash required>
+                                        <label class="custom-control-label" for="customRadio1">Cash</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="customRadio2" name="cashRadio" class="custom-control-input" value=visa required>
+                                        <label class="custom-control-label" for="customRadio2">Visa</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=row>
+                                <div class="col-12">
+                                    <div id="dynamicContainer">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success" @if(!Auth::user()->isAdmin()) disabled @endif>Submit</button><br><br>
+                        </form>
+                        <hr>
+                        <div class=row>
+                            <h4 class="card-title col-12">Patient Packages</h4>
+                            <h6 class="card-subtitle col-12">All Packages extra packages owned by the Patient</h6>
+                            <div class="col-12">
+                                <x-datatable id="patientPackagesTable" :title="'Packages'" :subtitle="''" :cols="$packagesCols" :items="$packagesList" :atts="$packagesAtts" :cardTitle="false" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tab-pane" id="paid" role="tabpanel">
                     <div class="row">
                         <div class="col-12">
@@ -192,7 +235,7 @@
                                     <form class="form pt-3" method="post" action="{{ url($addBalanceURL) }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type=hidden name=patientID value="{{(isset($patient)) ? $patient->id : ''}}">
-                                
+
                                         <div class="form-group">
                                             <label>Title*</label>
                                             <div class="input-group mb-3">
@@ -200,7 +243,7 @@
                                             </div>
                                             <small class="text-danger">{{$errors->first('title')}}</small>
                                         </div>
-                                
+
                                         <div class="form-group">
                                             <label>Amount*</label>
                                             <div class="input-group mb-3">
@@ -208,7 +251,7 @@
                                             </div>
                                             <small class="text-danger">{{$errors->first('amount')}}</small>
                                         </div>
-                                    
+
                                         <div class="form-group">
                                             <label>Comment</label>
                                             <div class="input-group mb-3">
@@ -305,20 +348,20 @@
                                 <p class="mb-1">{{$log->BLLG_TTLE}}</p><small>
                                     {{$log->BLLG_CMNT}}
                                 </small>
-                                </div>
-
-                                <small>{{$log->created_at}}</small>
-                            </a>
-                            @endforeach
-                        </ul>
                     </div>
+
+                    <small>{{$log->created_at}}</small>
+                    </a>
+                    @endforeach
+                    </ul>
                 </div>
-
-
             </div>
+
+
         </div>
     </div>
-    <!-- Column -->
+</div>
+<!-- Column -->
 </div>
 <script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
 <script src="{{ asset('assets/node_modules/datatables/datatables.min.js') }}"></script>
@@ -378,6 +421,102 @@
     });
 
 }
+function loadServices(row){
+        device = $('#device' + row).val();
+
+        var http = new XMLHttpRequest();
+        var url = "{{url($getServicesAPI)}}";
+        http.open('POST', url);
+        http.setRequestHeader("Accept", "application/json");
+
+        var formdata = new FormData();
+        formdata.append('deviceID',device);
+        formdata.append('patientID', {{$session->SSHN_PTNT_ID}});
+        formdata.append('_token','{{ csrf_token() }}');
+
+        
+
+        http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            try {        
+                services = JSON.parse(this.responseText);
+                showServices(row, services)
+            } catch(e){
+                console.log(e); 
+            }
+        } 
+        };
+        http.send(formdata, true);
+
+    }
+
+    function showServices(row, services){
+        $('#service' + row).html("") //clearing the select
+        $('#service' + row).removeAttr('disabled')
+        services.forEach(service => {
+            console.log(service)
+            var newOption = new Option(service.serviceName, service.id, false, false);
+            $('#service' + row).append(newOption).trigger('change');
+        });
+
+    }
+
+var room = 0;
+
+function addService() {
+
+    var objTo = document.getElementById('dynamicContainer')
+    var divtest = document.createElement("div");
+    divtest.setAttribute("class", "row removeclass" + room);
+
+    var concatString = "";
+
+    concatString +=   '<div class="col-lg-3">\
+                                <div class="input-group mb-2">\
+                                    <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
+                                            <option disabled hidden selected value="" class="text-muted">Device</option>';
+                                            @foreach($devices as $device)
+                                            concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
+                                            @endforeach
+    concatString +=                 '</select>\
+                                </div>\
+                            </div>'
+
+    concatString +=   '<div class="col-3">\
+                        <div class="input-group mb-2">\
+                            <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '"  disabled required>\
+                            </select>\
+                        </div>\
+                    </div>'
+
+    concatString +='<div class="col-3">\
+                        <div class="input-group mb-3">\
+                            <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
+                        </div>\
+                    </div>'
+
+    concatString +='<div class="col-3">\
+                        <div class="input-group mb-3">\
+                            <input id="unit' + room + '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
+                                <div class="input-group-append">\
+                                    <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
+                                </div>\
+                        </div>\
+                    </div>'
+    
+    divtest.innerHTML = concatString;
+    
+    objTo.appendChild(divtest);
+    $(".select2").select2()
+    $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
+                            
+    room++
+    }
+
+    function removeService(rid) {
+        $('.removeclass' + rid).remove();
+    }
+
 
 </script>
 @endsection

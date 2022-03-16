@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Device;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Patient;
@@ -46,10 +47,11 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user")->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
+        $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
-
+        $this->data['devices']  = Device::all();
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
         $this->data['cardTitle'] = false;
@@ -63,6 +65,19 @@ class PatientsController extends Controller
             ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
             'SHIT_QNTY',
             ['comment' => ['att' => "SHIT_NOTE"]]
+        ];
+
+        $this->data['getServicesAPI']           = "sessions/api/get/services";
+
+        //Packages Table
+        $this->data['packagesList']    =   $this->data['patient']->packageItems;
+        $this->data['cardTitle'] = false;
+        $this->data['packagesCols'] = ['Device', 'Area', 'Price', 'Quantity'];
+        $this->data['packagesAtts'] = [
+            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'device', 'att' => 'DVIC_NAME']],
+            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
+            ["number" => ['att' => 'PTPK_PRCE', 'nums' => 2]],
+            'PTPK_QNTY',
         ];
 
         //Pay table
@@ -148,6 +163,21 @@ class PatientsController extends Controller
 
         $patient = Patient::findOrFail($request->patientID);
         $patient->addBalance($request->title, $request->amount, $request->comment);
+        return redirect("patients/profile/" . $patient->id);
+    }
+
+    public function addPackage(Request $request)
+    {
+        $request->validate([
+            "id" => "required"
+        ]);
+        $patient = Patient::findOrFail($request->id);
+        $isVisa = (isset($request->cashRadio) &&  $request->cashRadio == "visa") ? true : false;
+        if (isset($request->service))
+            foreach ($request->service as $key => $pricelistID) {
+                $patient->addPackage($pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key]);
+                $patient->pay($request->price[$key], "Payment added from adding package", true, $isVisa, false);
+            }
         return redirect("patients/profile/" . $patient->id);
     }
 

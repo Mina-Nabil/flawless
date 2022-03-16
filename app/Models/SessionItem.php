@@ -10,10 +10,16 @@ class SessionItem extends Model
     public      $timestamps = false;
 
     protected $fillable = [
-        "SHIT_PLIT_ID", "SHIT_PRCE", "SHIT_QNTY", "SHIT_TOTL", "SHIT_NOTE", "SHIT_DCTR"
+        "SHIT_PLIT_ID", "SHIT_PRCE", "SHIT_QNTY", "SHIT_TOTL", "SHIT_NOTE", "SHIT_DCTR", "SHIT_CLTD_PCKG"
     ];
 
     private     $device;
+
+
+    ////scopes
+    public function scopeUncollected($query){
+        $query->where("SHIT_CLTD_PCKG", 0);
+    }
 
     public function getIsDoctorAttribute(){
         return $this->SHIT_DCTR == 1 ;

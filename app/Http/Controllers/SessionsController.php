@@ -132,6 +132,7 @@ class SessionsController extends Controller
         $this->data['editSessionURL']           = "sessions/edit";
         $this->data['deleteSessionURL']           = "sessions/delete/" .  $this->data['session']->id;
         $this->data['settleSessionOnBalanceURL'] = url('sessions/settle/balance/' . $this->data['session']->id);
+        $this->data['settleSessionOnPackagesURL'] = url('sessions/settle/packages/' . $this->data['session']->id);
 
         $this->data['setSessionPendingUrl']     = "sessions/set/pending/" . $this->data['session']->id;
         $this->data['setSessionDoneUrl']        = "sessions/set/done/" . $this->data['session']->id;
@@ -174,6 +175,15 @@ class SessionsController extends Controller
 
         $session = Session::findOrFail($sessionID);
         $session->payFromPatientBalance();
+
+        return $this->redirectToDetails($session->id);
+    }
+
+    public function settlePackages($sessionID)
+    {
+
+        $session = Session::findOrFail($sessionID);
+        $session->payFromPatientPackages();
 
         return $this->redirectToDetails($session->id);
     }

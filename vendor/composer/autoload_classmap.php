@@ -49,6 +49,7 @@ return array(
     'App\\Models\\FollowUp' => $baseDir . '/app/Models/FollowUp.php',
     'App\\Models\\Log' => $baseDir . '/app/Models/Log.php',
     'App\\Models\\Patient' => $baseDir . '/app/Models/Patient.php',
+    'App\\Models\\PatientPackage' => $baseDir . '/app/Models/PatientPackage.php',
     'App\\Models\\PatientPayment' => $baseDir . '/app/Models/PatientPayment.php',
     'App\\Models\\PriceList' => $baseDir . '/app/Models/PriceList.php',
     'App\\Models\\PriceListItem' => $baseDir . '/app/Models/PriceListItem.php',

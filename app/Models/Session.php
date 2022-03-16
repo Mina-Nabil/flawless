@@ -213,6 +213,29 @@ class Session extends Model
             });
     }
 
+    public function payFromPatientPackages()
+    {
+        if ($this->canEditMoney())
+            DB::transaction(function () {
+                foreach ($this->items()->uncollected()->get() as $item) {
+                    $item->loadMissing("pricelistItem");
+                    $foundPackages = $this->patient->hasPackage($item->pricelistItem);
+                    if ($foundPackages>0) {
+                        $packagesToUse = min($item->SHIT_QNTY, $foundPackages);
+                        $itemsPrice =  $this->patient->usePackage($item->pricelistItem, $packagesToUse);
+                        $item->SHIT_PRCE = $itemsPrice/$packagesToUse;
+                        $item->SHIT_TOTL = $item->SHIT_PRCE * $item->SHIT_QNTY;
+                        $item->SHIT_CLTD_PCKG = 1;
+                        $item->save();
+                    }
+                }
+                $this->calculateTotal();
+                if ($this->save()) {
+                    $this->logEvent("Settled Packages from client packages ");
+                }
+            });
+    }
+
     public function payFromPatientBalance()
     {
         if ($this->canEditMoney())
@@ -462,7 +485,7 @@ class Session extends Model
 
     function items()
     {
-        return $this->hasMany("App\Models\SessionItem", "SHIT_SSHN_ID");
+        return $this->hasMany(SessionItem::class, "SHIT_SSHN_ID");
     }
 
     function logs()

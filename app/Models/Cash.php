@@ -27,7 +27,7 @@ class Cash extends Model
     }
 
     public static function currentBalance(){
-        return self::latest()->first()->CASH_BLNC ?? 0;
+        return self::orderBy("id", 'desc')->first()->CASH_BLNC ?? 0;
     }
 
     public static function yesterdayBalance(){
@@ -35,7 +35,7 @@ class Cash extends Model
     }
 
     public static function entry($desc, $in=0, $out=0, $comment=null){
-        $latest = self::latest()->first();
+        $latest = self::orderBy("id", 'desc')->first();
         $balance = ($latest->CASH_BLNC ?? 0) + $in - $out;
 
         $newEntry = new self();

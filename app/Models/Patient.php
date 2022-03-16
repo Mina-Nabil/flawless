@@ -7,6 +7,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 class Patient extends Model
@@ -17,26 +18,6 @@ class Patient extends Model
     public function profileURL()
     {
         return url('patients/profile/' . $this->id);
-    }
-
-    public function sessions()
-    {
-        return $this->hasMany(Session::class, "SSHN_PTNT_ID", "id");
-    }
-
-    public function services()
-    {
-        return $this->hasManyThrough(SessionItem::class, Session::class, "SSHN_PTNT_ID", "SHIT_SSHN_ID");
-    }
-
-    public function pricelist()
-    {
-        return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
-    }
-
-    public function channel()
-    {
-        return $this->belongsTo("App\Models\Channel", "PTNT_CHNL_ID");
     }
 
     public function totalPaid()
@@ -84,15 +65,16 @@ class Patient extends Model
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
-    public static function getTopPayers($limit){
-        return self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id") 
-        ->select("patients.*")
-        ->selectRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) as total_paid")
-        ->selectRaw("COUNT(sessions.id) as sessions_count")
-        ->where('SSHN_STTS', "Done")
-        ->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
-        ->groupBy("patients.id")
-        ->get();
+    public static function getTopPayers($limit)
+    {
+        return self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id")
+            ->select("patients.*")
+            ->selectRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) as total_paid")
+            ->selectRaw("COUNT(sessions.id) as sessions_count")
+            ->where('SSHN_STTS', "Done")
+            ->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
+            ->groupBy("patients.id")
+            ->get();
     }
 
     public function createAFollowUp($updateLatestIfExist = true)
@@ -108,16 +90,64 @@ class Patient extends Model
         }
     }
 
-    ///////transactions
+    /////package functions
 
-    public function payments()
+    /**
+     * @param PriceListItem item to be queried if available
+     * @return int pricelist item quantity found
+     */
+    public function hasPackage(PriceListItem $item): int
+    {
+        return $this->packageItems()->where("PTPK_PLIT_ID", $item->id)->sum("PTPK_QNTY") ?? 0;
+    }
+
+    /**
+     * @param PriceListItem item to be queried if available
+     * @return int pricelist item quantity found
+     */
+    public function addPackage($itemID, int $quantity, float $price): bool
+    {
+        return $this->packageItems()->create([
+            "PTPK_PLIT_ID"  =>  $itemID,
+            "PTPK_QNTY"     =>  $quantity,
+            "PTPK_PRCE"     =>  $price,
+        ]) == true;
+    }
+
+    /**
+     * @param PriceListItem item to be queried if available
+     * @return float price of deducted items
+     */
+    public function usePackage(PriceListItem $item, int $quantity): float
+    {
+        $totalDeducted = 0;
+        for ($i = $quantity; $i > 0; $i--) {
+            $packagesFound = $this->packageItems()->where("PTPK_PLIT_ID", $item->id)->get();
+            foreach ($packagesFound as $package)
+                if ($package != null && $package->PTPK_QNTY > 0) {
+                    $package->PTPK_QNTY = $package->PTPK_QNTY - 1;
+                    $totalDeducted = $totalDeducted + $package->PTPK_PRCE;
+                    $package->save();
+                }
+        }
+        return $totalDeducted;
+    }
+
+    ///////relations
+
+    public function payments(): HasMany
     {
         return $this->hasMany(PatientPayment::class, 'PTPY_PTNT_ID');
     }
 
-    public function balanceLogs()
+    public function balanceLogs(): HasMany
     {
         return $this->hasMany(BalanceLog::class, 'BLLG_PTNT_ID');
+    }
+
+    public function packageItems(): HasMany
+    {
+        return $this->hasMany(PatientPackage::class, 'PTPK_PTNT_ID');
     }
 
     function followUps()
@@ -125,10 +155,34 @@ class Patient extends Model
         return $this->hasMany(FollowUp::class, "FLUP_PTNT_ID");
     }
 
-    public function pay($amount, $comment = null, $addEntry = true, $isVisa = false)
+
+    public function sessions()
     {
-        DB::transaction(function () use ($amount, $comment, $addEntry, $isVisa) {
-            $this->PTNT_BLNC += $amount;
+        return $this->hasMany(Session::class, "SSHN_PTNT_ID", "id");
+    }
+
+    public function services()
+    {
+        return $this->hasManyThrough(SessionItem::class, Session::class, "SSHN_PTNT_ID", "SHIT_SSHN_ID");
+    }
+
+    public function pricelist()
+    {
+        return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
+    }
+
+    public function channel()
+    {
+        return $this->belongsTo("App\Models\Channel", "PTNT_CHNL_ID");
+    }
+
+    //transactions
+
+    public function pay($amount, $comment = null, $addEntry = true, $isVisa = false, $updateBalance = true)
+    {
+        DB::transaction(function () use ($amount, $comment, $addEntry, $isVisa, $updateBalance) {
+            if ($updateBalance)
+                $this->PTNT_BLNC += $amount;
             $payment =  new PatientPayment();
             $payment->PTPY_PAID = $amount;
             $payment->PTPY_CMNT = $comment;

@@ -37,7 +37,7 @@
                             </a>
                             @if($session->patient->PTNT_BLNC != 0)
                             <br>
-                            <small>Current Balance: <strong>{{$session->patient->PTNT_BLNC}}</strong></small>
+                            <small>Current Balance: <strong>{{number_format($session->patient->PTNT_BLNC)}}</strong></small>
                             @endif
 
                         </p>
@@ -72,7 +72,7 @@
                         <div class="font-bold mb-2">
                             Total {{($session->discount > 0) ? "(Discount)" : ""}}
                         </div>
-                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->discount > 0) ? "(" .$session->discount. "EGP)" : ""}}</p>
+                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->discount > 0) ? "(" .$session->discount. "%)" : ""}}</p>
                         @endif
                     </div>
                     <div class="col-md-2">
@@ -143,7 +143,11 @@
                                     @foreach ($session->items as $item)
                                     <li>
                                         <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
-                                            ({{$item->pricelistItem->area->AREA_NAME}}) @endif</p>
+                                            ({{$item->pricelistItem->area->AREA_NAME}}) @endif
+                                        @if(Auth::user()->isAdmin())
+                                            {{$item->SHIT_TOTL}}EGP
+                                        @endif 
+                                        </p>
                                     </li>
 
                                     @endforeach
@@ -301,7 +305,7 @@
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">
                         <h4 class="card-title">Session Payments</h4>
-                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}} -
+                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}}% -
                             <strong>Remaining: {{$session->remaining_money}}</strong>
                         </h6>
                         @if($session->canEditMoney())
@@ -329,6 +333,8 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success mr-2">Collect Normal Payment</button>
+                            <button type="button" class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($settleSessionOnPackagesURL)}}', 'Settle Session on Client Packages')" @if($session->remaining_money <=0)
+                                    disabled @endif>Settle Session on Client Packages</button>
                             <button type="button" class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($settleSessionOnBalanceURL)}}', 'Settle Session on Client Balance')" @if($session->remaining_money <=0)
                                     disabled @endif>Settle Session on Client Balance</button>
                             <p class="text-muted mt-2">Payments higher than <strong>{{$session->remaining_money}}</strong> will be added to the Patient Balance</p>
