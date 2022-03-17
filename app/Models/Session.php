@@ -404,9 +404,18 @@ class Session extends Model
         Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));
     }
 
+    public function returnCollectedPackages(){
+        $this->loadMissing("patient");
+        $itemsToReturn = $this->items()->collected()->get();
+        foreach($itemsToReturn as $item){
+            $this->patient->addPackage($item->id, $item->SHIT_QNTY, $item->SHIT_PRCE);
+        }
+    }
+
     public function setAsCancelled($comment = null)
     {
         if ($this->canBeCancelled()) {
+            $this->returnCollectedPackages();
             $this->SSHN_STTS = "Cancelled";
             if ($comment !== null)
                 $this->SSHN_TEXT = $this->SSHN_TEXT . ". Cancellation Note: " . $comment;

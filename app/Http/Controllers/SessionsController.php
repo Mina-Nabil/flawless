@@ -102,6 +102,8 @@ class SessionsController extends Controller
         }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user")->findOrFail($id);
         $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->findOrFail($this->data['session']->SSHN_PTNT_ID);
 
+        $this->data['patient_packages'] = $this->data['patient']->available_packages;
+
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
         $this->data['cardTitle'] = false;

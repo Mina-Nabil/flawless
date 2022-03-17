@@ -392,36 +392,9 @@
 <script type="text/javascript" src="{{asset('assets/node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js')}}"></script>
 
 
-<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-<script>
-    var myWidget = cloudinary.createUploadWidget({
-    cloudName: 'sasawhale', 
-    folder: "whale/models",
-    uploadPreset: 'whalesec'}, (error, result) => { 
-      if (!error && result && result.event === "success") { 
-        document.getElementById('uploaded').value = result.info.url;
-      }
-    }
-  )
-  
-  document.getElementById("upload_widget").addEventListener("click", function(){
-      myWidget.open();
-    }, false);
+<script>  
 
-    function confirmAndGoTo(url, action){
-    Swal.fire({
-        text: "Are you sure you want to " + action + "?",
-        icon: "warning",
-        showCancelButton: true,
-        }).then((isConfirm) => {
-    if(isConfirm.value){
-
-    window.location.href = url;
-        }
-    });
-
-}
-function loadServices(row){
+    function loadServices(row){
         device = $('#device' + row).val();
 
         var http = new XMLHttpRequest();
@@ -461,56 +434,56 @@ function loadServices(row){
 
     }
 
-var room = 0;
 
-function addService() {
+    var room = 1;
 
-    var objTo = document.getElementById('dynamicContainer')
-    var divtest = document.createElement("div");
-    divtest.setAttribute("class", "row removeclass" + room);
+    function addService() {
 
-    var concatString = "";
+        var objTo = document.getElementById('dynamicContainer')
+        var divtest = document.createElement("div");
+        divtest.setAttribute("class", "row removeclass" + room);
 
-    concatString +=   '<div class="col-lg-3">\
-                                <div class="input-group mb-2">\
-                                    <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
-                                            <option disabled hidden selected value="" class="text-muted">Device</option>';
-                                            @foreach($devices as $device)
-                                            concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
-                                            @endforeach
-    concatString +=                 '</select>\
-                                </div>\
-                            </div>'
+        var concatString = "";
 
-    concatString +=   '<div class="col-3">\
-                        <div class="input-group mb-2">\
-                            <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '"  disabled required>\
-                            </select>\
-                        </div>\
-                    </div>'
+        concatString +=   '<div class="col-lg-3">\
+                                    <div class="input-group mb-2">\
+                                        <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
+                                                <option disabled hidden selected value="" class="text-muted">Device</option>';
+                                                @foreach($devices as $device)
+                                                concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
+                                                @endforeach
+        concatString +=                 '</select>\
+                                    </div>\
+                                </div>'
 
-    concatString +='<div class="col-3">\
-                        <div class="input-group mb-3">\
-                            <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
-                        </div>\
-                    </div>'
+        concatString +=   '<div class="col-3">\
+                            <div class="input-group mb-2">\
+                                <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '"  disabled required>\
+                                </select>\
+                            </div>\
+                        </div>'
 
-    concatString +='<div class="col-3">\
-                        <div class="input-group mb-3">\
-                            <input id="unit' + room + '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
-                                <div class="input-group-append">\
-                                    <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
-                                </div>\
-                        </div>\
-                    </div>'
-    
-    divtest.innerHTML = concatString;
-    
-    objTo.appendChild(divtest);
-    $(".select2").select2()
-    $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
-                            
-    room++
+        concatString +='<div class="col-3">\
+                            <div class="input-group mb-3">\
+                                <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
+                            </div>\
+                        </div>'
+
+        concatString +='<div class="col-3">\
+                            <div class="input-group mb-3">\
+                                <input id="unit' + room + '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
+                                    <div class="input-group-append">\
+                                        <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
+                                    </div>\
+                            </div>\
+                        </div>'
+        
+        divtest.innerHTML = concatString;
+
+        objTo.appendChild(divtest);
+        $(".select2").select2()
+                                
+        room++
     }
 
     function removeService(rid) {

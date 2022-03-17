@@ -92,6 +92,10 @@ class Patient extends Model
 
     /////package functions
 
+    public function getAvailablePackagesAttribute(){
+        return $this->packageItems()->with("pricelistItem", "pricelistItem.area", "pricelistItem.device")->where("PTPK_QNTY", ">", "0")->get();
+    }
+
     /**
      * @param PriceListItem item to be queried if available
      * @return int pricelist item quantity found

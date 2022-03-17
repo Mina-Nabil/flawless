@@ -39,7 +39,6 @@
                             <br>
                             <small>Current Balance: <strong>{{number_format($session->patient->PTNT_BLNC)}}</strong></small>
                             @endif
-
                         </p>
                     </div>
                     <div class="col-md-2">
@@ -81,7 +80,25 @@
                         </div>
                         <p class="text-muted">{{$session->doctor_total}}</p>
                     </div>
-                    <div class="col-md-10">
+                    @if($patient_packages->count() > 0)
+
+                    <div class="col-md-2">
+                        <div class="font-bold mb-2">
+                            Packages Available
+                        </div>
+                        @foreach($patient_packages as $item)
+                        <strong>
+                            <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} {{$item->pricelistItem->area->AREA_NAME ?? ""}} : {{$item->PTPK_QNTY}}</p>
+                        </strong>
+                        @endforeach
+
+                    </div>
+
+
+
+                    @endif
+
+                    <div class="col-md-8">
                         <div class="font-bold mb-2">
                             Note
                         </div>
@@ -144,9 +161,9 @@
                                     <li>
                                         <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
                                             ({{$item->pricelistItem->area->AREA_NAME}}) @endif
-                                        @if(Auth::user()->isAdmin())
+                                            @if(Auth::user()->isAdmin())
                                             {{$item->SHIT_TOTL}}EGP
-                                        @endif 
+                                            @endif
                                         </p>
                                     </li>
 
