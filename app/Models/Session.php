@@ -220,13 +220,15 @@ class Session extends Model
                 foreach ($this->items()->uncollected()->get() as $item) {
                     $item->loadMissing("pricelistItem");
                     $foundPackages = $this->patient->hasPackage($item->pricelistItem);
-                    if ($foundPackages>0) {
+                    if ($foundPackages > 0) {
                         $packagesToUse = min($item->SHIT_QNTY, $foundPackages);
                         $itemsPrice =  $this->patient->usePackage($item->pricelistItem, $packagesToUse);
-                        $item->SHIT_PRCE = $itemsPrice/$packagesToUse;
+                        $this->SSHN_PTNT_BLNC +=  $itemsPrice;
+                        $item->SHIT_PRCE = $itemsPrice / $packagesToUse;
                         $item->SHIT_TOTL = $item->SHIT_PRCE * $item->SHIT_QNTY;
                         $item->SHIT_CLTD_PCKG = 1;
                         $item->save();
+                        $this->save();
                     }
                 }
                 $this->calculateTotal();
