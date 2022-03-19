@@ -23,14 +23,14 @@ class Patient extends Model
     public function totalPaid()
     {
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)
-            ->selectRaw('SUM(SSHN_PAID + SSHN_CLNT_BLNC) as paid, SUM(SSHN_DISC) as discount')
+            ->selectRaw('SUM(SSHN_PAID + SSHN_PTNT_BLNC) as paid, SUM(SSHN_DISC) as discount')
             ->get()->first()->paid ?? 0;
     }
 
     public function totalDiscount()
     {
         return DB::table('sessions')->where('SSHN_PTNT_ID', $this->id)->where('SSHN_STTS', "Done")
-            ->selectRaw('SUM(SSHN_PAID) as paid, SUM(SSHN_DISC) as discount')
+            ->selectRaw(' SUM(SSHN_TOTL * (SSHN_DISC/100)) as discount')
             ->get()->first()->discount ?? 0;
     }
 
