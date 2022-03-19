@@ -144,7 +144,7 @@ class Session extends Model
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
         }
-        $sum = $query->selectRaw("SUM(SSHN_DCTR * (SSHN_DISC/100)) as totalSum")->first();
+        $sum = $query->selectRaw("SUM(SSHN_TOTL * (SSHN_DISC/100)) as totalSum")->first();
         return $sum->totalSum;
     }
 
