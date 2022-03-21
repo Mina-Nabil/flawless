@@ -27,7 +27,7 @@ class PriceList extends Model
 
     function getItemPrice($deviceID, $serviceID)
     {
-        $query = $this->pricelistItems();
+        $query = $this->pricelistItems()->where("PLIT_DVIC_ID", $deviceID);
         if ($serviceID == -1) {
             $query = $query->where("PLIT_TYPE", "Pulse")->select('PLIT_PRCE')->first()->PLIT_PRCE ?? 0;
         } else if ($serviceID == 0) {

@@ -156,7 +156,7 @@ class SessionsController extends Controller
         $session->clearServices();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false, isset($request->isDoctor[$key]) ? true : false);
+                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false, isset($request->isDoctor[$key]) ? true : false, $request->isCollected[$key] ?? 0 );
             }
 
         if (isset($request->isCommission) && $request->isCommission == "on")

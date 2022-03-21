@@ -192,10 +192,10 @@ class Session extends Model
     }
 
     ///services
-    public function addService($pricelistID, $unit, $note = null, $recalculateTotal = true, $isDoctor = true)
+    public function addService($pricelistID, $unit, $note = null, $recalculateTotal = true, $isDoctor = true, $isCollected = 0)
     {
         if ($this->canEditServices())
-            DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal, $isDoctor) {
+            DB::transaction(function () use ($pricelistID, $unit, $note, $recalculateTotal, $isDoctor, $isCollected) {
                 $pricelistItem = PriceListItem::findOrFail($pricelistID);
                 $this->items()->create([
                     "SHIT_PLIT_ID"  =>  $pricelistItem->id,
@@ -203,6 +203,7 @@ class Session extends Model
                     "SHIT_NOTE"     =>  $note,
                     "SHIT_QNTY"     =>  $unit,
                     "SHIT_DCTR"     =>  $isDoctor ? 1 : 0,
+                    "SHIT_CLTD_PCKG"     =>  $isCollected,
                     "SHIT_TOTL"     =>  $unit * $pricelistItem->PLIT_PRCE,
                 ]);
                 if ($this->save()) {
@@ -219,9 +220,16 @@ class Session extends Model
             DB::transaction(function () {
                 foreach ($this->items()->uncollected()->get() as $item) {
                     $item->loadMissing("pricelistItem");
+
                     $foundPackages = $this->patient->hasPackage($item->pricelistItem);
                     if ($foundPackages > 0) {
                         $packagesToUse = min($item->SHIT_QNTY, $foundPackages);
+                        if ($packagesToUse < $item->SHIT_QNTY) {
+                            //the session will pull client packages less than the packages assigned to the session
+                            //we need a new session item to cover the difference
+                            $this->addService($item->pricelistItem->id, $item->SHIT_QNTY - $foundPackages, "Added automatically for the uncollected amount after client Package Settlement", false, $item->is_doctor);
+                            $item->SHIT_QNTY = $packagesToUse;
+                        }
                         $itemsPrice =  $this->patient->usePackage($item->pricelistItem, $packagesToUse);
                         $this->SSHN_PTNT_BLNC +=  $itemsPrice;
                         $item->SHIT_PRCE = $itemsPrice / $packagesToUse;
@@ -404,10 +412,11 @@ class Session extends Model
         Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));
     }
 
-    public function returnCollectedPackages(){
+    public function returnCollectedPackages()
+    {
         $this->loadMissing("patient");
         $itemsToReturn = $this->items()->collected()->get();
-        foreach($itemsToReturn as $item){
+        foreach ($itemsToReturn as $item) {
             $this->patient->addPackage($item->id, $item->SHIT_QNTY, $item->SHIT_PRCE);
         }
     }

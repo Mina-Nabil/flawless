@@ -72,10 +72,9 @@ class PatientsController extends Controller
         //Packages Table
         $this->data['packagesList']    =   $this->data['patient']->packageItems;
         $this->data['cardTitle'] = false;
-        $this->data['packagesCols'] = ['Device', 'Area', 'Price', 'Quantity'];
+        $this->data['packagesCols'] = ['Service', 'Price', 'Quantity'];
         $this->data['packagesAtts'] = [
-            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'device', 'att' => 'DVIC_NAME']],
-            ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
+            ['foreign' => ['rel' => 'pricelistItem', 'att' => 'item_name']],
             ["number" => ['att' => 'PTPK_PRCE', 'nums' => 2]],
             'PTPK_QNTY',
         ];

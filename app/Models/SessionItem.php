@@ -25,6 +25,10 @@ class SessionItem extends Model
         $query->where("SHIT_CLTD_PCKG", 1);
     }
 
+    public function getIsCollectedAttribute(){
+        return $this->SHIT_CLTD_PCKG == 1 ;
+    }
+
     public function getIsDoctorAttribute(){
         return $this->SHIT_DCTR == 1 ;
     }

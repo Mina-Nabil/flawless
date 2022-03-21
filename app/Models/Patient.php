@@ -151,7 +151,7 @@ class Patient extends Model
 
     public function packageItems(): HasMany
     {
-        return $this->hasMany(PatientPackage::class, 'PTPK_PTNT_ID');
+        return $this->hasMany(PatientPackage::class, 'PTPK_PTNT_ID')->orderBy("PTPK_QNTY", "desc");
     }
 
     function followUps()

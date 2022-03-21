@@ -88,7 +88,7 @@
                         </div>
                         @foreach($patient_packages as $item)
                         <strong>
-                            <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} {{$item->pricelistItem->area->AREA_NAME ?? ""}} : {{$item->PTPK_QNTY}}</p>
+                            <p class="text-muted">{{$item->pricelistItem->item_name}} : {{$item->PTPK_QNTY}}</p>
                         </strong>
                         @endforeach
 
@@ -233,6 +233,15 @@
                             <?php $i = 0?>
                             @foreach ($session->items as $item)
                             <div class="row removeclass{{$i}}">
+                                <div class="mr-2 adjust-self-center">
+                                    @if($item->is_collected)
+                                    <i class="fas fa-check-circle" style="color:lightgreen" title="Collected from Client Package"></i>
+                                    <input type="hidden" value="1" name="isCollected[{{$i}}]">
+                                    @else
+                                    <i class="fas fa-check-circle" style="color:white"></i>
+                                    <input type="hidden" value="0" name="isCollected[{{$i}}]">
+                                    @endif
+                                </div>
                                 <div class="col-1">
                                     <div class="bt-switch justify-content-end">
                                         <input type="checkbox" name="isDoctor[{{$i}}]" data-size="medium" data-on-color="primary" data-off-color="info" data-on-text="Doctor" {{$item->is_doctor ?"checked":"off"}}
@@ -256,7 +265,7 @@
 
 
 
-                                <div class="col-3">
+                                <div class="col-2">
                                     <div class="input-group mb-2">
                                         <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required @if(!$session->canEditServices())
                                             disabled @endif>
@@ -630,7 +639,8 @@
 
         var concatString = "";
 
-        concatString += '<div class="col-1">\
+        concatString += '<div class="mr-3"></div>\
+                        <div class="col-1">\
                             <div class="bt-switch justify-content-end">\
                                 <input type="checkbox" name=isDoctor[' + room + '] data-size="medium" data-on-color="primary" data-off-color="info"\
                                 data-on-text="Doctor" {{(Auth::user()->isDoctor()) ?"checked":""}}\
@@ -650,7 +660,7 @@
                                     </div>\
                                 </div>'
 
-        concatString +=   '<div class="col-3">\
+        concatString +=   '<div class="col-2">\
                             <div class="input-group mb-2">\
                                 <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
                                 </select>\
