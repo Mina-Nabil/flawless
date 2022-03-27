@@ -48,6 +48,8 @@ Route::get('reports/missing', "ReportsController@prepareMissingPatients");
 Route::post('reports/missing', "ReportsController@loadMissingPatients");
 Route::get('reports/toppayers', "ReportsController@prepareTopPayers");
 Route::post('reports/toppayers', "ReportsController@loadTopPayers");
+Route::get('reports/newpatients', "ReportsController@prepareNewPatients");
+Route::post('reports/newpatients', "ReportsController@loadNewPatients");
 
 //attendance
 Route::get('attendance/home', 'AttendanceController@index');

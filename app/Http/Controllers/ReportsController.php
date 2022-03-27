@@ -83,7 +83,7 @@ class ReportsController extends Controller
 
 
         $this->data['discountTotal'] = $this->data['sessions']->sum('discount');
-        $this->data['sessionsTotal'] = $this->data['sessions']->sum('total') ; //- $this->data['discountTotal'];
+        $this->data['sessionsTotal'] = $this->data['sessions']->sum('total'); //- $this->data['discountTotal'];
         $this->data['sessionsCount'] = $this->data['sessions']->count();
 
         //Charts
@@ -192,6 +192,41 @@ class ReportsController extends Controller
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Top Payers Report";
         $this->data['tableSubtitle'] = "Showing Patients who paid more than " . number_format($request->totalPaid);
+
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
+        $this->data['atts'] = [
+            'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            'sessions_count',
+            ["number" => ["att" => "total_paid"]],
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+
+        return view("layouts.table", $this->data);
+    }
+
+    public function prepareNewPatients()
+    {
+        //page info
+        $this->data['title']           =   'New Patients Report';
+        $this->data['formTitle']       =   'Load New Patients';
+        $this->data['formSubtitle']    =   'Set start and end date and load all patients created during that time';
+
+        return view("patients.loadNewPatients", $this->data);
+    }
+
+    public function loadNewPatients(Request $request)
+    {
+        $request->validate([
+            "from"      =>  "required",
+            "to"      =>  "required",
+        ]);
+        $this->data['items'] = Patient::getPatientsByDate($request->from, $request->to);
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "New Patients Report";
+        $this->data['tableSubtitle'] = "Showing Patients who are created from " . (new DateTime($request->from))->format("d M Y") . " to " . (new DateTime($request->to))->format("d M Y");
 
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
         $this->data['atts'] = [

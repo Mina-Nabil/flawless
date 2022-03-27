@@ -77,6 +77,11 @@ class Patient extends Model
             ->get();
     }
 
+    public static function getPatientsByDate($from, $to)
+    {
+        return self::whereBetween("created_at", [$from, $to])->get();
+    }
+
     public function createAFollowUp($updateLatestIfExist = true)
     {
         if ($updateLatestIfExist)
@@ -92,7 +97,8 @@ class Patient extends Model
 
     /////package functions
 
-    public function getAvailablePackagesAttribute(){
+    public function getAvailablePackagesAttribute()
+    {
         return $this->packageItems()->with("pricelistItem", "pricelistItem.area", "pricelistItem.device")->where("PTPK_QNTY", ">", "0")->get();
     }
 
