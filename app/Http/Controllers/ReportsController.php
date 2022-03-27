@@ -226,7 +226,7 @@ class ReportsController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "New Patients Report";
-        $this->data['tableSubtitle'] = "Showing Patients who are created from " . (new DateTime($request->from))->format("d M Y") . " to " . (new DateTime($request->to))->format("d M Y");
+        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count . " Patients who are created from " . (new DateTime($request->from))->format("d M Y") . " to " . (new DateTime($request->to))->format("d M Y");
 
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
         $this->data['atts'] = [
