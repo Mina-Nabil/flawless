@@ -22,6 +22,8 @@
                 <h6>{{$patient->pricelist->PRLS_NAME ?? ""}}</h6>
                 <small class="text-muted p-t-30 db">Channel</small>
                 <h6>{{$patient->channel->CHNL_NAME ?? ""}}</h6>
+                <small class="text-muted p-t-30 db">Location</small>
+                <h6>{{$patient->location->LOCT_NAME ?? ""}}</h6>
             </div>
         </div>
         <div class="card">
@@ -295,9 +297,9 @@
 
                             <div class="form-group">
                                 <label>Pricelist*</label>
-                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=listID>
+                                <select class="select form-control  col-md-12 mb-3" style="width:100%" name=listID @if(!Auth::user()->isOwner()) readonly @endif>
                                     @foreach($allPricelists as $list)
-                                    <option value="{{$list->id}}" @if($list->id == $patient->PTNT_PRLS_ID) selected @endif >
+                                    <option value="{{$list->id}}" @if($list->id == $patient->PTNT_PRLS_ID) selected @elseif(!Auth::user()->isOwner()) disabled @endif>
                                         {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
                                     </option>
                                     @endforeach
@@ -311,6 +313,17 @@
                                     <option value="{{$channel->id}}" @if($channel->id == $patient->PTNT_CHNL_ID) selected @endif > {{$channel->CHNL_NAME}} </option>
                                     @endforeach
                                 </select>
+                                <small class="text-danger">{{$errors->first('channelID')}}</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Location</label>
+                                <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=locationID>
+                                    @foreach($locations as $location)
+                                    <option value="{{$location->id}}" @if($location->id == $patient->PTNT_LOCT_ID) selected @endif > {{$location->LOCT_NAME}} </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-danger">{{$errors->first('locationID')}}</small>
                             </div>
 
                             <div class="form-group">
@@ -392,8 +405,7 @@
 <script type="text/javascript" src="{{asset('assets/node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js')}}"></script>
 
 
-<script>  
-
+<script>
     function loadServices(row){
         device = $('#device' + row).val();
 
@@ -404,7 +416,7 @@
 
         var formdata = new FormData();
         formdata.append('deviceID',device);
-        formdata.append('patientID', {{$session->SSHN_PTNT_ID}});
+        formdata.append('patientID', {{$patient->id}});
         formdata.append('_token','{{ csrf_token() }}');
 
         

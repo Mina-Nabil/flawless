@@ -158,7 +158,7 @@
                                 <li><a href="{{url('dash/users/1')}}">Admins</a></li>
                                 @endif
                                 <li><a href="{{url('channels/home')}}">Channels</a></li>
-
+                                <li><a href="{{url('locations/home')}}">Locations</a></li>
                             </ul>
                         </li>
                         @endif
@@ -333,12 +333,13 @@
                                     </div>
                                     <small class="text-danger">{{$errors->first('mobn')}}</small>
                                 </div>
-
                                 <div class="form-group">
                                     <label>Pricelist*</label>
-                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id=listIDModal>
-                                        @foreach($allPricelists as $list)
-                                        <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
+                                    <select class="select form-control  col-md-12 mb-3 " style="width:100%" id=listIDModal @if(!Auth::user()->isOwner()) readonly @endif >
+                                        @foreach($allPricelists as $key => $list)
+                                        <option value="{{$list->id}}" @if(!Auth::user()->isOwner() && $key != count($allPricelists)-1)
+                                            disabled
+                                            @else selected @endif>
                                             {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
                                         </option>
                                         @endforeach
@@ -348,8 +349,19 @@
                                 <div class="form-group">
                                     <label>Channels*</label>
                                     <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id=channelIDModal>
+                                        <option selected disabled>Please select a channel</option>
                                         @foreach($channels as $channel)
                                         <option value="{{$channel->id}}">{{$channel->CHNL_NAME}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Locations*</label>
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id=locationIDModal>
+                                        <option selected disabled>Please select a location</option>
+                                        @foreach($locations as $location)
+                                        <option value="{{$location->id}}">{{$location->LOCT_NAME}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -363,14 +375,7 @@
                                     <small class="text-danger">{{$errors->first('balance')}}</small>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="2" name="adrs" id="patientAdrsModal"></textarea>
-                                    </div>
-
-                                    <small class="text-danger">{{$errors->first('adrs')}}</small>
-                                </div>
+                           
 
                                 <button type="button" onclick="addNewPatient(true)" class="btn btn-success mr-2">Add Patient</button>
 
@@ -736,10 +741,6 @@
                 dropdownParent: $("#add-session-modal")
             });
 
-            $("#listIDModal").select2({
-                dropdownParent: $("#add-patient-modal")
-            });
-
             $("#channelIDModal").select2({
                 dropdownParent: $("#add-patient-modal")
             });
@@ -791,13 +792,14 @@
                 var balance = $('#patientBlncModal').val();
                 var listID = $('#listIDModal').val();
                 var channelID = $('#channelIDModal').val();
+                var locationID = $('#locationIDModal').val();
             } else {
                 var name = $('#patientName').val();
                 var adrs = $('#patientAdrs').val();
                 var mobn = $('#patientMobn').val();
                 var balance = $('#patientBlnc').val();
                 var listID = $('#listID').val();
-                var channelID = $('#channelID').val();
+                var locationID = $('#channelID').val();
             }
 
             var formData = new FormData();
@@ -808,6 +810,7 @@
             formData.append("mobn", mobn)
             formData.append("listID", listID)
             formData.append("channelID", channelID)
+            formData.append("locationID", locationID)
 
             var url = "{{$addPatientFormURL}}";
 
@@ -835,9 +838,17 @@
                     if(errors.errors["mobn"]){
                         errorMesage += errors.errors["mobn"] + " " ;
                     }
+                    if(errors.errors["channelID"]){
+                        errorMesage += errors.errors["channelID"] + " " ;
+                    }
+                    if(errors.errors["locationID"]){
+                        errorMesage += errors.errors["locationID"] + " " ;
+                    }
 
                     errorMesage = errorMesage.replace('mobn', 'Mobile Number')
                     errorMesage = errorMesage.replace('name', 'Patient Name')
+                    errorMesage = errorMesage.replace('channelID', 'Channel')
+                    errorMesage = errorMesage.replace('locationID', 'Location')
 
                     Swal.fire({
                         title: "Error!",

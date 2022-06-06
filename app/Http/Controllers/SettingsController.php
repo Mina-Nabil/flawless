@@ -48,13 +48,12 @@ class SettingsController extends Controller
         $request->validate([
             "name" => "required|unique:pricelists,PRLS_NAME",
         ]);
-
         $pricelist = new PriceList();
         $pricelist->PRLS_NAME = $request->name;
-        $pricelist->PRLS_DFLT = $request->isDefault===true ? 1 : 0;
+        $pricelist->PRLS_DFLT = $request->isDefault==true ? 1 : 0;
 
         $pricelist->save();
-        if ($request->isDefault)
+        if ($request->isDefault==true)
             PriceList::setDefaultPriceList($pricelist->id);
         return $pricelist->id;
     }
@@ -73,7 +72,7 @@ class SettingsController extends Controller
         ]);
 
         $pricelist->PRLS_NAME = $request->name;
-        $pricelist->PRLS_DFLT = $request->isDefault ? 1 : 0;
+        $pricelist->PRLS_DFLT = $request->isDefault==true ? 1 : 0;
 
         $pricelist->save();
         if ($pricelist->PRLS_DFLT){

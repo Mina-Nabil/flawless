@@ -108,6 +108,13 @@ Route::get("visa/home", 'VisaController@home');
 Route::post("visa/insert", 'VisaController@insert');
 
 
+//Locations
+Route::get("locations/home", 'LocationsController@index');
+Route::post("locations/insert", 'LocationsController@insert');
+Route::get("locations/edit/{id}", 'LocationsController@edit');
+Route::post("locations/update", 'LocationsController@update');
+Route::get("locations/delete/{id}", 'LocationsController@delete');
+
 //Channels
 Route::get("channels/home", 'ChannelsController@index');
 Route::post("channels/insert", 'ChannelsController@insert');

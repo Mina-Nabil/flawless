@@ -47,7 +47,7 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device")->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
@@ -185,6 +185,8 @@ class PatientsController extends Controller
         $request->validate([
             "name"              => "required",
             "mobn"               => "required|numeric|unique:patients,PTNT_MOBN",
+            "channelID"         => "required|exists:channels,id",
+            "locationID"       => "required|exists:locations,id",
         ]);
 
         $patient = new Patient();
@@ -194,6 +196,7 @@ class PatientsController extends Controller
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;
+        $patient->PTNT_LOCT_ID = $request->locationID;
         $patient->save();
 
         return $patient->id;
@@ -208,6 +211,8 @@ class PatientsController extends Controller
         $request->validate([
             "name"  => ["required", Rule::unique('patients', "PTNT_NAME")->ignore($patient->PTNT_NAME, "PTNT_NAME"),],
             "mobn"  => ["required", "numeric",  Rule::unique('patients', "PTNT_MOBN")->ignore($patient->PTNT_MOBN, "PTNT_MOBN")],
+            "channelID"         => "required|exists:channels,id",
+            "locationID"       => "required|exists:locations,id",
         ]);
 
         $patient->PTNT_NAME = $request->name;
@@ -216,6 +221,7 @@ class PatientsController extends Controller
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;
+        $patient->PTNT_LOCT_ID = $request->locationID;
 
         $patient->save();
 

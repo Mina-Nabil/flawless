@@ -53,5 +53,8 @@ class PriceList extends Model
         self::where("id", "!=", $id)->update([
             "PRLS_DFLT" => 0
         ]);
+        self::where("id", "=", $id)->update([
+            "PRLS_DFLT" => 1
+        ]);
     }
 }

@@ -131,14 +131,21 @@ class Patient extends Model
     public function usePackage(PriceListItem $item, int $quantity): float
     {
         $totalDeducted = 0;
-        for ($i = $quantity; $i > 0; $i--) {
-            $packagesFound = $this->packageItems()->where("PTPK_PLIT_ID", $item->id)->get();
-            foreach ($packagesFound as $package)
-                if ($package != null && $package->PTPK_QNTY > 0) {
-                    $package->PTPK_QNTY = $package->PTPK_QNTY - 1;
-                    $totalDeducted = $totalDeducted + $package->PTPK_PRCE;
-                    $package->save();
-                }
+        $itemAvailability = $this->packageItems()->sum("PTPK_QNTY");
+        while ($quantity > 0 && $itemAvailability>0) {
+            $package = $this->packageItems()->where([
+                ["PTPK_PLIT_ID", $item->id],
+                ["PTPK_QNTY", ">", 0]
+            ])->first();
+
+            if ($package != null) {
+                $toDeduct = min($quantity, $package->PTPK_QNTY);
+                $package->PTPK_QNTY = $package->PTPK_QNTY - $toDeduct;
+                $quantity = $quantity - $toDeduct;
+                $itemAvailability = $itemAvailability - $toDeduct;
+                $totalDeducted = $totalDeducted + ($package->PTPK_PRCE*$toDeduct);
+                $package->save();
+            }
         }
         return $totalDeducted;
     }
@@ -184,6 +191,11 @@ class Patient extends Model
     public function channel()
     {
         return $this->belongsTo("App\Models\Channel", "PTNT_CHNL_ID");
+    }
+
+    public function location()
+    {
+        return $this->belongsTo("App\Models\Location", "PTNT_LOCT_ID");
     }
 
     //transactions

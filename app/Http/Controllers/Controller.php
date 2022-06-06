@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Channel;
 use App\Models\DashUser;
+use App\Models\Location;
 use App\Models\Patient;
 use App\Models\PriceList;
 use GuzzleHttp\Psr7\Request;
@@ -39,6 +40,7 @@ class Controller extends BaseController
 
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
+        $this->data['locations']             =   Location::all();
         $this->data['doctors']              =   DashUser::doctors();
         $this->data['allUsers']             =   DashUser::all();
         $this->data['patients']             =   Patient::orderByDesc('id')->get();

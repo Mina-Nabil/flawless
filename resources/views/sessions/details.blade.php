@@ -242,6 +242,7 @@
                                     <input type="hidden" value="0" name="isCollected[{{$i}}]">
                                     @endif
                                 </div>
+                                <input type="hidden" name="isDoctor[{{$i}}]" value="off">
                                 <div class="col-1">
                                     <div class="bt-switch justify-content-end">
                                         <input type="checkbox" name="isDoctor[{{$i}}]" data-size="medium" data-on-color="primary" data-off-color="info" data-on-text="Doctor" {{$item->is_doctor ?"checked":"off"}}
@@ -251,7 +252,7 @@
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="input-group mb-2">
-                                        <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required @if(!$session->canEditServices())
+                                        <select name="device[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required @if(!$session->canEditServices())
                                             disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Device</option>
                                             @foreach($devices as $device)
@@ -267,7 +268,7 @@
 
                                 <div class="col-2">
                                     <div class="input-group mb-2">
-                                        <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required @if(!$session->canEditServices())
+                                        <select name="service[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required @if(!$session->canEditServices())
                                             disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Type</option>
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)
@@ -286,14 +287,14 @@
 
                                 <div class="col-3">
                                     <div class="input-group mb-3">
-                                        <input id="note{{$i}}" value="{{$item->SHIT_NOTE}}" type="text" class="form-control" placeholder="Note" name=note[]>
+                                        <input id="note{{$i}}" value="{{$item->SHIT_NOTE}}" type="text" class="form-control" placeholder="Note" name="note[{{$i}}]">
                                     </div>
                                 </div>
 
 
                                 <div class="col-2">
                                     <div class="input-group mb-3">
-                                        <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[] {{((isset($readOnly) &&
+                                        <input id="unit{{$i}}" value="{{$item->SHIT_QNTY}}" type="number" step="0.01" class="form-control amount" placeholder="Unit" name="unit[{{$i}}]" {{((isset($readOnly) &&
                                             $readOnly)||!$session->canEditServices()) ? 'readonly' : ''}}>
 
                                         <div class="input-group-append">
@@ -637,7 +638,8 @@
         var divtest = document.createElement("div");
         divtest.setAttribute("class", "row removeclass" + room);
 
-        var concatString = "";
+        var concatString = ' <input type="hidden" value="0" name="isCollected[' + room + ']">\
+                            <input type="hidden" value="off" name="isDoctor[' + room + ']">';
 
         concatString += '<div class="mr-3"></div>\
                         <div class="col-1">\
@@ -651,7 +653,7 @@
 
         concatString +=   '<div class="col-lg-3">\
                                     <div class="input-group mb-2">\
-                                        <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
+                                        <select name=device[' + room + '] class="form-control select2 custom-select" style="width:100%" id="device' + room + '" onchange="loadServices(' + room + ')" required>\
                                                 <option disabled hidden selected value="" class="text-muted">Device</option>';
                                                 @foreach($devices as $device)
                                                 concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
@@ -662,20 +664,20 @@
 
         concatString +=   '<div class="col-2">\
                             <div class="input-group mb-2">\
-                                <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
+                                <select name=service[' + room + '] class="form-control select2 custom-select" style="width:100%" id="service' + room + '" onchange="checkUnit(' + room + ')" disabled required>\
                                 </select>\
                             </div>\
                         </div>'
                         
         concatString += '<div class="col-3">\
                             <div class="input-group mb-3">\
-                                <input id="note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[] >\
+                                <input id="note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[' + room + '] >\
                             </div>\
                         </div>'
 
         concatString +='<div class="col-2">\
                             <div class="input-group mb-3">\
-                                <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[]>\
+                                <input id="unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[' + room + ']>\
                                     <div class="input-group-append">\
                                         <button class="btn btn-danger" type="button" onclick="removeService('+room+');"><i class="fa fa-minus"></i></button>\
                                     </div>\
