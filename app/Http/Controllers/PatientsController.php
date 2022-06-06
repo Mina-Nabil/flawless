@@ -23,18 +23,19 @@ class PatientsController extends Controller
 
         $this->data['title'] = "All Registered Patients";
         $this->data['newCount'] = Patient::getPatientsCountCreatedThisMonth();
-        $this->data['patients'] = Patient::orderByDesc('id')->get();
+        $this->data['patients'] = Patient::with('location')->orderByDesc('id')->get();
         $this->data['allCount'] = $this->data['patients']->count();
 
         $this->data['patientsTitle'] = "Manage Patients";
         $this->data['patientsSubtitle'] = "Showing All Patients Data";
-        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since'];
+        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Area', 'Since'];
         $this->data['patientsAtts'] = [
             'id',
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
             'PTNT_MOBN',
             ['number' => ['att' => 'PTNT_BLNC']],
             ['comment' => ['att' => 'PTNT_ADRS']],
+            ['foreign' => ['att' => 'LOCT_NAME', 'rel' => 'location']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
         ];
         $this->data['homeURL'] = $this->homeURL;
