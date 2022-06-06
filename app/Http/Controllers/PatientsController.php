@@ -34,7 +34,6 @@ class PatientsController extends Controller
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
             'PTNT_MOBN',
             ['number' => ['att' => 'PTNT_BLNC']],
-            ['comment' => ['att' => 'PTNT_ADRS']],
             ['foreign' => ['att' => 'LOCT_NAME', 'rel' => 'location']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
         ];
