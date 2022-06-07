@@ -159,6 +159,7 @@
                                 @endif
                                 <li><a href="{{url('channels/home')}}">Channels</a></li>
                                 <li><a href="{{url('locations/home')}}">Locations</a></li>
+                                <li><a href="{{url('branches/home')}}">Branches</a></li>
                             </ul>
                         </li>
                         @endif
@@ -212,7 +213,7 @@
                 <!-- ============================================================== -->
                 <div class="row page-titles">
 
-                    <div class="col-md-5 align-self-center">
+                    <div class="col-md-4 align-self-center">
                         <div class=row>
                             <ul class="navbar-nav m-10">
                                 <!-- This is  -->
@@ -222,8 +223,19 @@
                             <h4 class="text-themecolor m-10" style="font-family: 'Signika' ; font-size:33px">{{$title}}</h4>
                         </div>
                     </div>
-                    <div class="col-md-7 align-self-center text-right">
+                    <div class="col-md-8 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
+                            @if(Auth::user()->isMultiBranch())
+
+                            <select class="select form-control" style="width:fit-content" onchange="changeBranch()" id=universalBranch >
+                                <option value=0 {{(0 == session('branch')) ? 'selected' : ''}}>All</option>
+                                @foreach($branches as $branch)
+                                <option value="{{$branch->id}}" {{($branch->id == session('branch')) ? 'selected' : ''}}
+                                    > {{$branch->BRCH_NAME}}</option>
+                                @endforeach
+                            </select>
+
+                            @endif
                             @if(Auth::user()->isAdmin())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal" class="btn btn-info m-b-5 m-l-15 addSessionButton"><i
                                     class="fa fa-plus-circle"></i> Book a Session</a>
@@ -269,6 +281,21 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                @if(session('branch')==0)
+                                <div class="col-12 form-group">
+                                    <label>Branch</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=branchModal>
+                                        @foreach($branches as $branch)
+                                        <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @elseif(session('branch')>0)
+                                <input type="hidden" value="{{session('branch')}}" id=branchModal readonly />
+                                @else
+                                <p class="text-danger">Unable to find branch! Please select branch</p>
+                                @endif
 
                                 <div class="form-group">
                                     <label>Title*</label>
@@ -375,7 +402,7 @@
                                     <small class="text-danger">{{$errors->first('balance')}}</small>
                                 </div>
 
-                           
+
 
                                 <button type="button" onclick="addNewPatient(true)" class="btn btn-success mr-2">Add Patient</button>
 
@@ -993,6 +1020,7 @@
 
 
         function addPayment(){
+            var branchID = $('#branchModal').val();
             var accountType = $('#accountModal').val();
             var title       = $('#titleModal').val();
             var inAmount    = $('#inModal').val();
@@ -1005,6 +1033,7 @@
             formData.append("out", outAmount)
             formData.append("title", title)
             formData.append("type", accountType)
+            formData.append("branch_id", branchID)
             formData.append("comment", commentModal)
 
             var url = "{{$addPaymentModalURL}}";
@@ -1017,7 +1046,7 @@
             if(this.readyState==4 && this.status == 200 && IsNumeric(this.responseText) ){
                 Swal.fire({
                     title: "Success!",
-                    text: "Session added successfully",
+                    text: "Payment added successfully",
                     icon: "success"
                 })
                 // append sessions table   
@@ -1328,6 +1357,11 @@
             getPatientsArray();
 
         });
+        
+        function changeBranch(){
+            var universalBranch = $('#universalBranch').val();
+            window.location.assign("{{$setBranchUrl}}" + "/"+ universalBranch)
+        }
 
 
 

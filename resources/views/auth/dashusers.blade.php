@@ -22,8 +22,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon11"><i class="ti-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Username" name=name aria-label="Username" aria-describedby="basic-addon11"
-                                value="{{ (isset($user)) ? $user->DASH_USNM : old('name')}}" required>
+                            <input type="text" class="form-control" placeholder="Username" name=name aria-label="Username" aria-describedby="basic-addon11" value="{{ (isset($user)) ? $user->DASH_USNM : old('name')}}"
+                                required>
                         </div>
                         <small class="text-danger">{{$errors->first('name')}}</small>
                     </div>
@@ -52,7 +52,7 @@
 
                     @if($userType==2)
                     <!-- doctors only -->
-                    <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type"> 
+                    <input type="hidden" value="{{ (isset($user)) ? $user->DASH_TYPE_ID : $userType }}" name="type">
                     @elseif(Auth::user()->isOwner())
                     <div class="form-group">
                         <label for="input-file-now-custom-1">User Type</label>
@@ -68,10 +68,21 @@
                     @endif
 
                     <div class="form-group">
+                        <label for="input-file-now-custom-1">Branch</label>
+                        <div class="input-group mb-3">
+                            <select name=branch_id class="form-control">
+                                <option value=0 {{ (isset($user) && $user->DASH_BRCH_ID==null) ? "selected" : "" }}>All</option>
+                                @foreach ($branches as $branch)
+                                <option value={{$branch->id}} {{ (isset($user) && $user->DASH_BRCH_ID==$branch->id) ? "selected" : "" }}>{{$branch->BRCH_NAME}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="input-file-now-custom-1">User Photo</label>
                         <div class="input-group mb-3">
-                            <input type="file" id="input-file-now-custom-1" name=photo class="dropify"
-                                data-default-file="{{ (isset($user->DASH_IMGE)) ? asset( 'storage/'. $user->DASH_IMGE ) : old('photo') }}" />
+                            <input type="file" id="input-file-now-custom-1" name=photo class="dropify" data-default-file="{{ (isset($user->DASH_IMGE)) ? asset( 'storage/'. $user->DASH_IMGE ) : old('photo') }}" />
                         </div>
                     </div>
 

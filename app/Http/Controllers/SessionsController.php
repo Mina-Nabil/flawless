@@ -17,6 +17,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session as FacadesSession;
 
 class SessionsController extends Controller
 {
@@ -24,7 +25,7 @@ class SessionsController extends Controller
     //home pages
     public function index($items = null)
     {
-
+        $branch_ID = FacadesSession::get('branch');
         //title
         $this->data['title'] = "FLAWLESS Dashboard";
 
@@ -47,11 +48,11 @@ class SessionsController extends Controller
         $this->data['feedbacksCount'] = Feedback::getUnconfirmedCount();
 
         //cash data
-        $this->data['paidToday'] = Cash::paidToday();
-        $this->data['cashIn'] = Cash::collectedToday();
-        $this->data['visaIn'] = Visa::collectedToday();
+        $this->data['paidToday'] = Cash::paidToday($branch_ID);
+        $this->data['cashIn'] = Cash::collectedToday($branch_ID);
+        $this->data['visaIn'] = Visa::collectedToday($branch_ID);
         $this->data['collectedToday'] = $this->data['cashIn'];
-        $this->data['cashBalance'] = Cash::currentBalance();
+        $this->data['cashBalance'] = Cash::currentBalance($branch_ID);
 
 
         //followups

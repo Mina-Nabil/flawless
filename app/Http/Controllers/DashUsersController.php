@@ -20,8 +20,11 @@ class DashUsersController extends Controller
         $this->data['title'] = ($accountType == 1) ? "Application Admins" : "Doctor Accounts";
         $this->data['subTitle'] = ($accountType == 1) ? "Manage, Add and Delete Admins data" : "Manage, Add and Delete Doctors data";
         $this->data['formTitle'] = ($accountType == 1) ? "Add Admins" : "Add Doctors";
-        $this->data['cols'] = ['Username', 'Fullname', 'Mob#', 'Type', 'Active', 'Edit'];
-        $this->data['atts'] = ['DASH_USNM', 'DASH_FLNM', 'DASH_MOBN', ['foreign' => ['rel' => 'dash_types', 'att' => 'DHTP_NAME']],     [
+        $this->data['cols'] = ['Username', 'Fullname', 'Branch', 'Type', 'Active', 'Edit'];
+        $this->data['atts'] = ['DASH_USNM', 'DASH_FLNM', 
+        ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],     
+        ['foreign' => ['rel' => 'dash_types', 'att' => 'DHTP_NAME']],
+        [
             'toggle' => [
                 "att"   =>  "DASH_ACTV",
                 "url"   =>  "dash/users/toggle/",
@@ -74,12 +77,15 @@ class DashUsersController extends Controller
             'fullname' => "required",
             'type' => 'required',
             'password' => 'required'
+
         ]);
 
         $dashUser->DASH_USNM = $request->name;
         $dashUser->DASH_FLNM = $request->fullname;
         $dashUser->DASH_TYPE_ID = $request->type;
         $dashUser->DASH_MOBN = $request->mobn;
+        if($request->branch_id!=0)
+        $dashUser->DASH_BRCH_ID = $request->branch_id;
         $dashUser->DASH_PASS = bcrypt($request->password);
 
         if ($request->hasFile('photo')) {
@@ -108,6 +114,8 @@ class DashUsersController extends Controller
         $dashUser->DASH_FLNM = $request->fullname;
         $dashUser->DASH_MOBN = $request->mobn;
         $dashUser->DASH_TYPE_ID = $request->type;
+        if($request->branch_id!=0)
+        $dashUser->DASH_BRCH_ID = $request->branch_id;
 
         if (isset($request->password)  && strcmp(trim($request->password), '') != 0) {
             $dashUser->DASH_PASS = bcrypt($request->password);

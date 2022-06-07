@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -107,6 +108,11 @@ Route::post("cash/insert", 'CashController@insert');
 Route::get("visa/home", 'VisaController@home');
 Route::post("visa/insert", 'VisaController@insert');
 
+//Branches
+Route::get("branches/home", 'BranchesController@index');
+Route::post("branches/insert", 'BranchesController@insert');
+Route::get("branches/edit/{id}", 'BranchesController@edit');
+Route::post("branches/update", 'BranchesController@update');
 
 //Locations
 Route::get("locations/home", 'LocationsController@index');
@@ -130,6 +136,7 @@ Route::post("dash/users/update", 'DashUsersController@update');
 Route::get("dash/users/toggle/{id}", 'DashUsersController@toggle');
 Route::get("dash/users/delete/{id}", 'DashUsersController@delete');
 
+Route::get("set/branch/{id}", [HomeController::class, "setBranch"]);
 
 Route::post('payments/modal/add', 'HomeController@addPayment');
 Route::post('message', 'HomeController@sendMessage')->name('sendMessage');

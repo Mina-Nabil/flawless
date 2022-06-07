@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -25,43 +26,74 @@ class DashUser extends Authenticatable
      * @var array
      */
     protected $hidden = [
-         'remember_token',
+        'remember_token',
     ];
 
-    public function getAuthPassword(){
+
+
+    /////model functions     
+    public function getAuthPassword()
+    {
         return $this->DASH_PASS;
     }
 
-    public function dash_types(){
-        return $this->hasOne( "App\Models\DashType" , 'id', 'DASH_TYPE_ID');
+    /**
+     * @return int Branch ID or zero for universal users
+     */
+    public function getBranchValue(): int
+    {
+        return $this->DASH_BRCH_ID ?? (session('branch', 0));
     }
 
-    public function isAdmin(){
+    ///////relations
+    public function dash_types()
+    {
+        return $this->hasOne("App\Models\DashType", 'id', 'DASH_TYPE_ID');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'DASH_BRCH_ID');
+    }
+
+    public function isMultiBranch()
+    {
+        return $this->DASH_BRCH_ID == NULL;
+    }
+
+    public function isAdmin()
+    {
         return ($this->DASH_TYPE_ID == 1 || $this->DASH_TYPE_ID == 3);
     }
 
-    public function isDoctor(){
+    public function isDoctor()
+    {
         return ($this->DASH_TYPE_ID == 2);
     }
 
-    public function isOwner(){
+    public function isOwner()
+    {
         return ($this->DASH_TYPE_ID == 3);
     }
 
-    public function toggle(){
+    public function toggle()
+    {
         $this->DASH_ACTV = ($this->DASH_ACTV + 1) % 2;
         $this->save();
     }
 
-    public static function owners(){
+    public static function owners()
+    {
         return self::where("DASH_TYPE_ID", 3)->get();
     }
 
-    public static function admins(){
+    public static function admins()
+    {
         return self::where("DASH_TYPE_ID", 1)->get();
     }
 
-    public static function doctors(){
+    public static function doctors()
+    {
         return self::where("DASH_TYPE_ID", 2)->get();
     }
 }

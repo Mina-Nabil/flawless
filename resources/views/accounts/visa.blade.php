@@ -105,11 +105,25 @@
                                             <h4 class="card-title">{{ $formTitle }}</h4>
                                             <form class="form pt-3" method="post" action="{{ url($formURL) }}" enctype="multipart/form-data">
                                                 @csrf
-
+                                                @if(session('branch')==0)
+                                                <div class="col-12 form-group">
+                                                    <label>Branch</label>
+                                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=branchID>
+                                                        @foreach($branches as $branch)
+                                                        <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <small class="text-danger">{{$errors->first('branchID')}}</small>
+                                                </div>
+                                                @elseif(session('branch')>0)
+                                                <input type="hidden" value="{{session('branch')}}" name=branchID />
+                                                @else
+                                                <p class="text-danger">Unable to find branch! Please select branch</p>
+                                                @endif
                                                 <div class="form-group">
                                                     <label>Title*</label>
                                                     <div class="input-group mb-3">
-                                                        <input type="text" class="form-control" placeholder="Transaction Title" name=title >
+                                                        <input type="text" class="form-control" placeholder="Transaction Title" name=title>
                                                     </div>
                                                     <small class="text-danger">{{$errors->first('title')}}</small>
                                                 </div>

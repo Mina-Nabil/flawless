@@ -6,6 +6,7 @@ use App\Models\Cash;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class CashController extends Controller
 {
@@ -14,12 +15,14 @@ class CashController extends Controller
     private function setDataArr()
     {
         //Trans table
-        $this->data['todayTrans'] = Cash::with("dash_user")->whereDate('created_at', Carbon::today())->orderByDesc('id')->get();
+        $branch_ID = HttpSession::get('branch');
+        $this->data['todayTrans'] = Cash::today($branch_ID)->get();
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');
         $this->data['title'] = "Cash Account Page";
-        $this->data['todayCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['todayCols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
         $this->data['todayAtts'] = [
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'CASH_DESC',
@@ -29,7 +32,7 @@ class CashController extends Controller
             ["comment" => ['att' => 'CASH_CMNT']],
         ];
         //Trans table
-        $this->data['trans'] = Cash::with("dash_user")->orderByDesc('id')->limit(300)->get();
+        $this->data['trans'] = Cash::latest300($branch_ID)->get();
         $this->data['transTitle'] = "More Transactions";
         $this->data['transSubtitle'] = "Check Latest 300 cash transaction";
         $this->data['transCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
@@ -45,10 +48,10 @@ class CashController extends Controller
 
         $this->data['formURL'] = url('cash/insert');
         $this->data['formTitle'] = "Add Cash Transaction";
-        $this->data['balance'] = Cash::currentBalance();
-        $this->data['paidToday'] = Cash::paidToday();
-        $this->data['collectedToday'] = Cash::collectedToday();
-        $this->data['startingBalance'] = Cash::yesterdayBalance();
+        $this->data['balance'] = Cash::currentBalance($branch_ID);
+        $this->data['paidToday'] = Cash::paidToday($branch_ID);
+        $this->data['collectedToday'] = Cash::collectedToday($branch_ID);
+        $this->data['startingBalance'] = Cash::yesterdayBalance($branch_ID);
     }
 
     public function home()
@@ -60,11 +63,12 @@ class CashController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            "title"              => "required",
-            "in"              => "required|numeric",
-            "out"              => "required|numeric",
+            "branchID"     => "required|exists:branches,id",
+            "title"         => "required",
+            "in"            => "required|numeric",
+            "out"           => "required|numeric",
         ]);
-        Cash::entry($request->title, $request->in, $request->out, $request->comment);
+        Cash::entry($request->branchID, $request->title, $request->in, $request->out, $request->comment);
         return redirect("cash/home");
     }
 
@@ -79,22 +83,24 @@ class CashController extends Controller
     public function loadQuery(Request $request)
     {
         $request->validate([
-            "from"  =>  "required",
-            "to"    =>  "required"
+            "branchID" =>  "required|numeric",
+            "from"      =>  "required",
+            "to"        =>  "required"
         ]);
 
         $startDate  = (new DateTime($request->from))->format('Y-m-d 00:00:00');
         $endDate    = (new DateTime($request->to))->format('Y-m-d 23:59:59');
 
         //query
-        $this->data['items'] = Cash::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
+        $this->data['items'] = Cash::filter($request->branch_id, $startDate, $endDate);
         $totalOut = $this->data['items']->sum('CASH_OUT');
         $totalIn = $this->data['items']->sum('CASH_IN');
         $diff = $totalIn - $totalOut;
 
-        $this->data['cols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['cols'] = ["Branch",'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
 
         $this->data['atts'] = [
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'CASH_DESC',

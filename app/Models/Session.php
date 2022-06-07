@@ -286,11 +286,11 @@ class Session extends Model
                 if ($isCash) {
                     $this->SSHN_PYMT_TYPE = "Cash";
                     $this->save();
-                    Cash::entry($transTitle, $amount, 0, "Automated Cash Entry for Session#{$this->id}");
+                    Cash::entry($this->SSHN_BRCH_ID, $transTitle, $amount, 0, "Automated Cash Entry for Session#{$this->id}");
                 } else {
                     $this->SSHN_PYMT_TYPE = "Visa";
                     $this->save();
-                    Visa::entry($transTitle, $amount, 0, "Automated Visa Entry for Session#{$this->id}");
+                    Visa::entry($this->SSHN_BRCH_ID, $transTitle, $amount, 0, "Automated Visa Entry for Session#{$this->id}");
                 }
             });
     }
@@ -346,9 +346,9 @@ class Session extends Model
 
             if ($this->SSHN_PAID > 0)
                 if ($this->SSHN_PYMT_TYPE == "Cash") {
-                    Cash::entry("Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
+                    Cash::entry($this->SSHN_BRCH_ID, "Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
                 } elseif ($this->SSHN_PYMT_TYPE == "Visa") {
-                    Visa::entry("Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
+                    Visa::entry($this->SSHN_BRCH_ID, "Session#{$this->id} deleted", 0, $this->SSHN_PAID, "Added Automatically after session delete");
                 }
 
             if ($this->SSHN_PTNT_BLNC > 0)

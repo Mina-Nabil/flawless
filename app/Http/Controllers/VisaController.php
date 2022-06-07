@@ -6,6 +6,7 @@ use App\Models\Visa;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class VisaController extends Controller
 {
@@ -14,7 +15,8 @@ class VisaController extends Controller
     private function setDataArr()
     {
         //Trans table
-        $this->data['todayTrans'] = Visa::with("dash_user")->whereDate('created_at', Carbon::today())->orderByDesc('id')->get();
+        $branch_ID = HttpSession::get('branch');
+        $this->data['todayTrans'] = Visa::today($branch_ID)->get();
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');
         $this->data['title'] = "Visa Account Page";
@@ -29,7 +31,7 @@ class VisaController extends Controller
             ["comment" => ['att' => 'VISA_CMNT']],
         ];
         //Trans table
-        $this->data['trans'] = Visa::with("dash_user")->orderByDesc('id')->limit(300)->get();
+        $this->data['trans'] = Visa::latest300($branch_ID)->get();
         $this->data['transTitle'] = "More Transactions";
         $this->data['transSubtitle'] = "Check Latest 300 visa transaction";
         $this->data['transCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
@@ -45,10 +47,10 @@ class VisaController extends Controller
 
         $this->data['formURL'] = url('visa/insert');
         $this->data['formTitle'] = "Add Visa Transaction";
-        $this->data['balance'] = Visa::currentBalance();
-        $this->data['paidToday'] = Visa::paidToday();
-        $this->data['collectedToday'] = Visa::collectedToday();
-        $this->data['startingBalance'] = Visa::yesterdayBalance();
+        $this->data['balance'] = Visa::currentBalance($branch_ID);
+        $this->data['paidToday'] = Visa::paidToday($branch_ID);
+        $this->data['collectedToday'] = Visa::collectedToday($branch_ID);
+        $this->data['startingBalance'] = Visa::yesterdayBalance($branch_ID);
     }
 
     public function home()
@@ -60,11 +62,12 @@ class VisaController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            "title"              => "required",
-            "in"              => "required|numeric",
-            "out"              => "required|numeric",
+            "branchID"         => "required|exists:branches,id",
+            "title"             => "required",
+            "in"                => "required|numeric",
+            "out"               => "required|numeric",
         ]);
-        Visa::entry($request->title, $request->in, $request->out, $request->comment);
+        Visa::entry($request->branch_id, $request->title, $request->in, $request->out, $request->comment);
         return redirect("visa/home");
     }
 
@@ -80,6 +83,7 @@ class VisaController extends Controller
     public function loadQuery(Request $request)
     {
         $request->validate([
+            "branchID"        =>  "required|numeric",
             "from"  =>  "required",
             "to"    =>  "required"
         ]);
@@ -88,7 +92,7 @@ class VisaController extends Controller
         $endDate    = (new DateTime($request->to))->format('Y-m-d 23:59:59');
 
         //query
-        $this->data['items'] = Visa::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id')->get();
+        $this->data['items'] = Visa::filter($request->branch_id, $startDate, $endDate);
         $totalOut = $this->data['items']->sum('VISA_OUT');
         $totalIn = $this->data['items']->sum('VISA_IN');
         $diff = $totalIn - $totalOut;

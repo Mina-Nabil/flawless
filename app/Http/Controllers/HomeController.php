@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\Cash;
 use App\Models\DashUser;
 use App\Models\Patient;
@@ -10,6 +11,7 @@ use App\Models\PushMessage;
 use App\Models\Visa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class HomeController extends Controller
 {
@@ -47,6 +49,14 @@ class HomeController extends Controller
         }
     }
 
+    public function setBranch($branchID)
+    {
+        if ($branchID !== "0")
+            Branch::findOrFail($branchID); //check if branch exists
+        HttpSession::put('branch', $branchID);
+        return back();
+    }
+
     public function search(Request $request)
     {
 
@@ -74,6 +84,7 @@ class HomeController extends Controller
 
     public function logout()
     {
+        HttpSession::flush();
         Auth::logout();
         return redirect('login');
     }
@@ -93,19 +104,20 @@ class HomeController extends Controller
     public function addPayment(Request $request)
     {
         $request->validate([
-            "type"  => "required",
-            "in"    =>  "required",
-            "out"   =>  "required",
-            "title" =>  "required"
+            "branch_id" =>  "required|exists:branches,id",
+            "type"      => "required",
+            "in"        =>  "required",
+            "out"       =>  "required",
+            "title"     =>  "required"
         ]);
 
         switch ($request->type) {
             case "cash":
-                Cash::entry($request->title, $request->in, $request->out, $request->comment);
+                Cash::entry($request->branch_id, $request->title, $request->in, $request->out, $request->comment);
                 break;
 
             case "visa":
-                Visa::entry($request->title, $request->in, $request->out, $request->comment);
+                Visa::entry($request->branch_id, $request->title, $request->in, $request->out, $request->comment);
                 break;
         }
 
