@@ -71,7 +71,9 @@
                         <label for="input-file-now-custom-1">Branch</label>
                         <div class="input-group mb-3">
                             <select name=branch_id class="form-control">
+                                @if($userType!=2)
                                 <option value=0 {{ (isset($user) && $user->DASH_BRCH_ID==null) ? "selected" : "" }}>All</option>
+                                @endif
                                 @foreach ($branches as $branch)
                                 <option value={{$branch->id}} {{ (isset($user) && $user->DASH_BRCH_ID==$branch->id) ? "selected" : "" }}>{{$branch->BRCH_NAME}}</option>
                                 @endforeach

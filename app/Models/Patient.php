@@ -132,7 +132,7 @@ class Patient extends Model
     {
         $totalDeducted = 0;
         $itemAvailability = $this->packageItems()->sum("PTPK_QNTY");
-        while ($quantity > 0 && $itemAvailability>0) {
+        while ($quantity > 0 && $itemAvailability > 0) {
             $package = $this->packageItems()->where([
                 ["PTPK_PLIT_ID", $item->id],
                 ["PTPK_QNTY", ">", 0]
@@ -143,7 +143,7 @@ class Patient extends Model
                 $package->PTPK_QNTY = $package->PTPK_QNTY - $toDeduct;
                 $quantity = $quantity - $toDeduct;
                 $itemAvailability = $itemAvailability - $toDeduct;
-                $totalDeducted = $totalDeducted + ($package->PTPK_PRCE*$toDeduct);
+                $totalDeducted = $totalDeducted + ($package->PTPK_PRCE * $toDeduct);
                 $package->save();
             }
         }
@@ -239,5 +239,24 @@ class Patient extends Model
             ]);
             $this->save();
         });
+    }
+
+    public function scopeLoadBy($query, $channel_ids, $locations_ids)
+    {
+        if (!in_array(-1, $locations_ids)) {
+            $query = $query->where(function ($query) use ($locations_ids) {
+                foreach ($locations_ids as $loct_id)
+                    $query->orWhere('PTNT_LOCT_ID', '=', $loct_id);
+            });
+        }
+        if (!in_array(-1, $channel_ids)) {
+            $query = $query->where(function ($query) use ($channel_ids) {
+                foreach ($channel_ids as $channel_id)
+                    $query->orWhere('PTNT_CHNL_ID', '=', $channel_id);
+            });
+        }
+
+
+        return $query;
     }
 }

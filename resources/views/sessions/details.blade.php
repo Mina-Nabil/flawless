@@ -29,6 +29,12 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="font-bold mb-2">
+                            Branch
+                        </div>
+                        <p class="text-muted">{{$session->branch->BRCH_NAME}}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="font-bold mb-2">
                             Patient
                         </div>
                         <p class="text-muted">
@@ -98,7 +104,7 @@
 
                     @endif
 
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="font-bold mb-2">
                             Note
                         </div>
@@ -252,7 +258,8 @@
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="input-group mb-2">
-                                        <select name="device[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required @if(!$session->canEditServices())
+                                        <select name="device[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="device{{$i}}" onchange="loadServices({{$i}})" required
+                                            @if(!$session->canEditServices())
                                             disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Device</option>
                                             @foreach($devices as $device)
@@ -268,7 +275,8 @@
 
                                 <div class="col-2">
                                     <div class="input-group mb-2">
-                                        <select name="service[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required @if(!$session->canEditServices())
+                                        <select name="service[{{$i}}]" class="form-control select2 custom-select" style="width:100%" id="service{{$i}}" onchange="checkUnit({{$i}})" required
+                                            @if(!$session->canEditServices())
                                             disabled @endif>
                                             <option disabled hidden selected value="" class="text-muted">Type</option>
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)

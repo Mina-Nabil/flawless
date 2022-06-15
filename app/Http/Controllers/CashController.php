@@ -90,9 +90,8 @@ class CashController extends Controller
 
         $startDate  = (new DateTime($request->from))->format('Y-m-d 00:00:00');
         $endDate    = (new DateTime($request->to))->format('Y-m-d 23:59:59');
-
         //query
-        $this->data['items'] = Cash::filter($request->branch_id, $startDate, $endDate);
+        $this->data['items'] = Cash::filter($request->branchID, $startDate, $endDate);
         $totalOut = $this->data['items']->sum('CASH_OUT');
         $totalIn = $this->data['items']->sum('CASH_IN');
         $diff = $totalIn - $totalOut;

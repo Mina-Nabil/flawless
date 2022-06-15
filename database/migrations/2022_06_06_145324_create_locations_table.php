@@ -33,7 +33,7 @@ class CreateLocationsTable extends Migration
     public function down()
     {
         Schema::table('patients', function (Blueprint $table){
-            $table->dropForeign('patients_locations_PTNT_LOCT_ID');
+            $table->dropForeign('patients_ptnt_loct_id_foreign');
             $table->dropColumn('PTNT_LOCT_ID');
         });
         Schema::dropIfExists('locations');

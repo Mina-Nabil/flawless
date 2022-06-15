@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Channel;
 use App\Models\DashUser;
 use App\Models\Device;
+use App\Models\Location;
 use App\Models\Patient;
 use App\Models\Session;
 use App\Models\SessionItem;
@@ -38,7 +40,7 @@ class ReportsController extends Controller
         $endDate = $request->to;
         $doctor = DashUser::findOrFail($request->doctorID);
 
-        $this->data['sessions']         =   Session::getSessions('asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
+        $this->data['sessions']         =   Session::getSessions(0, 'asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
         $this->data['totalPaid']        =   Session::getDoctorSum($startDate, $endDate, $doctor->id);
         $this->data['sessionsCount']    =   $this->data['sessions']->count();
 
@@ -67,11 +69,12 @@ class ReportsController extends Controller
     public function loadRevenue(Request $request)
     {
         $request->validate([
+            "branchID"  =>  "required|numeric",
             "from"      =>  "required",
             "to"        =>  "required",
         ]);
 
-        $this->data['sessions'] = Session::getSessions("asc", Session::STATE_DONE, $request->from, $request->to);
+        $this->data['sessions'] = Session::getSessions($request->branchID, "asc", Session::STATE_DONE, $request->from, $request->to);
 
         //table info
         $this->data['from'] = (new DateTime($request->from))->format('d-M-Y');
@@ -128,11 +131,12 @@ class ReportsController extends Controller
     public function loadDevicesRevenue(Request $request)
     {
         $request->validate([
+            "branchID" => "required|numeric",
             "deviceID" => "required|exists:devices,id",
             "from"  => "required",
             "to"    =>  "required"
         ]);
-        $res = SessionItem::getDeviceTotal($request->deviceID, $request->from, $request->to);
+        $res = SessionItem::getDeviceTotal($request->branchID, $request->deviceID, $request->from, $request->to);
         return json_encode((object) ["total" => $res]);
     }
 
@@ -231,6 +235,42 @@ class ReportsController extends Controller
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
         $this->data['atts'] = [
             'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            'sessions_count',
+            ["number" => ["att" => "total_paid"]],
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+
+        return view("layouts.table", $this->data);
+    }
+
+    public function preparePatients(){
+        $this->data['title']           =   'Patients';
+        $this->data['formTitle']       =   'Main Patients Report';
+        $this->data['formSubtitle']    =   'Load Patients by Channels, Locations';
+        
+        $this->data['channels']    =   Channel::all();
+        $this->data['locations']    =   Location::all();
+        return view("patients.loadReport", $this->data);
+    }
+
+    public function loadPatients(Request $request){
+        $request->validate([
+            "channel_ids"    =>  "required",
+            "location_ids"   =>  "required"
+        ]);
+        $this->data['items'] = Patient::loadBy($request->channel_ids, $request->location_ids)->with('channel', 'location')->get();
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Main Patients Report";
+        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " Patients " ;
+
+        $this->data['cols'] = ['Code', 'Location' , 'Channel' , 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
+        $this->data['atts'] = [
+            'id',
+            ['foreign' => ['rel' => 'location', 'att' => 'LOCT_NAME']],
+            ['foreign' => ['rel' => 'channel', 'att' => 'CHNL_NAME']],
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
             'PTNT_MOBN',
             'sessions_count',

@@ -134,14 +134,20 @@
                                         <li><a href="{{url('reports/visa')}}">Visa</a></li>
                                     </ul>
                                 </li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Patients</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('reports/patients')}}">Main Report</a></li>
+                                        <li><a href="{{url('reports/newpatients')}}">New Patients</a></li>
+                                        <li><a href="{{url('reports/toppayers')}}">Top Payers</a></li>
+                                        <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
                                 <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                                 <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
                                 <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
                                 <li><a href="{{url('reports/devices')}}">Devices Revenue</a></li>
-                                <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
-                                <li><a href="{{url('reports/toppayers')}}">Top Payers</a></li>
-                                <li><a href="{{url('reports/newpatients')}}">New Patients</a></li>
                             </ul>
                         </li>
                         @elseif(Auth::user()->isDoctor())
@@ -227,8 +233,8 @@
                         <div class="d-flex justify-content-end align-items-center">
                             @if(Auth::user()->isMultiBranch())
 
-                            <select class="select form-control" style="width:fit-content" onchange="changeBranch()" id=universalBranch >
-                                <option value=0 {{(0 == session('branch')) ? 'selected' : ''}}>All</option>
+                            <select class="select form-control" style="width:fit-content" onchange="changeBranch()" id=universalBranch>
+                                <option value=0 {{(0==session('branch')) ? 'selected' : '' }}>All</option>
                                 @foreach($branches as $branch)
                                 <option value="{{$branch->id}}" {{($branch->id == session('branch')) ? 'selected' : ''}}
                                     > {{$branch->BRCH_NAME}}</option>
@@ -420,6 +426,25 @@
                             </div>
                             <div class="modal-body">
 
+                                @if(session('branch')==0)
+                                <div class="col-12 form-group">
+                                    <label>Branch</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=attendanceModalBranch>
+                                        @foreach($branches as $branch)
+                                        <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-danger">{{$errors->first('branchID')}}</small>
+                                </div>
+                                @elseif(session('branch')>0)
+                                <input type="hidden" value="{{session('branch')}}" id=attendanceModalBranch />
+                                @else
+                                <p class="text-danger">Unable to find branch! Please select branch</p>
+                                @endif
+
+                                @if(Auth::user()->isDoctor())
+                                <input type=hidden value="{{Auth::id()}}" id=attendanceModalDoctor />
+                                @else
                                 <div class="form-group">
                                     <label>Doctor</label>
                                     <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id="attendanceModalDoctor">
@@ -428,7 +453,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-
+                                @endif
 
                                 <div class="form-group" style="display: block">
                                     <label>Shifts</label>
@@ -503,11 +528,25 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body">
+           
+                                @if(session('branch')==0)
+                                <div class="col-12 form-group">
+                                    <label>Branch</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=sessionBranch>
+                                        @foreach($branches as $branch)
+                                        <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @elseif(session('branch')>0)
+                                <input type="hidden" value="{{session('branch')}}" id=sessionBranch readonly />
+                                @else
+                                <p class="text-danger">Unable to find branch! Please select branch</p>
+                                @endif
 
                                 <div class="form-group col-md-12 m-t-0">
                                     <h5>Patients</h5>
                                     <select class="select2 form-control modalSelect2" style="width:100%" name=patientID id=patientSel>
-
                                     </select>
                                 </div>
 
@@ -937,11 +976,13 @@
             var date    = $('#sessionDate').val();
             var start   = $('#sessionStartTime').val();
             var end     = $('#sessionEndTime').val();
+            var branch  = $('#sessionBranch').val();
             var comment = $('#sessionComment').val();
 
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
             formData.append("patientID", id)
+            formData.append("branchID", branch)
             formData.append("sesDate", date)
             formData.append("start", start)
             formData.append("end", end)
@@ -1127,6 +1168,7 @@
         }
 
         function addAttendance(){
+            var branch      =   $('#attendanceModalBranch').val();
             var doctor      =   $('#attendanceModalDoctor').val();
             var date        =   $('#attendanceModalDate').val();
             var shifts      =   $('#numberOfShiftsModal').val();
@@ -1134,6 +1176,7 @@
 
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
+            formData.append("branchID", branch)
             formData.append("doctorID", doctor)
             formData.append("date", date)
             formData.append("shifts", shifts)

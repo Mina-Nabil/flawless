@@ -20,8 +20,9 @@ class VisaController extends Controller
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');
         $this->data['title'] = "Visa Account Page";
-        $this->data['todayCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['todayCols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
         $this->data['todayAtts'] = [
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'VISA_DESC',
@@ -34,8 +35,9 @@ class VisaController extends Controller
         $this->data['trans'] = Visa::latest300($branch_ID)->get();
         $this->data['transTitle'] = "More Transactions";
         $this->data['transSubtitle'] = "Check Latest 300 visa transaction";
-        $this->data['transCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['transCols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
         $this->data['transAtts'] = [
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'VISA_DESC',
@@ -92,14 +94,24 @@ class VisaController extends Controller
         $endDate    = (new DateTime($request->to))->format('Y-m-d 23:59:59');
 
         //query
-        $this->data['items'] = Visa::filter($request->branch_id, $startDate, $endDate);
+        $this->data['items'] = Visa::filter($request->branchIDq
+        
+        
+        
+        
+        
+        
+        
+        
+        , $startDate, $endDate);
         $totalOut = $this->data['items']->sum('VISA_OUT');
         $totalIn = $this->data['items']->sum('VISA_IN');
         $diff = $totalIn - $totalOut;
 
-        $this->data['cols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['cols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
 
         $this->data['atts'] = [
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'VISA_DESC',

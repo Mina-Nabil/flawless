@@ -147,11 +147,12 @@
                     <table id="sessionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
                         <thead>
                             <tr>
+                                <th>Branch</th>
                                 <th>Date</th>
                                 <th>Patient</th>
                                 <th>Status</th>
                                 <th>Start</th>
-                                <th>End</th>
+                                {{-- <th>End</th> --}}
                                 <th>Doctor</th>
                                 @if(Auth::user()->isAdmin())
                                 <th>Total</th>
@@ -162,6 +163,7 @@
                             @foreach ($sessions as $session)
                             <a href="javascript:void(0)">
                                 <tr>
+                                    <td>{{$session->branch->BRCH_NAME}}</td>
                                     <td>{{$session->SSHN_DATE->format('d-M-Y')}}</td>
                                     <td>{{$session->patient->PTNT_NAME}}</td>
                                     <td>
@@ -184,7 +186,7 @@
                                         </a>
                                     </td>
                                     <td>{{$session->SSHN_STRT_TIME}}</td>
-                                    <td>{{$session->SSHN_END_TIME}}</td>
+                                    {{-- <td>{{$session->SSHN_END_TIME}}</td> --}}
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
                                     @if(Auth::user()->isAdmin())
                                     <td>{{$session->getTotalAfterDiscount()}}</td>

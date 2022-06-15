@@ -56,7 +56,7 @@ class CheckType
             if (request()->is('followups/*')) {
                 return abort(404);
             }
-            if (request()->is('attendance/*')) {
+            if (request()->is('attendance/*') && !request()->is('attendance/insert')) {
                 return abort(404);
             }
             if (request()->is('patients/*')) {

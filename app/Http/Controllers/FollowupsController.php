@@ -88,11 +88,12 @@ class FollowupsController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
+            "branchID" =>  "required",
             "patientID" =>  "required",
             "date"      =>  "required"
         ]);
 
-        return FollowUp::createFollowup($request->sessionID, $request->date, $request->comment);
+        return FollowUp::createFollowup($request->branchID, $request->sessionID, $request->date, $request->comment);
     }
 
     public function delete($id)

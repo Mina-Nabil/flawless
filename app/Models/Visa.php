@@ -28,7 +28,7 @@ class Visa extends Model
      */
     public static function filter($branchID, $startDate, $endDate)
     {
-        $query = self::with("dash_user")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id');
+        $query = self::with("dash_user", "branch")->whereBetween('created_at', [$startDate, $endDate])->orderByDesc('id');
         if ($branchID != 0) {
             $query = $query->where('VISA_BRCH_ID', $branchID);
         }
@@ -37,7 +37,7 @@ class Visa extends Model
 
     public static function scopeToday($query, $branch = 0)
     {
-        $query = $query->with("dash_user")->whereDate('created_at', Carbon::today())->orderByDesc('id');
+        $query = $query->with("dash_user", "branch")->whereDate('created_at', Carbon::today())->orderByDesc('id');
         if ($branch != 0) {
             $query = $query->where('VISA_BRCH_ID', $branch);
         }
@@ -46,7 +46,7 @@ class Visa extends Model
 
     public static function scopeLatest300($query, $branch = 0)
     {
-        $query = $query->with("dash_user")->orderByDesc('id')->limit(300);
+        $query = $query->with("dash_user", "branch")->orderByDesc('id')->limit(300);
         if ($branch != 0) {
             $query = $query->where('VISA_BRCH_ID', $branch);
         }

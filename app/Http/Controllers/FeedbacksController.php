@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\DashUser;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class FeedbacksController extends Controller
 {
     public function index()
     {
         //show unconfirmed attendace
-        $this->data['items'] = Feedback::getFeedbackData("New", date('Y-m-d', 0), date('Y-m-d'));
+        $branchID = HttpSession::get('branch');
+        $this->data['items'] = Feedback::getFeedbackData($branchID, "New", date('Y-m-d', 0), date('Y-m-d'));
         $this->data['title']            =   'Feedback Sheet';
         $this->data['cardTitle']        =   'Pending Patients Feedbacks';
         $this->data['cardSubtitle']        =   'Showing all Pending Feedbacks';
@@ -34,7 +36,7 @@ class FeedbacksController extends Controller
 
         $feedback = Feedback::findOrFail($request->id);
 
-        $status = ($request->status && $request->status=="true" ) ? "Called" : "Cancelled";
+        $status = ($request->status && $request->status == "true") ? "Called" : "Cancelled";
 
         return $feedback->setCalled($status, $request->overall, $request->comment);
     }
@@ -45,11 +47,12 @@ class FeedbacksController extends Controller
     {
 
         $request->validate([
+            "branchID" => "required",
             "from" => "required",
             "to" => "required",
         ]);
 
-        $this->data['items'] = Feedback::getFeedbackData($request->state, $request->from, $request->to, $request->caller);
+        $this->data['items'] = Feedback::getFeedbackData($request->branchID, $request->state, $request->from, $request->to, $request->caller);
 
         $this->data['title']        =   'Feedbacks Sheet Report';
         $this->data['cardTitle']    =   'Feedbacks';
@@ -66,8 +69,8 @@ class FeedbacksController extends Controller
         $this->data['formTitle']        =   'Follow-up Query';
         $this->data['formSubtitle']     =   'Filter Follow-ups report by';
         // $this->data['patients']         =   Patient::all(); loaded by default
-        $this->data['admins']           =   DashUser::admins(); 
-        
+        $this->data['admins']           =   DashUser::admins();
+
         return view("feedbacks.query", $this->data);
     }
 
@@ -76,11 +79,12 @@ class FeedbacksController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
+            "branchID" =>  "required",
             "sessionID" =>  "required",
             "date"      =>  "required"
         ]);
 
-        return Feedback::createFeedback($request->sessionID, $request->date, $request->comment);
+        return Feedback::createFeedback($request->branchID, $request->sessionID, $request->date, $request->comment);
     }
 
     public function delete($id)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class AttendanceController extends Controller
 {
@@ -12,10 +13,11 @@ class AttendanceController extends Controller
     public function index()
     {
         //show unconfirmed attendace
-        $this->data['items'] = Attendance::getAttendanceData("New");
-        $this->data['title']            =   'Attendance Sheet';
-        $this->data['cardTitle']        =   'Unconfirmed Attendance';
-        $this->data['cardSubtitle']        =   'Show Unconfirmed Attendance records';
+        $branchID = HttpSession::get('branch');
+        $this->data['items']        = Attendance::getAttendanceData($branchID, "New");
+        $this->data['title']        =   'Attendance Sheet';
+        $this->data['cardTitle']    =   'Unconfirmed Attendance';
+        $this->data['cardSubtitle'] =   'Show Unconfirmed Attendance records';
         $this->data['setAttendanceURL'] =   'attendance/set/state';
 
         $this->data['canChange'] = true;
@@ -28,11 +30,12 @@ class AttendanceController extends Controller
     {
 
         $request->validate([
+            "branchID" => "required",
             "from" => "required",
             "to" => "required",
         ]);
 
-        $this->data['items'] = Attendance::getAttendanceData($request->type, $request->from, $request->to, $request->doctor);
+        $this->data['items'] = Attendance::getAttendanceData($request->branchID, $request->type, $request->from, $request->to, $request->doctor);
 
         $this->data['title']        =   'Attendance Sheet Report';
         $this->data['cardTitle']    =   'Attendance';
@@ -68,10 +71,11 @@ class AttendanceController extends Controller
     public function addAttendance(Request $request)
     {
         $request->validate([
+            "branchID"  =>  "required|exists:branches,id",
             "doctorID"  =>  "required",
             "date"      =>  "required"
         ]);
 
-        return Attendance::createAttendance($request->doctorID, $request->date, $request->comment, $request->shifts);
+        return Attendance::createAttendance($request->branchID, $request->doctorID, $request->date, $request->comment, $request->shifts);
     }
 }

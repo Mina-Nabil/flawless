@@ -27,11 +27,15 @@ class Feedback extends Model
 
 
     //Query 
-    public static function getFeedbackData($state = null, $from = null, $to = null, $caller = null)
+    public static function getFeedbackData($branchID = 0, $state = null, $from = null, $to = null, $caller = null)
     {
-        $query = self::with('caller', 'session.patient');
+        $query = self::with('caller', 'session.patient', 'branch');
         if (!is_null($state) && $state != 'All') {
             $query = $query->where("FDBK_STTS", $state);
+        }
+
+        if (!is_null($branchID) && $branchID > 0) {
+            $query = $query->where("FLUP_BRCH_ID", $branchID);
         }
 
         if (!is_null($caller) && $caller > 0) {
@@ -46,18 +50,23 @@ class Feedback extends Model
         return $query->get();
     }
 
-    public static function createFeedback($sessionID, $date, $comment = null)
+    public static function createFeedback($branchID, $sessionID, $date, $comment = null)
     {
         return self::insert([
+            "FDBK_BRCH_ID"  =>  $branchID,
             "FDBK_SSHN_ID"  =>  $sessionID,
             "FDBK_DATE"     =>  $date,
             "FDBK_TEXT"     =>  $comment
         ]);
     }
 
-    static function getUnconfirmedCount()
+    static function getUnconfirmedCount($branchID = 0)
     {
-        return self::where("FDBK_STTS", "New")->whereRaw("FDBK_DATE <= CURDATE()")->get()->count();
+        $query = self::where("FDBK_STTS", "New")->whereRaw("FDBK_DATE <= CURDATE()");
+        if ($branchID != 0) {
+            $query = $query->where('FDBK_BRCH_ID', $branchID);
+        }
+        return $query->get()->count();
     }
 
     ///relations
@@ -69,5 +78,10 @@ class Feedback extends Model
     function session()
     {
         return $this->belongsTo("App\Models\Session", "FDBK_SSHN_ID");
+    }
+
+    function branch()
+    {
+        return $this->belongsTo(Branch::class, "FDBK_BRCH_ID");
     }
 }

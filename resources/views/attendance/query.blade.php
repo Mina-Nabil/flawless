@@ -8,8 +8,26 @@
             <div class="card-body">
                 <h4 class="card-title">{{$formTitle}}</h4>
                 <h6 class="card-subtitle">{{$formSubtitle}}</h6>
-                <form class="form pt-3" method="post" >
+                <form class="form pt-3" method="post">
                     @csrf
+
+                    @if(session('branch')==0)
+                    <div class="col-12 form-group">
+                        <label>Branch</label>
+                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=branchID>
+                            <option value=0> All</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger">{{$errors->first('branchID')}}</small>
+                    </div>
+                    @elseif(session('branch')>0)
+                    <input type="hidden" value="{{session('branch')}}" name=branchID />
+                    @else
+                    <p class="text-danger">Unable to find branch! Please select branch</p>
+                    @endif
+                    
                     <div class="form-group">
                         <label>Attendance State*</label>
                         <div class="input-group mb-3">
@@ -26,9 +44,9 @@
                     <div class="form-group">
                         <label>Doctor</label>
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
-                            <option value="0" >All</option>
+                            <option value="0">All</option>
                             @foreach($doctors as $doctor)
-                            <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}}  </option>
+                            <option value="{{$doctor->id}}"> {{$doctor->DASH_USNM}} </option>
                             @endforeach
                         </select>
                     </div>
@@ -50,7 +68,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 
                 </form>
@@ -59,5 +77,5 @@
     </div>
 
 </div>
-    
+
 @endsection

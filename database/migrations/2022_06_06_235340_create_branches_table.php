@@ -40,14 +40,6 @@ class CreateBranchesTable extends Migration
             $table->foreignId('ATND_BRCH_ID')->default(1)->constrained('branches');
         });
 
-        Schema::table('followups', function (Blueprint $table) {
-            $table->foreignId('FLUP_BRCH_ID')->default(1)->constrained('branches');
-        });
-
-        Schema::table('feedbacks', function (Blueprint $table) {
-            $table->foreignId('FDBK_BRCH_ID')->default(1)->constrained('branches');
-        });
-
         Schema::table('sessions', function (Blueprint $table) {
             $table->foreignId('SSHN_BRCH_ID')->default(1)->constrained('branches');
         });
@@ -60,6 +52,31 @@ class CreateBranchesTable extends Migration
      */
     public function down()
     {
+        Schema::table('dash_users', function (Blueprint $table){
+            $table->dropForeign('dash_users_dash_brch_id_foreign');
+            $table->dropColumn('DASH_BRCH_ID');
+        });
+      
+        Schema::table('cash_transactions', function (Blueprint $table){
+            $table->dropForeign('cash_transactions_cash_brch_id_foreign');
+            $table->dropColumn('CASH_BRCH_ID');
+        });
+      
+        Schema::table('visa_transactions', function (Blueprint $table){
+            $table->dropForeign('visa_transactions_visa_brch_id_foreign');
+            $table->dropColumn('VISA_BRCH_ID');
+        });
+      
+        Schema::table('attendance', function (Blueprint $table){
+            $table->dropForeign('attendance_atnd_brch_id_foreign');
+            $table->dropColumn('ATND_BRCH_ID');
+        });
+      
+        Schema::table('sessions', function (Blueprint $table){
+            $table->dropForeign('sessions_sshn_brch_id_foreign');
+            $table->dropColumn('SSHN_BRCH_ID');
+        });
+      
         Schema::dropIfExists('branches');
     }
 }

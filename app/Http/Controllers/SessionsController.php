@@ -17,7 +17,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session as FacadesSession;
+use Illuminate\Support\Facades\Session as HttpSession;
 
 class SessionsController extends Controller
 {
@@ -25,7 +25,7 @@ class SessionsController extends Controller
     //home pages
     public function index($items = null)
     {
-        $branch_ID = FacadesSession::get('branch');
+        $branch_ID = HttpSession::get('branch');
         //title
         $this->data['title'] = "FLAWLESS Dashboard";
 
@@ -35,17 +35,17 @@ class SessionsController extends Controller
         $endOfMonth = (new DateTime())->format('Y-m-t');
 
         //counts
-        $this->data['newSessionsCount']      = Session::getNewCount($startOfLast2Month, $endOfMonth);
-        $this->data['doneSessionsCount']     = Session::getDoneCount($startOfMonth, $endOfMonth);
-        $this->data['pendingPaymentCount']  = Session::getPendingPaymentCount();
-        $this->data['todaySessionsCount']    = Session::getTodaySessionsCount();
+        $this->data['newSessionsCount']      = Session::getNewCount($branch_ID, $startOfLast2Month, $endOfMonth);
+        $this->data['doneSessionsCount']     = Session::getDoneCount($branch_ID, $startOfMonth, $endOfMonth);
+        $this->data['pendingPaymentCount']  = Session::getPendingPaymentCount($branch_ID);
+        $this->data['todaySessionsCount']    = Session::getTodaySessionsCount($branch_ID);
 
         //attendance count
-        $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount();
+        $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount($branch_ID);
         //followups count
-        $this->data['followupsCount'] = FollowUp::getUnconfirmedCount();
+        $this->data['followupsCount'] = FollowUp::getUnconfirmedCount($branch_ID);
         //followups count
-        $this->data['feedbacksCount'] = Feedback::getUnconfirmedCount();
+        $this->data['feedbacksCount'] = Feedback::getUnconfirmedCount($branch_ID);
 
         //cash data
         $this->data['paidToday'] = Cash::paidToday($branch_ID);
@@ -61,13 +61,13 @@ class SessionsController extends Controller
 
 
         if ($items == null || $items == "new") {
-            $this->data['sessions'] = Session::getNewSessions($startOfLast2Month, $endOfMonth);
+            $this->data['sessions'] = Session::getNewSessions($branch_ID, $startOfLast2Month, $endOfMonth);
         } else if ($items == "today") {
-            $this->data['sessions'] = Session::getTodaySessions();
+            $this->data['sessions'] = Session::getTodaySessions($branch_ID);
         } else if ($items == "pending") {
-            $this->data['sessions'] = Session::getPendingPaymentSessions();
+            $this->data['sessions'] = Session::getPendingPaymentSessions($branch_ID);
         } else if ($items == "done") {
-            $this->data['sessions'] = Session::getDoneSessions($startOfMonth, $endOfMonth);
+            $this->data['sessions'] = Session::getDoneSessions($branch_ID, $startOfMonth, $endOfMonth);
         }
 
         //Urls
@@ -87,10 +87,11 @@ class SessionsController extends Controller
 
     public function calendar()
     {
+        $branch_ID = HttpSession::get('branch');
         $this->data['title']    =   "Calendar";
         $startOfYear = (new DateTime())->format('Y-01-01');
         $endOfYear = (new DateTime())->format('Y-12-31');
-        $this->data['sessions'] =   Session::getSessions('desc', null, $startOfYear, $endOfYear);
+        $this->data['sessions'] =   Session::getSessions($branch_ID, 'desc', null, $startOfYear, $endOfYear);
         return view('layouts.calendar', $this->data);
     }
 
@@ -157,7 +158,7 @@ class SessionsController extends Controller
         $session->clearServices();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false, $request->isDoctor[$key]=="on" ? true : false, $request->isCollected[$key] );
+                $session->addService($pricelistID, $request->unit[$key], $request->note[$key], false, $request->isDoctor[$key] == "on" ? true : false, $request->isCollected[$key]);
             }
 
         if (isset($request->isCommission) && $request->isCommission == "on")
@@ -251,12 +252,13 @@ class SessionsController extends Controller
     public function loadQuery(Request $request)
     {
         $request->validate([
+            "branchID"  =>  "required|numeric",
             "from"  =>  "required",
             "to"    =>  "required"
         ]);
 
         //query
-        $this->data['items'] = Session::getSessions("asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
+        $this->data['items'] = Session::getSessions($request->branchID, "asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
@@ -296,9 +298,9 @@ class SessionsController extends Controller
         $this->data['tableTitle'] = "Sessions Report";
         $this->data['totalSum'] = $this->data['items']->sum('SSHN_TOTL');
         $this->data['totalDisc'] = $this->data['items']->sum('SSHN_DISC');
-        $this->data['totalDiff'] =$this->data['totalSum'] - $this->data['totalDisc'] ;
-        $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- ' . 
-        'Total Sum: ' . number_format($this->data['totalSum']) . ' Total Discount: ' . number_format($this->data['totalDisc']) . '   (Sum-Disc): ' . number_format($this->data['totalDiff']) ;
+        $this->data['totalDiff'] = $this->data['totalSum'] - $this->data['totalDisc'];
+        $this->data['tableSubtitle'] = "Showing sessions from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y') . ' -- ' .
+            'Total Sum: ' . number_format($this->data['totalSum']) . ' Total Discount: ' . number_format($this->data['totalDisc']) . '   (Sum-Disc): ' . number_format($this->data['totalDiff']);
 
         return view('layouts.table', $this->data);
     }
@@ -338,13 +340,14 @@ class SessionsController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
+            "branchID" =>  "required|numeric",
             "patientID" =>  "required|exists:patients,id",
             "sesDate"      =>  "required|date",
             "start"     =>  "required",
             "end"       =>  "required|after:start",
         ]);
 
-        echo Session::createNewSession($request->patientID, $request->sesDate, $request->start, $request->end, $request->comment);
+        echo Session::createNewSession($request->branchID, $request->patientID, $request->sesDate, $request->start, $request->end, $request->comment);
     }
 
     public function edit(Request $request)

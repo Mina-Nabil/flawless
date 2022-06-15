@@ -19,6 +19,7 @@ class FollowUp extends Model
         "FLUP_LAST_SSHN"
     ];
     protected $fillable = [
+        'FLUP_BRCH_ID',
         'FLUP_DATE',
         "FLUP_LAST_SSHN"
     ];
@@ -41,11 +42,15 @@ class FollowUp extends Model
     }
 
     //Query 
-    public static function getFollowupsData($state = null, $from = null, $to = null, $caller = null)
+    public static function getFollowupsData($branchID = 0, $state = null, $from = null, $to = null, $caller = null)
     {
-        $query = self::with('caller', 'patient');
+        $query = self::with('caller', 'patient', 'branch');
         if (!is_null($state) && $state != 'All') {
             $query = $query->where("FLUP_STTS", $state);
+        }
+
+        if (!is_null($branchID) && $branchID > 0) {
+            $query = $query->where("FLUP_BRCH_ID", $branchID);
         }
 
         if (!is_null($caller) && $caller > 0) {
@@ -60,18 +65,23 @@ class FollowUp extends Model
         return $query->get();
     }
 
-    public static function createFollowup($patientID, $date, $comment = null)
+    public static function createFollowup($branchID, $patientID, $date, $comment = null)
     {
         return self::insert([
+            "FLUP_BRCH_ID"  =>  $branchID,
             "FLUP_PTNT_ID"  =>  $patientID,
             "FLUP_DATE"     =>  $date,
             "FLUP_TEXT"     =>  $comment
         ]);
     }
 
-    static function getUnconfirmedCount()
+    static function getUnconfirmedCount($branchID=0)
     {
-        return self::where("FLUP_STTS", "NEW")->whereRaw("FLUP_DATE <= CURDATE()")->get()->count();
+        $query = self::where("FLUP_STTS", "NEW")->whereRaw("FLUP_DATE <= CURDATE()");
+        if ($branchID != 0) {
+            $query = $query->where('FLUP_BRCH_ID', $branchID);
+        }
+        return $query->get()->count();
     }
 
     ///relations
@@ -82,6 +92,11 @@ class FollowUp extends Model
 
     function patient()
     {
-        return $this->belongsTo(Patient::class, "FLUP_SSHN_ID");
+        return $this->belongsTo(Patient::class, "FLUP_PTNT_ID");
+    }
+
+    function branch()
+    {
+        return $this->belongsTo(Branch::class, "FLUP_BRCH_ID");
     }
 }

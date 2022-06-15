@@ -11,6 +11,7 @@
                     <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
                         <thead>
                             <tr>
+                                <th>Branch</th>
                                 <th>Call On</th>
                                 <th>Session Date</th>
                                 <th>Patient</th>
@@ -26,6 +27,7 @@
                         <tbody>
                             @foreach ($items as $item)
                             <tr>
+                                <td>{{$item->branch->BRCH_NAME}}</td>
                                 <td>{{$item->FDBK_DATE->format('d-M-Y')}}</td>
                                 <td>{{$item->session->SSHN_DATE->format('d-M-Y')}}</td>
                                 <td>{{$item->session->patient->PTNT_NAME}}</td>

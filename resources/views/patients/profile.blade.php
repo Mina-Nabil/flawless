@@ -14,8 +14,12 @@
                 <h6>{{$patient->PTNT_MOBN}}</h6>
                 <small class="text-muted p-t-30 db">Number of sessions</small>
                 <h6>{{$patient->sessions_count}}</h6>
-                <small class="text-muted p-t-30 db">Address</small>
-                <h6>{{$patient->PTNT_ADRS}}</h6>
+                <small class="text-muted p-t-30 db">Packages</small>
+                @foreach($patient->packageItems as $item)
+                @if($item->PTPK_QNTY>0)
+                <h6>{{$item->pricelistItem->item_name}} : {{$item->PTPK_QNTY}}</h6>
+                @endif
+                @endforeach
                 <small class="text-muted p-t-30 db">Since</small>
                 <h6>{{$patient->created_at->format("Y-M-d")}}</h6>
                 <small class="text-muted p-t-30 db">Pricelist</small>

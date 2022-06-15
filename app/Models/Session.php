@@ -47,33 +47,35 @@ class Session extends Model
         return $this->total;
     }
 
-    public static function getNewSessions($startDate, $endDate)
+    public static function getNewSessions($branchID, $startDate, $endDate)
     {
-        return self::getSessions("asc", "New", $startDate, $endDate);
+        return self::getSessions($branchID, "asc", "New", $startDate, $endDate);
     }
 
-    public static function getPendingPaymentSessions()
+    public static function getPendingPaymentSessions($branchID)
     {
-        return self::getSessions("asc", "Pending Payment", null, null);
+        return self::getSessions($branchID, "asc", "Pending Payment", null, null);
     }
 
-    public static function getTodaySessions()
+    public static function getTodaySessions($branchID)
     {
-        return self::getSessions("asc", null, date('Y-m-d'), date('Y-m-d'));
+        return self::getSessions($branchID, "asc", null, date('Y-m-d'), date('Y-m-d'));
     }
 
-    public static function getDoneSessions($startDate, $endDate)
+    public static function getDoneSessions($branchID, $startDate, $endDate)
     {
-        return self::getSessions("desc", "Done", $startDate, $endDate);
+        return self::getSessions($branchID, "desc", "Done", $startDate, $endDate);
     }
 
-    public static function getSessions($order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
+    public static function getSessions($branchID, $order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
     {
-        $rels = ["doctor", "patient", "creator", "accepter"];
+        $rels = ["doctor", "patient", "creator", "accepter", "branch"];
         if ($loadServices)
             array_push($rels, "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area");
         $query = self::with($rels);
 
+        if ($branchID != null && $branchID != 0)
+            $query = $query->where("SSHN_BRCH_ID", "=", $branchID);
 
         if ($state != null && $state != "All")
             $query = $query->where("SSHN_STTS", "=", $state);
@@ -110,11 +112,14 @@ class Session extends Model
         return  $query->get();
     }
 
-    public static function getDoneCount($startDate, $endDate, $doctorID = null)
+    public static function getDoneCount($branchID, $startDate, $endDate, $doctorID = null)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
+        }
+        if ($branchID != 0) {
+            $query = $query->where('SSHN_BRCH_ID', $branchID);
         }
         return $query->count();
     }
@@ -148,20 +153,32 @@ class Session extends Model
         return $sum->totalSum;
     }
 
-    public static function getPendingPaymentCount()
+    public static function getPendingPaymentCount($branchID = 0)
     {
-        return self::where("SSHN_STTS", "Pending Payment")->count();
+        $query = self::where("SSHN_STTS", "Pending Payment");
+        if ($branchID != 0) {
+            $query = $query->where('SSHN_BRCH_ID', $branchID);
+        }
+        return $query->count();
     }
 
-    public static function getTodaySessionsCount()
+    public static function getTodaySessionsCount($branchID = 0)
     {
         $today = (new DateTime())->format('Y-m-d');
-        return self::where("SSHN_DATE", "=", $today)->count();
+        $query = self::where("SSHN_DATE", "=", $today);
+        if ($branchID != 0) {
+            $query = $query->where('SSHN_BRCH_ID', $branchID);
+        }
+        return $query->count();
     }
 
-    public static function getNewCount($startDate, $endDate)
+    public static function getNewCount($branchID = 0, $startDate, $endDate)
     {
-        return self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New")->count();
+        $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New");
+        if ($branchID != 0) {
+            $query = $query->where('SSHN_BRCH_ID', $branchID);
+        }
+        return $query->count();
     }
 
     public static function getMinTotal()
@@ -174,9 +191,10 @@ class Session extends Model
         return self::max('SSHN_TOTL');
     }
 
-    public static function createNewSession($patientID, $date, $startTime, $endTime, $comment = null)
+    public static function createNewSession($branchID, $patientID, $date, $startTime, $endTime, $comment = null)
     {
         $res = self::insertGetId([
+            "SSHN_BRCH_ID"      =>  $branchID,
             "SSHN_PTNT_ID"      =>  $patientID,
             "SSHN_DATE"         =>  $date,
             "SSHN_STRT_TIME"    =>  $startTime,
@@ -409,7 +427,7 @@ class Session extends Model
 
     public function createFeedback()
     {
-        Feedback::createFeedback($this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));
+        Feedback::createFeedback($this->SSHN_BRCH_ID, $this->id, $this->SSHN_DATE->add(new DateInterval('P5D'))->format('Y-m-d'));
     }
 
     public function returnCollectedPackages()
@@ -496,6 +514,11 @@ class Session extends Model
     function accepter()
     {
         return $this->belongsTo("App\Models\DashUser", "SSHN_ACPT_ID");
+    }
+
+    function branch()
+    {
+        return $this->belongsTo(Branch::class, "SSHN_BRCH_ID");
     }
 
     function feedback()
