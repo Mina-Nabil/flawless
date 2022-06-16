@@ -24,7 +24,7 @@ class SessionItem extends Model
             ->join('patients', 'patients.id', '=', 'SSHN_PTNT_ID')
             ->join('pricelist_items', 'pricelist_items.id', '=', 'SHIT_PLIT_ID')
             ->join('devices', 'devices.id', '=', 'PLIT_DVIC_ID')
-            ->join('dashusers', 'dashusers.id', '=', 'SSHN_DCTR_ID')
+            ->join('dash_users', 'dash_users.id', '=', 'SSHN_DCTR_ID')
             ->leftJoin('areas', 'areas.id', '=', 'PLIT_AREA_ID')
             ->whereBetween('SSHN_DATE', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
             ->where('SSHN_DCTR_ID', $doctorID)
