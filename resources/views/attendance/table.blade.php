@@ -11,7 +11,6 @@
                     <table id="attendanceTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table" data-display-length='-1' data-order="[]">
                         <thead>
                             <tr>
-                                <th>Branch</th>
                                 <th>Date</th>
                                 <th>Doctor</th>
                                 @if($showConfirmed)
@@ -25,7 +24,6 @@
                         <tbody>
                             @foreach ($items as $item)
                             <tr>
-                                <td>{{$item->branch->BRCH_NAME}}</td>
                                 <td>{{$item->ATND_DATE->format('d-M-Y')}}</td>
                                 <td>{{$item->doctor->DASH_USNM}}</td>
                                 @if($showConfirmed)
