@@ -79,7 +79,7 @@
                                                     <?php $class="label label-success" ?>
                                                     @break
                                                     @endswitch
-                                                    <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
+                                                    <button class="{{$class}}">{{ $service->SSHN_STTS }}</button>
                                                 </a>
                                             </td>
                                             <td>
