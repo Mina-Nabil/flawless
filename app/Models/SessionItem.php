@@ -24,10 +24,10 @@ class SessionItem extends Model
             ->join('patients', 'patients.id', '=', 'SSHN_PTNT_ID')
             ->join('pricelist_items', 'pricelist_items.id', '=', 'SHIT_PLIT_ID')
             ->join('devices', 'devices.id', '=', 'PLIT_DVIC_ID')
-            ->join('doctors', 'doctors.id', '=', 'SSHN_DCTR_ID')
+            ->join('dashusers', 'dashusers.id', '=', 'SSHN_DCTR_ID')
             ->leftJoin('areas', 'areas.id', '=', 'PLIT_AREA_ID')
             ->whereBetween('SSHN_DATE', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-            ->where('doctors.id', $doctorID)
+            ->where('SSHN_DCTR_ID', $doctorID)
             ->where('SHIT_DCTR', 1)
             ->select('patients.PTNT_NAME', 'sessions.SSHN_STTS', 'devices.DVIC_NAME', 'SHIT_QNTY', 'SHIT_PRCE', 'SHIT_TOTL', "SHIT_SSHN_ID", "AREA_NAME", 'PLIT_TYPE');
 
