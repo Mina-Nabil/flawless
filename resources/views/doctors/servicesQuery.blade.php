@@ -43,7 +43,7 @@
 
                 
                     <div class="form-group col-md-6 m-t-0">
-                        <label>Location</label>
+                        <label>Devices</label>
                         <select class="select2  select2-multiple form-control" multiple="multiple" name=device_ids[]>
                           <option value="-1" selected>All Devices</option>
                           <?php foreach ($devices as $device) { ?>
