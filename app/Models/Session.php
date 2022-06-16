@@ -289,7 +289,7 @@ class Session extends Model
                     $this->SSHN_ACPT_ID = Auth::user()->id;
                     $this->SSHN_PAID = $this->SSHN_PAID + $remainingMoney;
                     $extra = $amount - $remainingMoney;
-                    $this->patient->pay($extra, "Extra Cash Entry from Session#{$this->id}", false);
+                    $this->patient->pay($this->SSHN_BRCH_ID, $extra, "Extra Cash Entry from Session#{$this->id}", false);
                     if ($this->save()) {
                         $this->logEvent(($isCash) ? 'Cash' : 'Visa' . " paid: {$amount} , Extra amount ({$extra}) added to patient balance ");
                     }
@@ -370,7 +370,7 @@ class Session extends Model
                 }
 
             if ($this->SSHN_PTNT_BLNC > 0)
-                $this->patient->pay($this->SSHN_PTNT_BLNC, "Money Refund after Session delete", false);
+                $this->patient->pay($this->SSHN_BRCH_ID, $this->SSHN_PTNT_BLNC, "Money Refund after Session delete", false);
 
             $this->delete();
         });

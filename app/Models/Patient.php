@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DateInterval;
 use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -97,6 +98,19 @@ class Patient extends Model
 
     /////package functions
 
+    public function submitNewPackage($branch, $item_id, $quantity, $price, $isVisa):bool {
+        try{
+            DB::transaction(function ()use($item_id, $quantity, $price, $isVisa, $branch){
+                $this->addPackage($item_id, $quantity, $price);
+                $this->pay($branch, $price, "Payment added from adding package", true, $isVisa, false);
+            });
+        } catch (Exception $e){
+            report($e);
+            return false;
+        }
+        return true;
+    }
+
     public function getAvailablePackagesAttribute()
     {
         return $this->packageItems()->with("pricelistItem", "pricelistItem.area", "pricelistItem.device")->where("PTPK_QNTY", ">", "0")->get();
@@ -115,7 +129,7 @@ class Patient extends Model
      * @param PriceListItem item to be queried if available
      * @return int pricelist item quantity found
      */
-    public function addPackage($itemID, int $quantity, float $price): bool
+    private function addPackage($itemID, int $quantity, float $price): bool
     {
         return $this->packageItems()->create([
             "PTPK_PLIT_ID"  =>  $itemID,
@@ -199,10 +213,9 @@ class Patient extends Model
     }
 
     //transactions
-
-    public function pay($amount, $comment = null, $addEntry = true, $isVisa = false, $updateBalance = true)
+    public function pay($branchID, $amount, $comment = null, $addEntry = true, $isVisa = false, $updateBalance = true)
     {
-        DB::transaction(function () use ($amount, $comment, $addEntry, $isVisa, $updateBalance) {
+        DB::transaction(function () use ($branchID, $amount, $comment, $addEntry, $isVisa, $updateBalance) {
             if ($updateBalance)
                 $this->PTNT_BLNC += $amount;
             $payment =  new PatientPayment();
@@ -216,9 +229,9 @@ class Patient extends Model
             if ($addEntry) {
                 $entryTitle = "Recieved from " . $this->PTNT_NAME;
                 if (!$isVisa) {
-                    Cash::entry($entryTitle, $amount, 0, $comment);
+                    Cash::entry($branchID, $entryTitle, $amount, 0, $comment);
                 } else {
-                    Visa::entry($entryTitle, $amount, 0, $comment);
+                    Visa::entry($branchID, $entryTitle, $amount, 0, $comment);
                 }
             }
             $this->save();

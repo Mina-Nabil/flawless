@@ -12,6 +12,7 @@ use App\Models\PriceList;
 use App\Models\Session;
 use App\Rules\triplename;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session as HttpSession;
 use Illuminate\Validation\Rule;
 
 class PatientsController extends Controller
@@ -137,14 +138,18 @@ class PatientsController extends Controller
 
     public function pay(Request $request)
     {
+
         $request->validate([
             "amount"        => "required|numeric",
             "patientID"     => "required|exists:patients,id",
+            "branchID"     => "nullable|exists:branches,id",
         ]);
+        $branch_ID = $request->branchID ?? HttpSession::get('branch');
 
+        /** @var Patient */
         $patient = Patient::findOrFail($request->patientID);
         $isVisa = (isset($request->isVisa) &&  $request->isVisa == "on") ? true : false;
-        $patient->pay($request->amount, $request->comment, true, $isVisa);
+        $patient->pay($branch_ID, $request->amount, $request->comment, true, $isVisa);
         if ($request->goToHome) {
             return redirect($this->homeURL);
         } else {
@@ -168,14 +173,17 @@ class PatientsController extends Controller
     public function addPackage(Request $request)
     {
         $request->validate([
-            "id" => "required"
+            "id" => "required",
+            "branchID"     => "nullable|exists:branches,id",
         ]);
+        $branch_ID = $request->branchID ?? HttpSession::get('branch');
+        /** @var Patient */
         $patient = Patient::findOrFail($request->id);
         $isVisa = (isset($request->cashRadio) &&  $request->cashRadio == "visa") ? true : false;
+        $branch_ID = $request->branchID ?? HttpSession::get('branch');
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $patient->addPackage($pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key]);
-                $patient->pay($request->price[$key], "Payment added from adding package", true, $isVisa, false);
+                $patient->submitNewPackage($branch_ID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa );;
             }
         return redirect("patients/profile/" . $patient->id);
     }
