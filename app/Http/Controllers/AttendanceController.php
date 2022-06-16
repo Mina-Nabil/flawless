@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     {
         //show unconfirmed attendace
         $branchID = HttpSession::get('branch');
-        $this->data['items']        = Attendance::getAttendanceData($branchID, "New");
+        $this->data['items']        = Attendance::getAttendanceData("New");
         $this->data['title']        =   'Attendance Sheet';
         $this->data['cardTitle']    =   'Unconfirmed Attendance';
         $this->data['cardSubtitle'] =   'Show Unconfirmed Attendance records';
@@ -30,12 +30,11 @@ class AttendanceController extends Controller
     {
 
         $request->validate([
-            "branchID" => "required",
             "from" => "required",
             "to" => "required",
         ]);
 
-        $this->data['items'] = Attendance::getAttendanceData($request->branchID, $request->type, $request->from, $request->to, $request->doctor);
+        $this->data['items'] = Attendance::getAttendanceData( $request->type, $request->from, $request->to, $request->doctor);
 
         $this->data['title']        =   'Attendance Sheet Report';
         $this->data['cardTitle']    =   'Attendance';

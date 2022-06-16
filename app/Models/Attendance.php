@@ -60,7 +60,7 @@ class Attendance extends Model
     //Query 
     public static function getAttendanceData( $type = null, $from = null, $to = null, $doctor = null)
     {
-        $query = Attendance::with('doctor', 'branch');
+        $query = Attendance::with('doctor');
         if (!is_null($type))
             if ($type == 'NotCancelled') {
                 $query = $query->where("ATND_STTS", "!=", "Cancelled");

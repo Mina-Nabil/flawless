@@ -44,7 +44,7 @@ class ReportsController extends Controller
         $this->data['totalPaid']        =   Session::getDoctorSum($startDate, $endDate, $doctor->id);
         $this->data['sessionsCount']    =   $this->data['sessions']->count();
 
-        $this->data['attendance']       =   Attendance::getAttendanceData(0, "NotCancelled", $startDate, $endDate, $doctor->id);
+        $this->data['attendance']       =   Attendance::getAttendanceData("NotCancelled", $startDate, $endDate, $doctor->id);
         $this->data['totalShifts']    =   $this->data['attendance']->sum("ATND_SHFT");
 
         //table info
