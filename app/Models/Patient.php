@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -254,7 +255,7 @@ class Patient extends Model
         });
     }
 
-    public function scopeLoadBy($query, $channel_ids, $locations_ids)
+    public function scopeLoadBy($query, $channel_ids, $locations_ids, $from=null, $to=null)
     {
         if (!in_array(-1, $locations_ids)) {
             $query = $query->where(function ($query) use ($locations_ids) {
@@ -268,7 +269,15 @@ class Patient extends Model
                     $query->orWhere('PTNT_CHNL_ID', '=', $channel_id);
             });
         }
+        if($from!=null){
+            $fromDate = new Carbon($from);
+            $query = $query->whereDate('created_at', ">=", $fromDate->format('Y-m-d'));
+        }
 
+        if($to!=null){
+            $toDate = new Carbon($to);
+            $query = $query->whereDate('created_at', "<=", $toDate->format('Y-m-d'));
+        }
 
         return $query;
     }

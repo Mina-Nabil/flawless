@@ -31,6 +31,20 @@
                         </select>
                       </div>
 
+                      <div class="col-6 form-group">
+                        <label>From*</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name=from >
+                        </div>
+                    </div>
+
+                    <div class="col-6 form-group">
+                        <label>To*</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name=to  >
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 
                 </form>
