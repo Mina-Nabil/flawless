@@ -37,7 +37,7 @@ class HomeController extends Controller
             if (Auth::attempt(array('DASH_USNM' => $userName, 'password' => $passWord, 'DASH_ACTV' => 1), true)) {
                 //logging in
                 if (Auth::user()->isDoctor() == 2) //if doctor
-                    Attendance::createAttendance(Auth::user()->DASH_BRCH_ID, Auth::user()->id, date('Y-m-d'));
+                    Attendance::createAttendance(Auth::user()->id, date('Y-m-d'));
                 return redirect('/home');
             } else {
                 $data['first'] = false;

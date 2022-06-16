@@ -41,7 +41,7 @@ class SessionsController extends Controller
         $this->data['todaySessionsCount']    = Session::getTodaySessionsCount($branch_ID);
 
         //attendance count
-        $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount($branch_ID);
+        $this->data['unconfirmedCount'] = Attendance::getUnconfirmedCount();
         //followups count
         $this->data['followupsCount'] = FollowUp::getUnconfirmedCount($branch_ID);
         //followups count

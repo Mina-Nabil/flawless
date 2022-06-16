@@ -76,6 +76,6 @@ class AttendanceController extends Controller
             "date"      =>  "required"
         ]);
 
-        return Attendance::createAttendance($request->branchID, $request->doctorID, $request->date, $request->comment, $request->shifts);
+        return Attendance::createAttendance($request->doctorID, $request->date, $request->comment, $request->shifts);
     }
 }

@@ -22,12 +22,11 @@ class Attendance extends Model
         return $this->save();
     }
 
-    public static function createAttendance($branch, $doctor, $date, $comment = null, $shifts = 1)
+    public static function createAttendance($doctor, $date, $comment = null, $shifts = 1)
     {
-        $prevAttendance = self::hasAttendance($branch, $doctor, $date);
+        $prevAttendance = self::hasAttendance($doctor, $date);
         if (is_null($prevAttendance)) {
             $insertArr = [
-                "ATND_BRCH_ID"  =>  $branch ?? 1,
                 "ATND_DCTR_ID"  =>  $doctor,
                 "ATND_DATE"     =>  $date,
                 "ATND_SHFT"     =>  $shifts,
@@ -47,22 +46,19 @@ class Attendance extends Model
         return -1; //already has attendance
     }
 
-    private static function hasAttendance($branch, $doctor, $date)
+    private static function hasAttendance($doctor, $date)
     {
-        return self::where("ATND_DCTR_ID", $doctor)->where("ATND_DATE", $date)->where("ATND_BRCH_ID", $branch)->first();
+        return self::where("ATND_DCTR_ID", $doctor)->where("ATND_DATE", $date)->first();
     }
 
-    static function getUnconfirmedCount($branch = 0)
+    static function getUnconfirmedCount()
     {
         $query = self::where("ATND_STTS", "NEW");
-        if ($branch != 0) {
-            $query = $query->where("ATND_BRCH_ID", $branch);
-        }
         return $query->get()->count();
     }
 
     //Query 
-    public static function getAttendanceData($branch = 0, $type = null, $from = null, $to = null, $doctor = null)
+    public static function getAttendanceData( $type = null, $from = null, $to = null, $doctor = null)
     {
         $query = Attendance::with('doctor', 'branch');
         if (!is_null($type))
@@ -71,10 +67,6 @@ class Attendance extends Model
             } elseif ($type == 'NotCancelled') {
                 $query = $query->where("ATND_STTS", $type);
             }
-
-        if (!is_null($branch) && $branch > 0) {
-            $query = $query->where("ATND_BRCH_ID", $branch);
-        }
 
         if (!is_null($doctor) && $doctor > 0) {
             $query = $query->where("ATND_DCTR_ID", $doctor);
@@ -92,11 +84,6 @@ class Attendance extends Model
     function doctor()
     {
         return $this->belongsTo("App\Models\DashUser", "ATND_DCTR_ID");
-    }
-
-    function branch()
-    {
-        return $this->belongsTo(Branch::class, "ATND_BRCH_ID");
     }
 
     function accepter()
