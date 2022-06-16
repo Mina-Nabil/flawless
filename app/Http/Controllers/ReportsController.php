@@ -260,7 +260,7 @@ class ReportsController extends Controller
             "channel_ids"    =>  "required",
             "location_ids"   =>  "required"
         ]);
-        $this->data['items'] = Patient::loadBy($request->channel_ids, $request->location_ids)->with('channel', 'location')->get();
+        $this->data['items'] = Patient::loadBy($request->channel_ids, $request->location_ids, $request->from, $request->to)->with('channel', 'location')->get();
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Main Patients Report";

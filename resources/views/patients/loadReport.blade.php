@@ -32,14 +32,14 @@
                       </div>
 
                       <div class="col-6 form-group">
-                        <label>From*</label>
+                        <label>From</label>
                         <div class="input-group">
                             <input type="date" class="form-control" name=from >
                         </div>
                     </div>
 
                     <div class="col-6 form-group">
-                        <label>To*</label>
+                        <label>To</label>
                         <div class="input-group">
                             <input type="date" class="form-control" name=to  >
                         </div>
