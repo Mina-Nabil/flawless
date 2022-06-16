@@ -37,6 +37,8 @@ Route::get('sessions/delete/{id}', "SessionsController@delete");
 //reports
 Route::get('reports/doctors', "ReportsController@prepareDoctorQuery");
 Route::post('reports/doctors', "ReportsController@loadDoctorData");
+Route::get('reports/doctors/services', "ReportsController@prepareDoctorServicesQuery");
+Route::post('reports/doctors/services', "ReportsController@loadDoctorServicesData");
 Route::get('reports/patients', "ReportsController@preparePatients");
 Route::post('reports/patients', "ReportsController@loadPatients");
 Route::get('reports/cash', "CashController@query");

@@ -100,7 +100,7 @@
                         </div>
                         @if(Auth::user()->isOwner())
                         <li class="ml-auto"> <a class="waves-effect waves-dark" href="{{url('sessions/query')}}" aria-expanded="false"><i class="fas fa-list"></i>Sessions</a>
-                        @endif
+                            @endif
                             {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
@@ -128,10 +128,10 @@
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('reports/revenue')}}">Revenue</a></li>
                                 <li>
-                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Accounts</a>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Doctors</a>
                                     <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{url('reports/cash')}}">Cash</a></li>
-                                        <li><a href="{{url('reports/visa')}}">Visa</a></li>
+                                        <li><a href="{{url('reports/doctors')}}">By Session</a></li>
+                                        <li><a href="{{url('reports/doctors/services')}}">By Service</a></li>
                                     </ul>
                                 </li>
                                 <li>
@@ -143,7 +143,13 @@
                                         <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="{{url('reports/doctors')}}">Doctors</a></li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Accounts</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('reports/cash')}}">Cash</a></li>
+                                        <li><a href="{{url('reports/visa')}}">Visa</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                                 <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
                                 <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>
@@ -528,7 +534,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body">
-           
+
                                 @if(session('branch')==0)
                                 <div class="col-12 form-group">
                                     <label>Branch</label>

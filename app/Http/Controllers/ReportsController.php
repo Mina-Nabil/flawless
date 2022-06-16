@@ -54,6 +54,43 @@ class ReportsController extends Controller
 
         return view("doctors.report", $this->data);
     }
+    public function prepareDoctorServicesQuery()
+    {
+        //page info
+        $this->data['title']            =   'Load Doctor Report';
+        $this->data['formTitle']            =   'Doctors Performance Query per Device';
+        $this->data['formSubtitle']            =   'Set Dates';
+        $this->data['devices']      =   Device::all();
+        return view("doctors.query", $this->data);
+    }
+
+    public function loadDoctorServicesData(Request $request)
+    {
+        $request->validate([
+            "from"      =>  "required",
+            "to"        =>  "required",
+            "doctorID"  =>  "required|exists:dash_users,id"
+        ]);
+
+        $startDate = $request->from;
+        $endDate = $request->to;
+        $doctor = DashUser::findOrFail($request->doctorID);
+
+        // $this->data['sessions']         =   Session::getSessions(0, 'asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
+        $this->data['services']         =   SessionItem::getServicesDoneByDoctor($request->device_ids, $request->doctorID, $request->from, $request->to);
+        $this->data['totalPaid']        =   $this->data['services']->sum('SHIT_TOTL');
+        $this->data['services']    =   $this->data['services']->count();
+
+        $this->data['attendance']       =   Attendance::getAttendanceData("NotCancelled", $startDate, $endDate, $doctor->id);
+        $this->data['totalShifts']    =   $this->data['attendance']->sum("ATND_SHFT");
+
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Doctors Report";
+        $this->data['tableSubtitle'] = "Showing Doctor {$doctor->DASH_USNM} Services Report starting from " . (new DateTime($request->from))->format('d-M-Y') . " to " . (new DateTime($request->to))->format('d-M-Y');
+
+        return view("doctors.servicesReport", $this->data);
+    }
 
     //Revenue Query
     public function prepareRevenue()

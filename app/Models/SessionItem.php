@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class SessionItem extends Model
@@ -14,7 +15,22 @@ class SessionItem extends Model
     ];
 
     private     $device;
-
+    ////static queries
+    public static function getServicesDoneByDoctor($devicesIDs, $doctorID, $from, $to){
+        $fromDate   = new Carbon($from);
+        $toDate     = new Carbon($to);
+        return self::join('sessions', 'sessions.id', '=', 'SHIT_SSHN_ID')
+            ->join('patients', 'patients.id', '=', 'SSHN_PTNT_ID')
+            ->join('pricelist_items', 'pricelist_items.id', '=', 'SHIT_PLIT_ID')
+            ->join('devices', 'devices.id', '=', 'PLIT_DVIC_ID')
+            ->leftJoin('areas', 'areas.id', '=', 'PLIT_AREA_ID')
+            ->whereIn('PLIT_DVIC_ID', $devicesIDs)
+            ->whereBetween('SSHN_DATE', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->where('doctors.id', $doctorID)
+            ->where('SHIT_DCTR', 1)
+            ->select('patients.PTNT_NAME', 'sessions.SSHN_STTS', 'devices.DVIC_NAME', 'SHIT_QNTY' , 'SHIT_PRCE', 'SHIT_TOTL', "SHIT_SSHN_ID", "AREA_NAME", 'PLIT_TYPE')
+            ->get();
+    }
 
     ////scopes
     public function scopeUncollected($query){
