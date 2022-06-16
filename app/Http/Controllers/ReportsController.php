@@ -80,6 +80,7 @@ class ReportsController extends Controller
         $this->data['services']         =   SessionItem::getServicesDoneByDoctor($request->device_ids, $request->doctorID, $request->from, $request->to);
         $this->data['totalPaid']        =   $this->data['services']->sum('SHIT_TOTL');
         $this->data['servicesCount']    =   $this->data['services']->count();
+        $this->data['servicesDiscount']    =   $this->data['services']->average('SSHN_DISC');
 
         $this->data['attendance']       =   Attendance::getAttendanceData("NotCancelled", $startDate, $endDate, $doctor->id);
         $this->data['totalShifts']    =   $this->data['attendance']->sum("ATND_SHFT");
