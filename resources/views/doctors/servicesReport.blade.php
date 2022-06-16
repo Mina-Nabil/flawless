@@ -6,7 +6,7 @@
     <div class="col-lg-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Sessions</h5>
+                <h5 class="card-title">Services</h5>
                 <div class="d-flex m-30 no-block align-items-center">
                     <span class="display-6 text-primary"><i class="far fa-calendar-plus"></i></span>
                     <a href="javascript:void(0)" class="link display-6 ml-auto">{{$servicesCount}}</a>
