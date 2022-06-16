@@ -102,7 +102,7 @@ class Patient extends Model
         try{
             DB::transaction(function ()use($item_id, $quantity, $price, $isVisa, $branch){
                 $this->addPackage($item_id, $quantity, $price);
-                $this->pay($branch, $price, "Payment added from adding package", true, $isVisa, false);
+                $this->pay($branch, $quantity*$price, "Payment added from adding package", true, $isVisa, false);
             });
         } catch (Exception $e){
             report($e);

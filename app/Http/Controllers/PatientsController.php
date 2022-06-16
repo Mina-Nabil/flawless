@@ -142,14 +142,13 @@ class PatientsController extends Controller
         $request->validate([
             "amount"        => "required|numeric",
             "patientID"     => "required|exists:patients,id",
-            "branchID"     => "nullable|exists:branches,id",
+            "branchID"     => "required|exists:branches,id",
         ]);
-        $branch_ID = $request->branchID ?? HttpSession::get('branch');
 
         /** @var Patient */
         $patient = Patient::findOrFail($request->patientID);
         $isVisa = (isset($request->isVisa) &&  $request->isVisa == "on") ? true : false;
-        $patient->pay($branch_ID, $request->amount, $request->comment, true, $isVisa);
+        $patient->pay($request->branchID, $request->amount, $request->comment, true, $isVisa);
         if ($request->goToHome) {
             return redirect($this->homeURL);
         } else {
@@ -174,16 +173,16 @@ class PatientsController extends Controller
     {
         $request->validate([
             "id" => "required",
-            "branchID"     => "nullable|exists:branches,id",
+            "branchID"     => "required|exists:branches,id",
         ]);
-        $branch_ID = $request->branchID ?? HttpSession::get('branch');
+
         /** @var Patient */
         $patient = Patient::findOrFail($request->id);
         $isVisa = (isset($request->cashRadio) &&  $request->cashRadio == "visa") ? true : false;
         $branch_ID = $request->branchID ?? HttpSession::get('branch');
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $patient->submitNewPackage($branch_ID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa );;
+                $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa );;
             }
         return redirect("patients/profile/" . $patient->id);
     }
