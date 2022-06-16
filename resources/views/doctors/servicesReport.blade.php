@@ -61,7 +61,7 @@
                                     @foreach ($services as $service)
                                     <a href="javascript:void(0)">
                                         <tr>
-                                            <td>{{$session->SSHN_DATE}}</td>
+                                            <td>{{$service->SSHN_DATE}}</td>
                                             <td>{{$service->PTNT_NAME}}</td>
                                             <td>
                                                 <a href="{{ url('sessions/details/' . $service->SHIT_SSHN_ID)}}">
