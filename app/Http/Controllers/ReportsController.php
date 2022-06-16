@@ -61,7 +61,7 @@ class ReportsController extends Controller
         $this->data['formTitle']            =   'Doctors Performance Query per Device';
         $this->data['formSubtitle']            =   'Set Dates';
         $this->data['devices']      =   Device::all();
-        return view("doctors.query", $this->data);
+        return view("doctors.servicesQuery", $this->data);
     }
 
     public function loadDoctorServicesData(Request $request)
