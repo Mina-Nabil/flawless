@@ -106,7 +106,7 @@ class Cash extends Model
     public static function entry($branch, $desc, $in = 0, $out = 0, $comment = null)
     {
         $latest = self::where('CASH_BRCH_ID', $branch)->orderBy("id", 'desc')->first();
-        $balance = ($latest->CASH_BLNC ?? 0) + $in - $out;
+        $balance = ($latest ? ($latest->CASH_BLNC ?? 0) : 0) + $in - $out;
 
         $newEntry = new self();
         $newEntry->CASH_IN = $in;
