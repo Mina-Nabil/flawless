@@ -31,7 +31,7 @@ class SessionItem extends Model
             ->where('SHIT_DCTR', 1)
             ->select('patients.PTNT_NAME', 'sessions.SSHN_STTS', 'devices.DVIC_NAME', 'SHIT_QNTY', 'SHIT_PRCE', 'SHIT_TOTL', "SHIT_SSHN_ID", "AREA_NAME", 'PLIT_TYPE');
 
-        if (!in_array('0', $devicesIDs)) {
+        if ($devicesIDs!=null && !in_array('0', $devicesIDs)) {
             $query = $query->whereIn('PLIT_DVIC_ID', $devicesIDs);
         }
 
