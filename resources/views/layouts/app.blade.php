@@ -98,9 +98,9 @@
                                 <img src="{{ asset('images/logo.png') }}" height=60px alt="homepage" class="dark-logo" />
                             </a>
                         </div>
-
+                        @if(Auth::user()->isOwner())
                         <li class="ml-auto"> <a class="waves-effect waves-dark" href="{{url('sessions/query')}}" aria-expanded="false"><i class="fas fa-list"></i>Sessions</a>
-
+                        @endif
                             {{-- <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-list"></i><span class="hide-menu">Sessions</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
@@ -156,16 +156,16 @@
                             @if(Auth::user()->isAdmin())
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                             <ul aria-expanded="false" class="collapse">
+                                @if(Auth::user()->isOwner())
                                 <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
                                 <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
-                                @if(Auth::user()->isOwner())
                                 <li><a href="{{url('dash/users/3')}}">Owners</a></li>
                                 <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
                                 <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                                <li><a href="{{url('branches/home')}}">Branches</a></li>
                                 @endif
                                 <li><a href="{{url('channels/home')}}">Channels</a></li>
                                 <li><a href="{{url('locations/home')}}">Locations</a></li>
-                                <li><a href="{{url('branches/home')}}">Branches</a></li>
                             </ul>
                         </li>
                         @endif
