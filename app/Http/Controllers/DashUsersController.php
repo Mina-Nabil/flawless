@@ -21,27 +21,29 @@ class DashUsersController extends Controller
         $this->data['subTitle'] = ($accountType == 1) ? "Manage, Add and Delete Admins data" : "Manage, Add and Delete Doctors data";
         $this->data['formTitle'] = ($accountType == 1) ? "Add Admins" : "Add Doctors";
         $this->data['cols'] = ['Username', 'Fullname', 'Branch', 'Type', 'Active', 'Edit'];
-        $this->data['atts'] = ['DASH_USNM', 'DASH_FLNM', 
-        ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],     
-        ['foreign' => ['rel' => 'dash_types', 'att' => 'DHTP_NAME']],
-        [
-            'toggle' => [
-                "att"   =>  "DASH_ACTV",
-                "url"   =>  "dash/users/toggle/",
-                "states" => [
-                    "1" => "Active",
-                    "0" => "Disabled",
-                ],
-                "actions" => [
-                    "1" => "disable the User",
-                    "0" => "Activate the User",
-                ],
-                "classes" => [
-                    "1" => "label-success",
-                    "0" => "label-danger",
-                ],
-            ]
-        ], ['edit' => ['url' => 'dash/users/edit/', 'att' => 'id']]];
+        $this->data['atts'] = [
+            'DASH_USNM', 'DASH_FLNM',
+            ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
+            ['foreign' => ['rel' => 'dash_types', 'att' => 'DHTP_NAME']],
+            [
+                'toggle' => [
+                    "att"   =>  "DASH_ACTV",
+                    "url"   =>  "dash/users/toggle/",
+                    "states" => [
+                        "1" => "Active",
+                        "0" => "Disabled",
+                    ],
+                    "actions" => [
+                        "1" => "disable the User",
+                        "0" => "Activate the User",
+                    ],
+                    "classes" => [
+                        "1" => "label-success",
+                        "0" => "label-danger",
+                    ],
+                ]
+            ], ['edit' => ['url' => 'dash/users/edit/', 'att' => 'id']]
+        ];
         $this->data['homeURL'] = 'dash/users/' . $accountType;
         $this->data['userType'] = $accountType;
     }
@@ -84,8 +86,8 @@ class DashUsersController extends Controller
         $dashUser->DASH_FLNM = $request->fullname;
         $dashUser->DASH_TYPE_ID = $request->type;
         $dashUser->DASH_MOBN = $request->mobn;
-        if($request->branch_id!=0)
-        $dashUser->DASH_BRCH_ID = $request->branch_id;
+        if ($request->branch_id != 0)
+            $dashUser->DASH_BRCH_ID = $request->branch_id;
         $dashUser->DASH_PASS = bcrypt($request->password);
 
         if ($request->hasFile('photo')) {
@@ -114,8 +116,10 @@ class DashUsersController extends Controller
         $dashUser->DASH_FLNM = $request->fullname;
         $dashUser->DASH_MOBN = $request->mobn;
         $dashUser->DASH_TYPE_ID = $request->type;
-        if($request->branch_id!=0)
-        $dashUser->DASH_BRCH_ID = $request->branch_id;
+        if ($request->branch_id != 0)
+            $dashUser->DASH_BRCH_ID = $request->branch_id;
+        else
+            $dashUser->DASH_BRCH_ID = null;
 
         if (isset($request->password)  && strcmp(trim($request->password), '') != 0) {
             $dashUser->DASH_PASS = bcrypt($request->password);
@@ -133,18 +137,21 @@ class DashUsersController extends Controller
         return redirect("dash/users/" . $dashUser->DASH_TYPE_ID);
     }
 
-    public function toggle($userID){
+    public function toggle($userID)
+    {
         $dashUser = DashUser::findOrFail($userID);
         $dashUser->toggle();
         return redirect("dash/users/" . $dashUser->DASH_TYPE_ID);
     }
 
-    public function delete($userID){
+    public function delete($userID)
+    {
         $dashUser = DashUser::findOrFail($userID);
         try {
             Attendance::where("ATND_DCTR_ID", $userID)->delete();
             $dashUser->delete();
-        } catch (Exception $e) { }
+        } catch (Exception $e) {
+        }
         return redirect("dash/users/" . $dashUser->DASH_TYPE_ID);
     }
 }
