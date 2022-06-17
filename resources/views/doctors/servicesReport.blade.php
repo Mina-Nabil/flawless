@@ -54,6 +54,8 @@
                                         <th>Patient</th>
                                         <th>Status</th>
                                         <th>Service</th>
+                                        <th>Unit*Prce.</th>
+                                        <th>Discount</th>
                                         <th>Paid</th>
                                     </tr>
                                 </thead>
@@ -86,8 +88,11 @@
                                                 {{$service->DVIC_NAME}} - {{$service->PLIT_TYPE}}
                                                 @if($service->PLIT_TYPE=="Area") ({{$service->AREA_NAME}}) @endif</p>
                                             </td>
-
-                                            <td>{{number_format($service->SHIT_TOTL-($service->SHIT_TOTL*($service->SSHN_DISC/100)))}}</td>
+                                            <td>
+                                                {{$service->SHIT_QNTY}}*{{$service->SHIT_PRCE}}
+                                            </td>
+                                            <td>{{$service->SSHN_DISC}}%</td>
+                                            <td>{{number_format($service->discounted_total)}}</td>
                                         </tr>
                                     </a>
                                     @endforeach

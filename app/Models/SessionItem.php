@@ -29,8 +29,8 @@ class SessionItem extends Model
             ->whereBetween('SSHN_DATE', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
             ->where('SSHN_DCTR_ID', $doctorID)
             ->where('SHIT_DCTR', 1)
-            ->select('patients.PTNT_NAME', 'sessions.SSHN_STTS', 'devices.DVIC_NAME', 'SHIT_QNTY', 'SHIT_PRCE', 'SHIT_TOTL', "SHIT_SSHN_ID", "AREA_NAME", 'PLIT_TYPE', 'SSHN_DISC');
-
+            ->select('patients.PTNT_NAME', 'sessions.SSHN_STTS', 'devices.DVIC_NAME', 'SHIT_QNTY', 'SHIT_PRCE', 'SHIT_TOTL', "SHIT_SSHN_ID", "AREA_NAME", 'PLIT_TYPE', 'SSHN_DISC')
+            ->selectRaw('SHIT_TOTL * (SSHN_DISC/100) as discounted_total');
         if ($devicesIDs!=null && !in_array('0', $devicesIDs)) {
             $query = $query->whereIn('PLIT_DVIC_ID', $devicesIDs);
         }
