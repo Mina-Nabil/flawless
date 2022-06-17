@@ -19,7 +19,7 @@
                 <h6 class="card-title">Paid</h6>
                 <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
                     <span class="display-6 text-danger"><i class="fas fa-hand-holding-usd"></i></span>
-                    <a href="javascript:void(0)" class="link display-6 ml-auto">{{number_format($totalPaid - ($totalPaid * ($servicesDiscount/100)))}}</a>
+                    <a href="javascript:void(0)" class="link display-6 ml-auto">{{number_format($totalPaid)}}</a>
                 </div>
             </div>
         </div>
