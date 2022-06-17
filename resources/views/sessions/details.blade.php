@@ -75,9 +75,9 @@
                     <div class="col-md-2">
                         @if(Auth::user()->isAdmin())
                         <div class="font-bold mb-2">
-                            Total {{($session->discount > 0) ? "(Discount)" : ""}}
+                            Total {{($session->discount > 0) ? "({$session->SSHN_DISC}% Discount)" : ""}}
                         </div>
-                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->discount > 0) ? "(" .$session->discount. "%)" : ""}}</p>
+                        <p class="text-muted">{{$session->SSHN_TOTL ." EGP"}} {{($session->discount > 0) ? "(" .$session->discount. ")" : ""}}</p>
                         @endif
                     </div>
                     <div class="col-md-2">
@@ -340,7 +340,7 @@
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">
                         <h4 class="card-title">Session Payments</h4>
-                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}}% -
+                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}} ({{$session->SSHN_DISC}}%) -
                             <strong>Remaining: {{$session->remaining_money}}</strong>
                         </h6>
                         @if($session->canEditMoney())
