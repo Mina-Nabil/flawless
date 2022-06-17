@@ -89,7 +89,7 @@
                                                 @if($service->PLIT_TYPE=="Area") ({{$service->AREA_NAME}}) @endif</p>
                                             </td>
                                             <td>
-                                                {{$service->SHIT_QNTY}}*{{$number_format(service->SHIT_PRCE)}}
+                                                {{$service->SHIT_QNTY}}*{{number_format($service->SHIT_PRCE)}}
                                             </td>
                                             <td>{{$service->SSHN_DISC}}%</td>
                                             <td>{{number_format($service->discounted_total)}}</td>
