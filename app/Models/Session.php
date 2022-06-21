@@ -272,7 +272,7 @@ class Session extends Model
                 $remainingMoney = $this->remaining_money;
                 $this->SSHN_PTNT_BLNC = $this->SSHN_PTNT_BLNC + $remainingMoney;
                 $this->SSHN_ACPT_ID = Auth::user()->id;
-                $this->patient->deductBalance($remainingMoney, $this->id);
+                $this->patient->deductBalance($this->SSHN_BRCH_ID, $remainingMoney, $this->id);
                 if ($this->save()) {
                     $this->logEvent("Settled Amount ({$remainingMoney}) from client balance ");
                 }

@@ -56,9 +56,9 @@ class Patient extends Model
         return DB::table('patients')->whereBetween("created_at", [$startOfMonth, $endOfMonth])->count();
     }
 
-    public function deductBalance($moneyToDeducted, $sessionID)
+    public function deductBalance($branchID, $moneyToDeducted, $sessionID)
     {
-        $this->pay(-1 * $moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
+        $this->pay($branchID, -1 * $moneyToDeducted, "Session#{$sessionID} Settle from balance", false, false);
     }
 
     public static function loadMissingPatients($daysFrom, $daysTo)
