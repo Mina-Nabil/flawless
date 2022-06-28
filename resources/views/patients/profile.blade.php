@@ -14,6 +14,8 @@
                 <h6>{{$patient->PTNT_MOBN}}</h6>
                 <small class="text-muted p-t-30 db">Number of sessions</small>
                 <h6>{{$patient->sessions_count}}</h6>
+                <small class="text-muted p-t-30 db">Patient Note</small>
+                <h6>{{$patient->PTNT_NOTE}}</h6>
                 <small class="text-muted p-t-30 db">Packages</small>
                 @foreach($patient->packageItems as $item)
                 @if($item->PTPK_QNTY>0)
@@ -373,6 +375,13 @@
                                     <textarea class="form-control" rows="3" name="address">{{ (isset($patient)) ? $patient->PTNT_ADRS : old('address') }}</textarea>
                                 </div>
                                 <small class="text-danger">{{$errors->first('balance')}}</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Note</label>
+                                <div class="input-group mb-3">
+                                    <textarea class="form-control" rows="2" name="note">{{ (isset($patient)) ? $patient->PTNT_NOTE : old('note') }}</textarea>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-success mr-2">Submit</button>

@@ -414,7 +414,12 @@
                                     <small class="text-danger">{{$errors->first('balance')}}</small>
                                 </div>
 
-
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" name="note"></textarea>
+                                    </div>
+                                </div>
 
                                 <button type="button" onclick="addNewPatient(true)" class="btn btn-success mr-2">Add Patient</button>
 

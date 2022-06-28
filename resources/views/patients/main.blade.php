@@ -53,7 +53,7 @@
                                 <span class="hidden-sm-up"><i class="ti-user"></i></span>
                                 <span class="hidden-xs-down">Patients</span>
                             </a>
-                        </li>        
+                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#addPatient" role="tab" aria-selected="false">
@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                         </div>
-      
+
 
                         <div class="tab-pane" id="addPatient" role="tabpanel">
                             <div class="row">
@@ -89,56 +89,64 @@
                                         <div class="card-body">
                                             <h4 class="card-title">{{ $addPatientFormTitle }}</h4>
                                             {{-- <form class="form pt-3" method="post" action="{{ url($addPatientFormURL) }}" enctype="multipart/form-data"> --}}
-                                            @csrf
+                                                @csrf
 
-                                            <div class="form-group">
-                                                <label>Name*</label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" id="patientName" class="form-control" placeholder="Patient Name" name=name required>
-                                                </div>
-                                                <small class="text-danger">{{$errors->first('name')}}</small>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Mobile*</label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" id="patientMobn" class="form-control" placeholder="Patient Mobile Number" name=mobn required>
-                                                </div>
-                                                <small class="text-danger">{{$errors->first('in')}}</small>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Pricelist*</label>
-                                                <select class="select2 form-control  col-md-12 mb-3 " style="width:100%" id=listID>
-                                                    @foreach($allPricelists as $list)
-                                                    <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
-                                                        {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Balance*</label>
-                                                <div class="input-group mb-3">
-                                                    <input type="number" id="patientBlnc" step=0.01 class="form-control" placeholder="Patient Balance" name=balance value="0" required>
-                                                </div>
-                                                <small class="text-muted">In case patient owes us or we owe him money, default is 0</small>
-                                                <small class="text-danger">{{$errors->first('balance')}}</small>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Address</label>
-                                                <div class="input-group mb-3">
-                                                    <textarea class="form-control" rows="2" name="adrs" id="patientAdrs"></textarea>
+                                                <div class="form-group">
+                                                    <label>Name*</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" id="patientName" class="form-control" placeholder="Patient Name" name=name value="{{old('name')}}" required>
+                                                    </div>
+                                                    <small class="text-danger">{{$errors->first('name')}}</small>
                                                 </div>
 
-                                                <small class="text-danger">{{$errors->first('adrs')}}</small>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label>Mobile*</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" id="patientMobn" class="form-control" placeholder="Patient Mobile Number" name=mobn value="{{old('mobn')}}" required>
+                                                    </div>
+                                                    <small class="text-danger">{{$errors->first('in')}}</small>
+                                                </div>
 
-                                            <button type="button" onclick="addNewPatient(false)" class="btn btn-success mr-2">Add Patient</button>
+                                                <div class="form-group">
+                                                    <label>Pricelist*</label>
+                                                    <select class="select2 form-control  col-md-12 mb-3 " style="width:100%" id=listID>
+                                                        @foreach($allPricelists as $list)
+                                                        <option value="{{$list->id}}" @if($list->PRLS_DFLT) selected @endif >
+                                                            {{$list->PRLS_NAME}} @if($list->PRLS_DFLT)(Default)@endif
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
 
-                                            {{-- </form> --}}
+                                                <div class="form-group">
+                                                    <label>Balance*</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" id="patientBlnc" step=0.01 class="form-control" placeholder="Patient Balance" name=balance value="{{old('balance') ?? 0}}" required>
+                                                    </div>
+                                                    <small class="text-muted">In case patient owes us or we owe him money, default is 0</small>
+                                                    <small class="text-danger">{{$errors->first('balance')}}</small>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Address</label>
+                                                    <div class="input-group mb-3">
+                                                        <textarea class="form-control" rows="2" name="adrs" id="patientAdrs">{{ old('adrs') }}</textarea>
+                                                    </div>
+
+                                                    <small class="text-danger">{{$errors->first('adrs')}}</small>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Note</label>
+                                                    <div class="input-group mb-3">
+                                                        <textarea class="form-control" rows="2" name="note">{{ old('note') }}</textarea>
+                                                    </div>
+                                                </div>
+
+                                                <button type="button" onclick="addNewPatient(false)" class="btn btn-success mr-2">Add Patient</button>
+
+                                                {{--
+                                            </form> --}}
                                         </div>
                                     </div>
                                 </div>
