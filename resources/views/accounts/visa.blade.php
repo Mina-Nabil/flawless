@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(Auth::user()->isOwner())
 <div class="row">
     <div class="col-md-3">
         <div class="card">
@@ -49,6 +50,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <div class="row">
     <div class="col-md-12">
@@ -65,6 +67,7 @@
                                 <span class="hidden-xs-down">Today</span>
                             </a>
                         </li>
+                        @if(Auth::user()->isOwner())
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#trans" role="tab" aria-selected="false">
                                 <span class="hidden-sm-up">
@@ -79,6 +82,7 @@
                                 <span class="hidden-xs-down">Add Payment</span>
                             </a>
                         </li>
+                        @endif
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
@@ -89,6 +93,7 @@
                                 </div>
                             </div>
                         </div>
+                        @if(Auth::user()->isOwner())
                         <div class="tab-pane" id="trans" role="tabpanel">
                             <div class="row">
                                 <div class="col-12">
@@ -161,7 +166,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @endif
                     </div>
                 </div>
             </div>

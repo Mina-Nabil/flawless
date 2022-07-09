@@ -16,7 +16,7 @@ class CheckType
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::user()->isOwner()) {
+        if (Auth::user()->isAdmin()) {
             if (request()->is('cash/*')) {
                 return abort(404);
             }
