@@ -17,7 +17,7 @@ class FollowupsController extends Controller
         $branch_ID = Session::get('branch');
         $yesterday = ((new DateTime())->sub(new DateInterval('P1D')))->format('Y-m-d');
         //show unconfirmed attendace
-        $this->data['items'] = FollowUp::getFollowupsData($branch_ID, "New", $yesterday, date('Y-m-d'));
+        $this->data['items'] = FollowUp::getFollowupsData($branch_ID, "New");
         $this->data['title']            =   'Followup Sheet';
         $this->data['cardTitle']        =   'Pending Patients Follow-ups';
         $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';

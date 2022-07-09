@@ -134,49 +134,64 @@ class Session extends Model
         return $query->sum('totalSum');
     }
 
-    public static function getPaidSum($startDate, $endDate, $doctorID = null)
+    public static function getPaidSum($startDate, $endDate, $doctorID = null, $userID = 0)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
         }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
+        }
         return ($query->sum("SSHN_PAID") + $query->sum("SSHN_PTNT_BLNC"));
     }
 
-    public static function getTotalSum($startDate, $endDate, $doctorID = null)
+    public static function getTotalSum($startDate, $endDate, $doctorID = null, $userID = 0)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
+        }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
         }
         $sum = $query->selectRaw("SUM(SSHN_TOTL * ((100-SSHN_DISC)/100)) as totalSum")->first();
         return $sum->totalSum;
     }
 
-    public static function getPendingPaymentCount($branchID = 0)
+    public static function getPendingPaymentCount($branchID = 0, $userID = 0)
     {
         $query = self::where("SSHN_STTS", "Pending Payment");
         if ($branchID != 0) {
             $query = $query->where('SSHN_BRCH_ID', $branchID);
         }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
+        }
         return $query->count();
     }
 
-    public static function getTodaySessionsCount($branchID = 0)
+    public static function getTodaySessionsCount($branchID = 0, $userID = 0)
     {
         $today = (new DateTime())->format('Y-m-d');
         $query = self::where("SSHN_DATE", "=", $today);
         if ($branchID != 0) {
             $query = $query->where('SSHN_BRCH_ID', $branchID);
         }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
+        }
         return $query->count();
     }
 
-    public static function getNewCount($branchID = 0, $startDate, $endDate)
+    public static function getNewCount($branchID = 0, $startDate, $endDate, $userID = 0)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "New");
         if ($branchID != 0) {
             $query = $query->where('SSHN_BRCH_ID', $branchID);
+        }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
         }
         return $query->count();
     }
