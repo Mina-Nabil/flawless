@@ -143,7 +143,7 @@
                     <div class="card-body">
                         <div class=row>
                             <div class="mb-10 col-3 ">
-                                <button type="button" class="btn btn-success" onclick="addService()" @if(!Auth::user()->isAdmin()) disabled @endif>Add Service</button><br><br>
+                                <button type="button" class="btn btn-success" onclick="addService()" @if(!Auth::user()->canAdmin()) disabled @endif>Add Service</button><br><br>
                             </div>
                         </div>
                         <form class="form " method="post" action="{{ url($addPackagesURL) }}">
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-success" @if(!Auth::user()->isAdmin()) disabled @endif>Submit</button><br><br>
+                            <button type="submit" class="btn btn-success" @if(!Auth::user()->canAdmin()) disabled @endif>Submit</button><br><br>
                         </form>
                         <hr>
                         <div class=row>

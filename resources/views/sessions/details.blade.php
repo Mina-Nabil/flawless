@@ -73,7 +73,7 @@
                         <p class="text-muted">{{$session->patient->PTNT_MOBN}}</p>
                     </div>
                     <div class="col-md-2">
-                        @if(Auth::user()->isAdmin())
+                        @if(Auth::user()->canAdmin())
                         <div class="font-bold mb-2">
                             Total {{($session->discount > 0) ? "({$session->SSHN_DISC}% Discount)" : ""}}
                         </div>
@@ -124,7 +124,7 @@
                     <li class="nav-item"> <a class="nav-link active" role="tab" data-toggle="tab" href="#status">Session Status</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#services">Services</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient</a> </li>
-                    @if(Auth::user()->isAdmin() )
+                    @if(Auth::user()->canAdmin() )
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#settings">Session Info</a> </li>
@@ -168,7 +168,7 @@
                                     <li>
                                         <p class="text-muted">{{$item->pricelistItem->device->DVIC_NAME}} - {{$item->pricelistItem->PLIT_TYPE}} @if($item->pricelistItem->PLIT_TYPE=="Area")
                                             ({{$item->pricelistItem->area->AREA_NAME}}) @endif
-                                            @if(Auth::user()->isAdmin())
+                                            @if(Auth::user()->canAdmin())
                                             {{$item->SHIT_TOTL}}EGP
                                             @endif
                                         </p>
@@ -178,7 +178,7 @@
                                 </ul>
                             </li>
                             @endif
-                            @if(Auth::user()->isAdmin())
+                            @if(Auth::user()->canAdmin())
                             <li>
                                 @if($session->remaining_money != 0)
                                 <p class="text-muted">Payment not yet fully collected please collect payment before setting Session as Done, {{$session->remaining_money}}EGP remaining
@@ -351,7 +351,7 @@
                         </div>
                     </div>
                 </div>
-                @if(Auth::user()->isAdmin() )
+                @if(Auth::user()->canAdmin() )
                 <!--Add Item tab-->
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">

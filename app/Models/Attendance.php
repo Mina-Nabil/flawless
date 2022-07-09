@@ -32,12 +32,12 @@ class Attendance extends Model
                 "ATND_SHFT"     =>  $shifts,
                 "ATND_CMNT"     =>  $comment,
             ];
-            if (Auth::user()->isAdmin()) {
+            if (Auth::user()->canAdmin()) {
                 $insertArr['ATND_STTS'] = 'Confirmed';
                 $insertArr['ATND_USER_ID'] = Auth::user()->id;
             }
             return self::insert($insertArr); //returns 1 if inserted .. 0 if no
-        } elseif (Auth::user()->isAdmin()) {
+        } elseif (Auth::user()->canAdmin()) {
             $prevAttendance->ATND_STTS = "Confirmed";
             $prevAttendance->ATND_USER_ID = Auth::user()->id;
             $prevAttendance->ATND_CMNT = $comment;

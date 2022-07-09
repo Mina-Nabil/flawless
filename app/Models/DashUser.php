@@ -61,9 +61,14 @@ class DashUser extends Authenticatable
         return $this->DASH_BRCH_ID == NULL;
     }
 
-    public function isAdmin()
+    public function canAdmin()
     {
         return ($this->DASH_TYPE_ID == 1 || $this->DASH_TYPE_ID == 3);
+    }
+
+    public function isAdmin()
+    {
+        return ($this->DASH_TYPE_ID == 1);
     }
 
     public function isDoctor()

@@ -106,11 +106,11 @@
                                 <li><a href="{{url('sessions/query')}}">Show</a></li>
                             </ul> --}}
                         </li>
-                        @if(Auth::user()->isAdmin())
+                        @if(Auth::user()->canAdmin())
                         <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
                         </li>
                         @endif
-                        @if(Auth::user()->isAdmin())
+                        @if(Auth::user()->canAdmin())
                         <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
                         </li>
                         @endif
@@ -159,7 +159,7 @@
                         @elseif(Auth::user()->isDoctor())
                         <li> <a class="waves-effect waves-dark" href="{{url('reports/doctors')}}" aria-expanded="false"><i class="fas fa-chart-bar"></i>Doctor Report</a>
                             @endif
-                            @if(Auth::user()->isAdmin())
+                            @if(Auth::user()->canAdmin())
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 @if(Auth::user()->isOwner())
@@ -248,7 +248,7 @@
                             </select>
 
                             @endif
-                            @if(Auth::user()->isAdmin())
+                            @if(Auth::user()->canAdmin())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-session-modal" class="btn btn-info m-b-5 m-l-15 addSessionButton"><i
                                     class="fa fa-plus-circle"></i> Book a Session</a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-patient-modal" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Add

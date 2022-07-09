@@ -47,24 +47,24 @@ class Session extends Model
         return $this->total;
     }
 
-    public static function getNewSessions($branchID, $startDate, $endDate)
+    public static function getNewSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, "asc", "New", $startDate, $endDate);
+        return self::getSessions($branchID, "asc", "New", $startDate, $endDate, null, null, $userID);
     }
 
-    public static function getPendingPaymentSessions($branchID)
+    public static function getPendingPaymentSessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, "asc", "Pending Payment", null, null);
+        return self::getSessions($branchID, "asc", "Pending Payment", null, null, null, null, $userID);
     }
 
-    public static function getTodaySessions($branchID)
+    public static function getTodaySessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, "asc", null, date('Y-m-d'), date('Y-m-d'));
+        return self::getSessions($branchID, "asc", null, date('Y-m-d'), date('Y-m-d'), null, null, $userID);
     }
 
-    public static function getDoneSessions($branchID, $startDate, $endDate)
+    public static function getDoneSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, "desc", "Done", $startDate, $endDate);
+        return self::getSessions($branchID, "desc", "Done", $startDate, $endDate, null, null, $userID);
     }
 
     public static function getSessions($branchID, $order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
@@ -112,7 +112,7 @@ class Session extends Model
         return  $query->get();
     }
 
-    public static function getDoneCount($branchID, $startDate, $endDate, $doctorID = null)
+    public static function getDoneCount($branchID, $startDate, $endDate, $doctorID = null, $userID = 0)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
         if ($doctorID != null) {
@@ -120,6 +120,9 @@ class Session extends Model
         }
         if ($branchID != 0) {
             $query = $query->where('SSHN_BRCH_ID', $branchID);
+        }
+        if ($userID != 0) {
+            $query = $query->where('SSHN_OPEN_ID', $userID);
         }
         return $query->count();
     }
@@ -146,14 +149,11 @@ class Session extends Model
         return ($query->sum("SSHN_PAID") + $query->sum("SSHN_PTNT_BLNC"));
     }
 
-    public static function getTotalSum($startDate, $endDate, $doctorID = null, $userID = 0)
+    public static function getTotalSum($startDate, $endDate, $doctorID = null)
     {
         $query = self::where("SSHN_DATE", ">=", $startDate)->where("SSHN_DATE", "<=", $endDate)->where("SSHN_STTS", "Done");
         if ($doctorID != null) {
             $query = $query->where("SSHN_DCTR_ID", $doctorID)->where("SSHN_CMSH", 1);
-        }
-        if ($userID != 0) {
-            $query = $query->where('SSHN_OPEN_ID', $userID);
         }
         $sum = $query->selectRaw("SUM(SSHN_TOTL * ((100-SSHN_DISC)/100)) as totalSum")->first();
         return $sum->totalSum;
@@ -482,7 +482,7 @@ class Session extends Model
 
     public function canEditDoctor()
     {
-        return (Auth::user()->isAdmin() || $this->SSHN_STTS == "New");
+        return (Auth::user()->canAdmin() || $this->SSHN_STTS == "New");
     }
 
     public function canEditMoney()

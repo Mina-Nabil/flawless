@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="row justify-content-center">
-    @if(Auth::user()->isAdmin())
+    @if(Auth::user()->canAdmin())
     <div class="col-lg-3">
         <div class=row>
             <div class=col-6>
@@ -129,7 +129,7 @@
                             </div>
                         </a>
                     </div>
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->canAdmin())
                     <div class="col-lg-3 col-xlg-3 col-6 ">
                         <a href="{{$doneSessionsURL}}">
                             <div class="card m-b-0">
@@ -154,7 +154,7 @@
                                 <th>Start</th>
                                 {{-- <th>End</th> --}}
                                 <th>Doctor</th>
-                                @if(Auth::user()->isAdmin())
+                                @if(Auth::user()->canAdmin())
                                 <th>Total</th>
                                 @endif
                             </tr>
@@ -188,7 +188,7 @@
                                     <td>{{$session->SSHN_STRT_TIME}}</td>
                                     {{-- <td>{{$session->SSHN_END_TIME}}</td> --}}
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
-                                    @if(Auth::user()->isAdmin())
+                                    @if(Auth::user()->canAdmin())
                                     <td>{{$session->getTotalAfterDiscount()}}</td>
                                     @endif
                                 </tr>

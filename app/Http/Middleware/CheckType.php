@@ -28,7 +28,7 @@ class CheckType
             }
         }
 
-        if (!Auth::user()->isAdmin()) {
+        if (!Auth::user()->canAdmin()) {
             if (request()->is('*/pricelist/*')) {
                 return abort(404);
             }
