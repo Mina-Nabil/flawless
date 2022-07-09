@@ -61,6 +61,8 @@ class FollowUp extends Model
             $query = $query->whereBetween("FLUP_DATE", [
                 $from, $to
             ]);
+        } else {
+            $query = $query->whereRaw("FLUP_DATE <= CURDATE()");
         }
         return $query->get();
     }
@@ -75,7 +77,7 @@ class FollowUp extends Model
         ]);
     }
 
-    static function getUnconfirmedCount($branchID=0)
+    static function getUnconfirmedCount($branchID = 0)
     {
         $query = self::where("FLUP_STTS", "NEW")->whereRaw("FLUP_DATE <= CURDATE()");
         if ($branchID != 0) {
