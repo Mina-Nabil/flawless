@@ -16,7 +16,7 @@ class CheckType
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->isAdmin()) {
+        if (Auth::user()->isDoctor()) {
             if (request()->is('cash/*')) {
                 return abort(404);
             }
