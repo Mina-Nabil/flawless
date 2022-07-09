@@ -25,7 +25,7 @@
                             <tr>
                                 <td>{{$item->branch->BRCH_NAME}}</td>
                                 <td>{{$item->FLUP_DATE->format('d-M-Y')}}</td>
-                                <td>{{$item->patient->profileURL()}}</td>
+                                <td><a href="{{$item->patient->profileURL()}}">{{$item->patient->PTNT_NAME}}</td>
                                 <td>{{$item->caller->DASH_USNM ?? ""}}</td>
                                 <td>{{$item->FLUP_CALL ?? ""}}</td>
                                 <td>
