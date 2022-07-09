@@ -236,6 +236,18 @@ class PatientsController extends Controller
         return redirect("patients/profile/" . $patient->id);
     }
 
+    public function setNote(Request $request)
+    {
+        $request->validate([
+            "id"    =>  "required|exists:patients",
+            "note"  =>  "required"
+        ]);
+        /** @var Patient */
+        $patient = Patient::findOrFail($request->id);
+        $patient->setNote($request->note);
+        return back();
+    }
+
 
     //////?API function
 

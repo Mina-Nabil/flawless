@@ -123,11 +123,12 @@
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item"> <a class="nav-link active" role="tab" data-toggle="tab" href="#status">Session Status</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#services">Services</a> </li>
-                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient History</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient</a> </li>
                     @if(Auth::user()->isAdmin() )
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#settings">Session Info</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#balancelogs">Balance Log</a> </li>
                     @endif
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#log">Log</a> </li>
 
@@ -327,8 +328,23 @@
                 <!--Item Bought tab-->
                 <div class="tab-pane" id="history" role="tabpanel">
                     <div class="card-body">
-                        <h4 class="card-title">Patient's History</h4>
-                        <h6 class="card-subtitle">All Services done to the Patient</h6>
+                        <h4 class="card-title">Patient's Info</h4>
+                        <h6 class="card-subtitle">Patient's Notes & Services</h6>
+                        <div class="col-12">
+                            <form class="form pt-3" method="post" action="{{ $setNoteURL }}">
+                                @csrf
+                                <input name=id type="hidden" value="{{$session->SSHN_PTNT_ID}}">
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" name="note">{{ (isset($session->patient)) ? $session->patient->PTNT_NOTE : old('note') }}</textarea>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success mr-2">Submit</button>
+                            </form>
+                        </div>
+                        <hr>
+
                         <div class="col-12">
                             <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts"
                                 :cardTitle="false" />
@@ -340,7 +356,8 @@
                 <div class="tab-pane" id="payment" role="tabpanel">
                     <div class="card-body">
                         <h4 class="card-title">Session Payments</h4>
-                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}} ({{$session->SSHN_DISC}}%) -
+                        <h6 class="card-subtitle">Total: {{$session->SSHN_TOTL}} - Paid: {{$session->SSHN_PAID}} - Client Balance: {{$session->SSHN_PTNT_BLNC}} - Discount: {{$session->discount}}
+                            ({{$session->SSHN_DISC}}%) -
                             <strong>Remaining: {{$session->remaining_money}}</strong>
                         </h6>
                         @if($session->canEditMoney())
@@ -492,6 +509,26 @@
                             <button type="button" class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($deleteSessionURL)}}', 'delete this session and all its info')">Delete Session</button>
 
                         </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="balancelogs" role="tabpanel">
+                    <div class="card-body">
+                        <h4 class="card-title">Patient's Balance Log</h4>
+                        <h6 class="card-subtitle">Check all patient's balance Log</h6>
+
+                        <ul class="list-group">
+                            @foreach($session->packageLogs as $event)
+                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$event->PKLG_TTLE}}</h5>
+                                    <small>{{$event->user->DASH_USNM}} on {{$event->created_at}}</small>
+                                </div>
+                                <p class="mb-1">{{$event->PKLG_CMNT}}</p>
+                            </a>
+                            @endforeach
+                  
+                        </ul>
                     </div>
                 </div>
                 @endif

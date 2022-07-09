@@ -248,7 +248,7 @@ class Session extends Model
                             $this->addService($item->pricelistItem->id, $item->SHIT_QNTY - $foundPackages, "Added automatically for the uncollected amount after client Package Settlement", false, $item->is_doctor);
                             $item->SHIT_QNTY = $packagesToUse;
                         }
-                        $itemsPrice =  $this->patient->usePackage($item->pricelistItem, $packagesToUse);
+                        $itemsPrice =  $this->patient->usePackage($item->pricelistItem, $packagesToUse, $this->id);
                         $this->SSHN_PTNT_BLNC +=  $itemsPrice;
                         $item->SHIT_PRCE = $itemsPrice / $packagesToUse;
                         $item->SHIT_TOTL = $item->SHIT_PRCE * $item->SHIT_QNTY;
@@ -534,5 +534,10 @@ class Session extends Model
     function logs()
     {
         return $this->hasMany("App\Models\Log", "LOG_SSHN_ID");
+    }
+
+    function packageLogs()
+    {
+        return $this->hasMany(PackageLog::class, "PKLG_SSHN_ID");
     }
 }

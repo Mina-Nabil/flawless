@@ -8,14 +8,16 @@ use App\Models\Patient;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class FollowupsController extends Controller
 {
     public function index()
     {
+        $branch_ID = Session::get('branch');
         $yesterday = ((new DateTime())->sub(new DateInterval('P1D')))->format('Y-m-d');
         //show unconfirmed attendace
-        $this->data['items'] = FollowUp::getFollowupsData("New", $yesterday, date('Y-m-d'));
+        $this->data['items'] = FollowUp::getFollowupsData($branch_ID, "New", $yesterday, date('Y-m-d'));
         $this->data['title']            =   'Followup Sheet';
         $this->data['cardTitle']        =   'Pending Patients Follow-ups';
         $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';

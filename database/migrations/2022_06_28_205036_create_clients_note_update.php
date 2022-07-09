@@ -14,7 +14,7 @@ class CreateClientsNoteUpdate extends Migration
     public function up()
     {
         Schema::table('patients', function (Blueprint $table) {
-            $table->string("PTNT_NOTE")->nullable();
+            $table->text("PTNT_NOTE")->nullable();
         });
     }
 

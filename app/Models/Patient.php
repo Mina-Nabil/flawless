@@ -99,13 +99,14 @@ class Patient extends Model
 
     /////package functions
 
-    public function submitNewPackage($branch, $item_id, $quantity, $price, $isVisa):bool {
-        try{
-            DB::transaction(function ()use($item_id, $quantity, $price, $isVisa, $branch){
+    public function submitNewPackage($branch, $item_id, $quantity, $price, $isVisa): bool
+    {
+        try {
+            DB::transaction(function () use ($item_id, $quantity, $price, $isVisa, $branch) {
                 $this->addPackage($item_id, $quantity, $price);
-                $this->pay($branch, $quantity*$price, "Payment added from adding package", true, $isVisa, false);
+                $this->pay($branch, $quantity * $price, "Payment added from adding package", true, $isVisa, false);
             });
-        } catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
             return false;
         }
@@ -132,18 +133,50 @@ class Patient extends Model
      */
     private function addPackage($itemID, int $quantity, float $price): bool
     {
-        return $this->packageItems()->create([
-            "PTPK_PLIT_ID"  =>  $itemID,
-            "PTPK_QNTY"     =>  $quantity,
-            "PTPK_PRCE"     =>  $price,
-        ]) == true;
+        try {
+            /** @var PriceListItem */
+            $item = PriceListItem::with('device', 'area')->findOrFail($itemID);
+            $title = "Adding Package";
+            $comment = "Adding " . $quantity . " " . $item->device->DVIC_NAME . " " . $item->PLIT_TYPE;
+            if ($item->area != null) {
+                $comment .= " (" . $item->area->AREA_NAME . ")";
+            }
+            $comment .= " for " . $price . "EGP";
+            DB::transaction(function () use ($itemID, $quantity, $price, $title, $comment) {
+                $this->packageItems()->create([
+                    "PTPK_PLIT_ID"  =>  $itemID,
+                    "PTPK_QNTY"     =>  $quantity,
+                    "PTPK_PRCE"     =>  $price,
+                ]);
+                $this->addToPackageLog($title, $quantity, $comment);
+            });
+            return true;
+        } catch (Exception $e) {
+            report($e);
+            return false;
+        }
+    }
+
+    /**
+     * @param $title should include session number or transaction
+     * @param $comment should include package name and price
+     */
+    private function addToPackageLog(string $title, int $amount, string $comment, int $sessionID = null): bool
+    {
+        return $this->packageLogs()->create([
+            "PKLG_TTLE"     =>  $title,
+            "PKLG_DASH_ID"  =>  Auth::user()->id,
+            "PKLG_SSHN_ID"  =>  $sessionID,
+            "PKLG_AMNT"     =>  $amount,
+            "PKLG_CMNT"     =>  $comment,
+        ]) !== null;
     }
 
     /**
      * @param PriceListItem item to be queried if available
      * @return float price of deducted items
      */
-    public function usePackage(PriceListItem $item, int $quantity): float
+    public function usePackage(PriceListItem $item, int $quantity, int $sessionID): float
     {
         $totalDeducted = 0;
         $itemAvailability = $this->packageItems()->sum("PTPK_QNTY");
@@ -160,9 +193,27 @@ class Patient extends Model
                 $itemAvailability = $itemAvailability - $toDeduct;
                 $totalDeducted = $totalDeducted + ($package->PTPK_PRCE * $toDeduct);
                 $package->save();
+                $title = "Using Package";
+                $comment = "Using " . $toDeduct . " " . $item->device->DVIC_NAME . " " . $item->PLIT_TYPE;
+                if ($item->area != null) {
+                    $comment .= " (" . $item->area->AREA_NAME . ")";
+                }
+                $comment .= " for " . $package->PTPK_PRCE . 'EGP';
+                $this->addToPackageLog($title, $toDeduct, $comment, $sessionID);
             }
         }
         return $totalDeducted;
+    }
+
+    public function setNote($note): bool
+    {
+        $this->PTNT_NOTE = $note;
+        try {
+            return $this->save();
+        } catch (Exception $e) {
+            report($e);
+            return false;
+        }
     }
 
     ///////relations
@@ -175,6 +226,11 @@ class Patient extends Model
     public function balanceLogs(): HasMany
     {
         return $this->hasMany(BalanceLog::class, 'BLLG_PTNT_ID');
+    }
+
+    public function packageLogs(): HasMany
+    {
+        return $this->hasMany(PackageLog::class, 'PKLG_PTNT_ID');
     }
 
     public function packageItems(): HasMany
@@ -255,7 +311,7 @@ class Patient extends Model
         });
     }
 
-    public function scopeLoadBy($query, $channel_ids, $locations_ids, $from=null, $to=null)
+    public function scopeLoadBy($query, $channel_ids, $locations_ids, $from = null, $to = null)
     {
         if (!in_array(-1, $locations_ids)) {
             $query = $query->where(function ($query) use ($locations_ids) {
@@ -269,12 +325,12 @@ class Patient extends Model
                     $query->orWhere('PTNT_CHNL_ID', '=', $channel_id);
             });
         }
-        if($from!=null){
+        if ($from != null) {
             $fromDate = new Carbon($from);
             $query = $query->whereDate('created_at', ">=", $fromDate->format('Y-m-d'));
         }
 
-        if($to!=null){
+        if ($to != null) {
             $toDate = new Carbon($to);
             $query = $query->whereDate('created_at', "<=", $toDate->format('Y-m-d'));
         }

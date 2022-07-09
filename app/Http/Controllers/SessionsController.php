@@ -101,7 +101,7 @@ class SessionsController extends Controller
 
         $this->data['session'] = Session::with(["logs" => function ($query) {
             $query->orderBy('id', 'desc');
-        }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user")->findOrFail($id);
+        }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user", "packageLogs")->findOrFail($id);
         $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->findOrFail($this->data['session']->SSHN_PTNT_ID);
 
         $this->data['patient_packages'] = $this->data['patient']->available_packages;
@@ -134,6 +134,7 @@ class SessionsController extends Controller
         $this->data['doctorURL']               = "sessions/set/doctor";
         $this->data['discountURL']              = "sessions/set/discount";
         $this->data['editSessionURL']           = "sessions/edit";
+        $this->data['setNoteURL']           = url("patients/setnote");
         $this->data['deleteSessionURL']           = "sessions/delete/" .  $this->data['session']->id;
         $this->data['settleSessionOnBalanceURL'] = url('sessions/settle/balance/' . $this->data['session']->id);
         $this->data['settleSessionOnPackagesURL'] = url('sessions/settle/packages/' . $this->data['session']->id);

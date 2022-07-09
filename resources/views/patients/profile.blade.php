@@ -64,7 +64,7 @@
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add Payment</a> </li>
                 {{-- <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li> --}}
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Info</a> </li>
-                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#log" role="tab">Balance Log</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#balancelogs" role="tab">Balance Log</a> </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
@@ -400,23 +400,38 @@
                                     <h5 class="mb-1 text-dark">{{$log->user->DASH_USNM}}</h5>
                                     <small>{{$log->created_at}}</small>
                                 </div>
-                                <p class="mb-1">{{$log->BLLG_TTLE}}</p><small>
+                                <p class="mb-1">{{$log->BLLG_TTLE}}</p>
+                                <small>
                                     {{$log->BLLG_CMNT}}
                                 </small>
+                            </a>
+                            @endforeach
+                        </ul>
                     </div>
+                </div>
+                <div class="tab-pane" id="balancelogs" role="tabpanel">
+                    <div class="card-body">
+                        <h4 class="card-title">Patient's Balance Log</h4>
+                        <h6 class="card-subtitle">Check all patient's balance Log</h6>
 
-                    <small>{{$log->created_at}}</small>
-                    </a>
-                    @endforeach
-                    </ul>
+                        <ul class="list-group">
+                            @foreach($patient->packageLogs as $event)
+                            <a href="{{$event->PKLG_SSHN_ID ? url('sessions/details/' . $event->PKLG_SSHN_ID) : 'javascript:void(0)'}}"  @if($event->PKLG_SSHN_ID)target=_blank @endif class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$event->PKLG_TTLE}}</h5>
+                                    <small>{{$event->user->DASH_USNM}} on {{$event->created_at}}</small>
+                                </div>
+                                <p class="mb-1">{{$event->PKLG_CMNT}}</p>
+                            </a>
+                            @endforeach
+                  
+                        </ul>
+                    </div>
                 </div>
             </div>
-
-
         </div>
     </div>
-</div>
-<!-- Column -->
+    <!-- Column -->
 </div>
 <script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
 <script src="{{ asset('assets/node_modules/datatables/datatables.min.js') }}"></script>
