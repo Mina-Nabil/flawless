@@ -16,7 +16,7 @@ class CheckType
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->isDoctor()) {
+        if (!Auth::user()->canAdmin()) {
             if (request()->is('cash/*')) {
                 return abort(404);
             }
@@ -26,9 +26,6 @@ class CheckType
             if (request()->is('dash/*')) {
                 return abort(404);
             }
-        }
-
-        if (!Auth::user()->canAdmin()) {
             if (request()->is('*/pricelist/*')) {
                 return abort(404);
             }
