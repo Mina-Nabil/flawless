@@ -38,10 +38,10 @@ class SessionsController extends Controller
         /** @var DashUser */
         $user = Auth::user();
 
-        $this->data['newSessionsCount']      = Session::getNewCount($branch_ID, $startOfLast2Month, $endOfMonth,);
+        $this->data['newSessionsCount']      = Session::getNewCount($branch_ID, $startOfLast2Month, $endOfMonth);
         $this->data['doneSessionsCount']     = Session::getDoneCount($branch_ID, $startOfMonth, $endOfMonth);
         $this->data['pendingPaymentCount']  = Session::getPendingPaymentCount($branch_ID);
-        $this->data['todaySessionsCount']    = Session::getTodaySessionsCount($branch_ID,);
+        $this->data['todaySessionsCount']    = Session::getTodaySessionsCount($branch_ID);
 
 
         //attendance count
@@ -65,13 +65,13 @@ class SessionsController extends Controller
 
 
         if ($items == null || $items == "new") {
-            $this->data['sessions'] = Session::getNewSessions($branch_ID, $startOfLast2Month, $endOfMonth,);
+            $this->data['sessions'] = Session::getNewSessions($branch_ID, $startOfLast2Month, $endOfMonth);
         } else if ($items == "today") {
-            $this->data['sessions'] = Session::getTodaySessions($branch_ID,);
+            $this->data['sessions'] = Session::getTodaySessions($branch_ID);
         } else if ($items == "pending") {
-            $this->data['sessions'] = Session::getPendingPaymentSessions($branch_ID,);
+            $this->data['sessions'] = Session::getPendingPaymentSessions($branch_ID);
         } else if ($items == "done") {
-            $this->data['sessions'] = Session::getDoneSessions($branch_ID, $startOfMonth, $endOfMonth,);
+            $this->data['sessions'] = Session::getDoneSessions($branch_ID, $startOfMonth, $endOfMonth);
         }
 
         //Urls
