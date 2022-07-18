@@ -337,7 +337,7 @@
                                 <div class="form-group">
                                     <label>Note</label>
                                     <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="5" name="note">{{ (isset($session->patient)) ? $session->patient->PTNT_NOTE : old('note') }}</textarea>
+                                        <textarea class="form-control" rows="8" name="note">{{ (isset($session->patient)) ? $session->patient->PTNT_NOTE : old('note') }}</textarea>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-success mr-2">Submit</button>
