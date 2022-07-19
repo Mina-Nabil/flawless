@@ -8,6 +8,8 @@
     <div class="col-lg-4 col-xlg-3 col-md-5">
         <div class="card">
             <div class="card-body">
+                <small class="text-muted">Patient Code </small>
+                <h6>{{$patient->id}}</h6>
                 <small class="text-muted">Patient Name </small>
                 <h6>{{$patient->PTNT_NAME}}</h6>
                 <small class="text-muted p-t-30 db">Phone</small>
