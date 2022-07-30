@@ -81,13 +81,14 @@ class PatientsController extends Controller
         ];
 
         //Pay table
-        $this->data['pays'] = PatientPayment::where('PTPY_PTNT_ID', '=', $this->data['patient']->id)
+        $this->data['pays'] = PatientPayment::with('dash_user')->where('PTPY_PTNT_ID', '=', $this->data['patient']->id)
             ->orderByDesc('id')->get();
         $this->data['payTitle'] = "Patients Account";
         $this->data['paySubtitle'] = "Check all {$this->data['patient']->PTNT_NAME}'s transactions ";
-        $this->data['payCols'] = ['Date', 'Amount', 'Balance', 'Comment'];
+        $this->data['payCols'] = ['Date', 'User', 'Amount', 'Balance', 'Comment'];
         $this->data['payAtts'] = [
             ['date' => ['att' => 'created_at']],
+            ['foreign' =>  ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             ["number" => ['att' => 'PTPY_PAID', 'nums' => 2]],
             ["number" => ['att' => 'PTPY_BLNC', 'nums' => 2]],
             ["comment" => ['att' => 'PTPY_CMNT']],

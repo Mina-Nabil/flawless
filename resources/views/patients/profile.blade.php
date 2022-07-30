@@ -250,7 +250,7 @@
                                         <div class="form-group">
                                             <label>Comment</label>
                                             <div class="input-group mb-3">
-                                                <textarea class="form-control" rows="2" name="comment"></textarea>
+                                                <textarea class="form-control" rows="2" name="comment" required></textarea>
                                             </div>
 
                                             <small class="text-danger">{{$errors->first('comment')}}</small>
