@@ -67,7 +67,7 @@ class Patient extends Model
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
-    public static function loadByBranch($branchID, Carbon|null $from, Carbon|null $to)
+    public static function loadByBranch($branchID, Carbon $from = null, Carbon $to = null)
     {
         $query = self::from('patients AS p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
             ->select('p1.*', 'sessions.SSHN_BRCH_ID')
