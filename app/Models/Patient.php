@@ -71,7 +71,7 @@ class Patient extends Model
     {
         DB::table('patients', 'p1')->join("sessions", "SSHN_PTNT_ID", '=', "patients.id")
             ->whereRaw("sessions.id = 
-                    (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id AND sessions.SSHN_BRCH_ID = {$branchID} AND sessions.id = MIN(id))")
+                    (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id AND sessions.SSHN_BRCH_ID = {$branchID} ORDER BY id asc limit 1)")
             ->get();
     }
 
