@@ -141,6 +141,7 @@
                                         <li><a href="{{url('reports/newpatients')}}">New Patients</a></li>
                                         <li><a href="{{url('reports/toppayers')}}">Top Payers</a></li>
                                         <li><a href="{{url('reports/missing')}}">Where is My Patient?</a></li>
+                                        <li><a href="{{url('reports/fromwhere')}}">By Branch</a></li>
                                     </ul>
                                 </li>
                                 <li>

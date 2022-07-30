@@ -51,6 +51,8 @@ Route::get('reports/devices', "ReportsController@prepareDevicesRevenue");
 Route::post('reports/devices', "ReportsController@loadDevicesRevenue");
 Route::get('reports/missing', "ReportsController@prepareMissingPatients");
 Route::post('reports/missing', "ReportsController@loadMissingPatients");
+Route::get('reports/fromwhere', "ReportsController@preparePatientsByBranch");
+Route::post('reports/fromwhere', "ReportsController@loadPatientsByBranch");
 Route::get('reports/toppayers', "ReportsController@prepareTopPayers");
 Route::post('reports/toppayers', "ReportsController@loadTopPayers");
 Route::get('reports/newpatients', "ReportsController@prepareNewPatients");

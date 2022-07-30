@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\Channel;
 use App\Models\DashUser;
 use App\Models\Device;
@@ -198,6 +199,42 @@ class ReportsController extends Controller
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Missing Patients Report";
         $this->data['tableSubtitle'] = "Showing Patients who didn't visit {$request->days} days ago";
+
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
+        $this->data['atts'] = [
+            'id',
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            'PTNT_MOBN',
+            ['number' => ['att' => 'PTNT_BLNC']],
+            ['comment' => ['att' => 'PTNT_ADRS']],
+            ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+            'sessionCount',
+        ];
+
+        return view("layouts.table", $this->data);
+    }
+
+    public function preparePatientsByBranch()
+    {
+        //page info
+        $this->data['title']           =   'Patients Report';
+        $this->data['formTitle']       =   'Load Patients by branch';
+        $this->data['formSubtitle']    =   'Search for patients by their first visit to one of our branches';
+
+        return view("patients.loadByBranch", $this->data);
+    }
+
+    public function loadPatientsByBranch(Request $request)
+    {
+        $request->validate([
+            "branchID"      =>  "required",
+        ]);
+        $branch = Branch::findOrFail($request->branchID);
+        $this->data['items'] = Patient::loadByBranch($request->branchID);
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Missing Patients Report";
+        $this->data['tableSubtitle'] = "Showing Patients who visited {$branch->BRCH_NAME} first";
 
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
         $this->data['atts'] = [
