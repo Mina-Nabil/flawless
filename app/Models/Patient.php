@@ -72,7 +72,8 @@ class Patient extends Model
         return self::from('patients AS p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
             ->select('p1.*')
             ->whereRaw("sessions.id = 
-                    (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id AND sessions.SSHN_BRCH_ID = {$branchID} ORDER BY id asc limit 1)")
+                    (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id ORDER BY sessions.id asc limit 1)")
+            ->where('SSHN_BRNCH_ID', $branchID)
             ->get();
     }
 

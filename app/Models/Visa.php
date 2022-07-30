@@ -87,7 +87,7 @@ class Visa extends Model
         return $query->get()->first()->VISA_BLNC ?? 0;
     }
 
-    public static function entry($branch, $desc, $in = 0, $out = 0, $comment = null)
+    public static function entry(int $branch, $desc, $in = 0, $out = 0, $comment = null)
     {
         $latest = self::where('VISA_BRCH_ID', $branch)->orderBy("id", 'desc')->first();
         $balance = ($latest->VISA_BLNC ?? 0) + $in - $out;
