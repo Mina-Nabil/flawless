@@ -69,7 +69,7 @@ class Patient extends Model
 
     public static function loadByBranch($branchID)
     {
-        return DB::table('patients', 'p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
+        return self::table('patients', 'p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
             ->select('p1.*')
             ->whereRaw("sessions.id = 
                     (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id AND sessions.SSHN_BRCH_ID = {$branchID} ORDER BY id asc limit 1)")
