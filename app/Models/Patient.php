@@ -67,14 +67,20 @@ class Patient extends Model
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
-    public static function loadByBranch($branchID)
+    public static function loadByBranch($branchID, Carbon|null $from, Carbon|null $to)
     {
-        return self::from('patients AS p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
+        $query = self::from('patients AS p1')->join("sessions", "SSHN_PTNT_ID", '=', "p1.id")
             ->select('p1.*', 'sessions.SSHN_BRCH_ID')
             ->whereRaw("sessions.id = 
                     (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id ORDER BY sessions.id asc limit 1)")
-            ->where('sessions.SSHN_BRCH_ID', $branchID)
-            ->get();
+            ->where('sessions.SSHN_BRCH_ID', $branchID);
+        if ($from) {
+            $query = $query->where("created_at", ">=", $from->format('Y-m-d'));
+        }
+        if ($to) {
+            $query = $query->where("created_at", "<=", $to->format('Y-m-d'));
+        }
+        return $query->get();
     }
 
     public static function getTopPayers($limit)

@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Patient;
 use App\Models\Session;
 use App\Models\SessionItem;
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -230,7 +231,9 @@ class ReportsController extends Controller
             "branchID"      =>  "required",
         ]);
         $branch = Branch::findOrFail($request->branchID);
-        $this->data['items'] = Patient::loadByBranch($request->branchID);
+        $from = $request->from ? new Carbon($request->from) :  null;
+        $to = $request->to ? new Carbon($request->to) :  null;
+        $this->data['items'] = Patient::loadByBranch($request->branchID, $from, $to);
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Missing Patients Report";
@@ -319,17 +322,19 @@ class ReportsController extends Controller
         return view("layouts.table", $this->data);
     }
 
-    public function preparePatients(){
+    public function preparePatients()
+    {
         $this->data['title']           =   'Patients';
         $this->data['formTitle']       =   'Main Patients Report';
         $this->data['formSubtitle']    =   'Load Patients by Channels, Locations';
-        
+
         $this->data['channels']    =   Channel::all();
         $this->data['locations']    =   Location::all();
         return view("patients.loadReport", $this->data);
     }
 
-    public function loadPatients(Request $request){
+    public function loadPatients(Request $request)
+    {
         $request->validate([
             "channel_ids"    =>  "required",
             "location_ids"   =>  "required"
@@ -338,9 +343,9 @@ class ReportsController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Main Patients Report";
-        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " Patients " ;
+        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " Patients ";
 
-        $this->data['cols'] = ['Code', 'Location' , 'Channel' , 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
+        $this->data['cols'] = ['Code', 'Location', 'Channel', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
         $this->data['atts'] = [
             'id',
             ['foreign' => ['rel' => 'location', 'att' => 'LOCT_NAME']],

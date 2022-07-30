@@ -10,6 +10,18 @@
                 <h6 class="card-subtitle">{{$formSubtitle}}</h6>
                 <form class="form pt-3" method="post">
                     @csrf
+                    <div class="col-6 form-group">
+                        <label>From*</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name=from >
+                        </div>
+                    </div>
+                    <div class="col-6 form-group">
+                        <label>To*</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name=to value={{date("Y-m-d")}} >
+                        </div>
+                    </div>
 
                     <div class="col-12 form-group">
                         <label>Branch</label>
