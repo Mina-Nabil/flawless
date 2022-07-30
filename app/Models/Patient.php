@@ -75,10 +75,10 @@ class Patient extends Model
                     (SELECT id from sessions where sessions.SSHN_PTNT_ID = p1.id ORDER BY sessions.id asc limit 1)")
             ->where('sessions.SSHN_BRCH_ID', $branchID);
         if ($from) {
-            $query = $query->where("created_at", ">=", $from->format('Y-m-d'));
+            $query = $query->where("p1.created_at", ">=", $from->format('Y-m-d'));
         }
         if ($to) {
-            $query = $query->where("created_at", "<=", $to->format('Y-m-d'));
+            $query = $query->where("p1.created_at", "<=", $to->format('Y-m-d'));
         }
         return $query->get();
     }

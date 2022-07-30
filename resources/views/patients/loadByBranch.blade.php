@@ -10,30 +10,31 @@
                 <h6 class="card-subtitle">{{$formSubtitle}}</h6>
                 <form class="form pt-3" method="post">
                     @csrf
-                    <div class="col-6 form-group">
-                        <label>From*</label>
-                        <div class="input-group">
-                            <input type="date" class="form-control" name=from >
+                    <div class=row>
+                        <div class="col-6 form-group">
+                            <label>From*</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" name=from>
+                            </div>
+                        </div>
+                        <div class="col-6 form-group">
+                            <label>To*</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" name=to value={{date("Y-m-d")}}>
+                            </div>
+                        </div>
+
+                        <div class="col-12 form-group">
+                            <label>Branch</label>
+                            <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=branchID>
+                                <option value=0> All</option>
+                                @foreach($branches as $branch)
+                                <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger">{{$errors->first('branchID')}}</small>
                         </div>
                     </div>
-                    <div class="col-6 form-group">
-                        <label>To*</label>
-                        <div class="input-group">
-                            <input type="date" class="form-control" name=to value={{date("Y-m-d")}} >
-                        </div>
-                    </div>
-
-                    <div class="col-12 form-group">
-                        <label>Branch</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=branchID>
-                            <option value=0> All</option>
-                            @foreach($branches as $branch)
-                            <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
-                            @endforeach
-                        </select>
-                        <small class="text-danger">{{$errors->first('branchID')}}</small>
-                    </div>
-
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 
                 </form>
