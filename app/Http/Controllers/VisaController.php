@@ -69,7 +69,7 @@ class VisaController extends Controller
             "in"                => "required|numeric",
             "out"               => "required|numeric",
         ]);
-        Visa::entry($request->branch_id, $request->title, $request->in, $request->out, $request->comment);
+        Visa::entry($request->branchID, $request->title, $request->in, $request->out, $request->comment);
         return redirect("visa/home");
     }
 
