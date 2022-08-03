@@ -95,7 +95,7 @@ class VisaController extends Controller
 
         //query
         $this->data['items'] = Visa::filter(
-            $request->branchIDq,
+            $request->branchID,
             $startDate,
             $endDate
         );
