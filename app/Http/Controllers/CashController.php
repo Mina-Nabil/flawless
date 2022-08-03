@@ -20,7 +20,7 @@ class CashController extends Controller
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');
         $this->data['title'] = "Cash Account Page";
-        $this->data['todayCols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['todayCols'] = ['Branch', 'Date', 'User', 'Title', 'In', 'Out', 'Comment'];
         $this->data['todayAtts'] = [
             ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
             ['date' => ['att' => 'created_at']],
@@ -28,21 +28,21 @@ class CashController extends Controller
             'CASH_DESC',
             ["number" => ['att' => 'CASH_IN', 'nums' => 2]],
             ["number" => ['att' => 'CASH_OUT', 'nums' => 2]],
-            ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
+            // ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
             ["comment" => ['att' => 'CASH_CMNT']],
         ];
         //Trans table
         $this->data['trans'] = Cash::latest300($branch_ID)->get();
         $this->data['transTitle'] = "More Transactions";
         $this->data['transSubtitle'] = "Check Latest 300 cash transaction";
-        $this->data['transCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['transCols'] = ['Date', 'User', 'Title', 'In', 'Out', 'Comment'];
         $this->data['transAtts'] = [
             ['date' => ['att' => 'created_at']],
             ['foreign' => ['rel' => 'dash_user', 'att' => 'DASH_USNM']],
             'CASH_DESC',
             ["number" => ['att' => 'CASH_IN', 'nums' => 2]],
             ["number" => ['att' => 'CASH_OUT', 'nums' => 2]],
-            ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
+            // ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
             ["comment" => ['att' => 'CASH_CMNT']],
         ];
 
@@ -96,7 +96,7 @@ class CashController extends Controller
         $totalIn = $this->data['items']->sum('CASH_IN');
         $diff = $totalIn - $totalOut;
 
-        $this->data['cols'] = ["Branch",'Date', 'User', 'Title', 'In', 'Out', 'Balance', 'Comment'];
+        $this->data['cols'] = ["Branch",'Date', 'User', 'Title', 'In', 'Out', 'Comment'];
 
         $this->data['atts'] = [
             ['foreign' => ['rel' => 'branch', 'att' => 'BRCH_NAME']],
@@ -105,7 +105,7 @@ class CashController extends Controller
             'CASH_DESC',
             ["number" => ['att' => 'CASH_IN', 'nums' => 2]],
             ["number" => ['att' => 'CASH_OUT', 'nums' => 2]],
-            ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
+            // ["number" => ['att' => 'CASH_BLNC', 'nums' => 2]],
             ["comment" => ['att' => 'CASH_CMNT']],
         ];
 
