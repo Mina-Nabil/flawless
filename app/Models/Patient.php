@@ -9,7 +9,9 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Auth;
 
 class Patient extends Model
@@ -232,6 +234,20 @@ class Patient extends Model
         }
     }
 
+    public function addNote($note): bool
+    {
+
+        try {
+            return $this->notes()->save(new PatientNote([
+                "PNOT_NOTE"     =>  $note,
+                "PNOT_DASH_ID"  =>  Auth::user()->id
+            ])) ? true : false;
+        } catch (Exception $e) {
+            report($e);
+            return false;
+        }
+    }
+
     ///////relations
 
     public function payments(): HasMany
@@ -254,37 +270,41 @@ class Patient extends Model
         return $this->hasMany(PatientPackage::class, 'PTPK_PTNT_ID')->orderBy("PTPK_QNTY", "desc");
     }
 
-    function followUps()
+    function followUps(): HasMany
     {
         return $this->hasMany(FollowUp::class, "FLUP_PTNT_ID");
     }
 
 
-    public function sessions()
+    public function sessions(): HasMany
     {
         return $this->hasMany(Session::class, "SSHN_PTNT_ID", "id");
     }
 
-    public function services()
+    public function services(): HasManyThrough
     {
         return $this->hasManyThrough(SessionItem::class, Session::class, "SSHN_PTNT_ID", "SHIT_SSHN_ID");
     }
 
-    public function pricelist()
+    public function pricelist(): BelongsTo
     {
         return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
     }
 
-    public function channel()
+    public function channel(): BelongsTo
     {
         return $this->belongsTo("App\Models\Channel", "PTNT_CHNL_ID");
     }
 
-    public function location()
+    public function location(): BelongsTo
     {
         return $this->belongsTo("App\Models\Location", "PTNT_LOCT_ID");
     }
 
+    public function notes(): HasMany
+    {
+        return $this->hasMany(PatientNote::class, "PNOT_PTNT_ID");
+    }
     //transactions
     public function pay($branchID, $amount, $comment = null, $addEntry = true, $isVisa = false, $updateBalance = true)
     {

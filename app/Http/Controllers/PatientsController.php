@@ -51,6 +51,7 @@ class PatientsController extends Controller
         $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
+        $this->data['setNoteURL']           = url("patients/setnote");
         $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
         $this->data['devices']  = Device::all();
         //Services Table
@@ -245,7 +246,7 @@ class PatientsController extends Controller
         ]);
         /** @var Patient */
         $patient = Patient::findOrFail($request->id);
-        $patient->setNote($request->note);
+        $patient->addNote($request->note);
         return back();
     }
 

@@ -124,6 +124,7 @@
                     <li class="nav-item"> <a class="nav-link active" role="tab" data-toggle="tab" href="#status">Session Status</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#services">Services</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#patient_notes">Notes</a> </li>
                     @if(Auth::user()->canAdmin() )
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
@@ -337,12 +338,25 @@
                                 <div class="form-group">
                                     <label>Note</label>
                                     <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="8" name="note">{{ (isset($session->patient)) ? $session->patient->PTNT_NOTE : old('note') }}</textarea>
+                                        <textarea class="form-control" rows="8" name="note">{{  old('note') }}</textarea>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-success mr-2">Submit</button>
                             </form>
                         </div>
+                        <hr>
+                        <h4 class="card-title">Patient's Notes</h4>
+                        <ul class="list-group">
+                            @foreach($session->patient->notes as $note)
+                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$note->user->DASH_USNM}}</h5>
+                                    <small>{{$note->created_at}}</small>
+                                </div>
+                                <p class="mb-1">{{$note->PNOT_NOTE}}</p>
+                            </a>
+                            @endforeach
+                        </ul>
                         <hr>
 
                         <div class="col-12">
@@ -351,6 +365,10 @@
                         </div>
                     </div>
                 </div>
+ 
+
+
+
                 @if(Auth::user()->canAdmin() )
                 <!--Add Item tab-->
                 <div class="tab-pane" id="payment" role="tabpanel">
@@ -512,25 +530,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane" id="balancelogs" role="tabpanel">
-                    <div class="card-body">
-                        <h4 class="card-title">Patient's Balance Log</h4>
-                        <h6 class="card-subtitle">Check all patient's balance Log</h6>
-
-                        <ul class="list-group">
-                            @foreach($session->packageLogs as $event)
-                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1 text-dark">{{$event->PKLG_TTLE}}</h5>
-                                    <small>{{$event->user->DASH_USNM}} on {{$event->created_at}}</small>
-                                </div>
-                                <p class="mb-1">{{$event->PKLG_CMNT}}</p>
-                            </a>
-                            @endforeach
-                  
-                        </ul>
-                    </div>
-                </div>
+       
                 @endif
 
                 <div class="tab-pane" id="log" role="tabpanel">

@@ -61,6 +61,7 @@
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#history" role="tab">Sessions</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#services" role="tab">Services</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#notes" role="tab">Notes</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#packages" role="tab">Packages</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paid" role="tab">Account</a> </li>
                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add Payment</a> </li>
@@ -139,6 +140,41 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="tab-pane" id="notes" role="tabpanel">
+                    <div class="card-body">
+                        <h4 class="card-title">Patient's Notes</h4>
+                        <h6 class="card-subtitle">Patient's Notes added by all users</h6>
+                        <div class="col-12">
+                            <form class="form pt-3" method="post" action="{{ $setNoteURL }}">
+                                @csrf
+                                <input name=id type="hidden" value="{{$patient->id}}">
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="8" name="note">{{ old('note') }}</textarea>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success mr-2">Submit</button>
+                            </form>
+                        </div>
+                        <hr>
+                        <h4 class="card-title">Patient's Notes</h4>
+                        <ul class="list-group">
+                            @foreach($patient->notes as $note)
+                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$note->user->DASH_USNM}}</h5>
+                                    <small>{{$note->created_at}}</small>
+                                </div>
+                                <p class="mb-1">{{$note->PNOT_NOTE}}</p>
+                            </a>
+                            @endforeach
+                        </ul>
+               
+                    </div>
+                </div>
+ 
 
                 <!--Patient Packages tab-->
                 <div class="tab-pane" id="packages" role="tabpanel">
