@@ -165,16 +165,29 @@
                             <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1 text-dark">{{$note->user->DASH_USNM}}</h5>
-                                    <small>{{$note->created_at}}</small>
+                                    <div>
+                                        <small>Added on {{$note->created_at}}</small>
+
+                                        @if(Auth::user()->isOwner())
+                                        @if($note->deleted_at)
+                                        Deleted on {{$note->deleted_at}}
+                                        <button class="btn btn-success fas fa-trash-restore ml-2" onclick="window.location.href='{{$restoreNoteURL.'/'.$note->id}}'"></button>
+                                        @endif
+                                        <button class="btn btn-danger fas fa-trash-alt ml-2" onclick="window.location.href='{{$deleteNoteURL.'/'.$note->id}}'"></button>
+                                        @else
+                                        <button class="btn btn-danger fas fa-eye-slash ml-2" onclick="window.location.href='{{$deleteNoteURL.'/'.$note->id}}'"></button>
+                                        @endif
+
+                                    </div>
                                 </div>
                                 <p class="mb-1">{{$note->PNOT_NOTE}}</p>
                             </a>
                             @endforeach
                         </ul>
-               
+
                     </div>
                 </div>
- 
+
 
                 <!--Patient Packages tab-->
                 <div class="tab-pane" id="packages" role="tabpanel">
@@ -454,7 +467,8 @@
 
                         <ul class="list-group">
                             @foreach($patient->packageLogs as $event)
-                            <a href="{{$event->PKLG_SSHN_ID ? url('sessions/details/' . $event->PKLG_SSHN_ID) : 'javascript:void(0)'}}"  @if($event->PKLG_SSHN_ID)target=_blank @endif class="list-group-item list-group-item-action flex-column align-items-start">
+                            <a href="{{$event->PKLG_SSHN_ID ? url('sessions/details/' . $event->PKLG_SSHN_ID) : 'javascript:void(0)'}}" @if($event->PKLG_SSHN_ID)target=_blank @endif class="list-group-item
+                                list-group-item-action flex-column align-items-start">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1 text-dark">{{$event->PKLG_TTLE}}</h5>
                                     <small>{{$event->user->DASH_USNM}} on {{$event->created_at}}</small>
@@ -462,7 +476,7 @@
                                 <p class="mb-1">{{$event->PKLG_CMNT}}</p>
                             </a>
                             @endforeach
-                  
+
                         </ul>
                     </div>
                 </div>

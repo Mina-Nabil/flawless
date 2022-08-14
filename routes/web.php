@@ -101,6 +101,8 @@ Route::get('patients/add', 'PatientsController@add');
 Route::get('patients/profile/{id}', 'PatientsController@profile');
 Route::post('patients/pay', 'PatientsController@pay');
 Route::post('patients/setnote', 'PatientsController@setNote');
+Route::get('patients/notes/delete/{id}', 'PatientsController@deleteNote');
+Route::get('patients/notes/restore/{id}', 'PatientsController@restoreNote');
 Route::post('patients/addbalance', 'PatientsController@addBalance');
 Route::post('patients/add/package', 'PatientsController@addPackage');
 Route::post('patients/insert', 'PatientsController@insert');

@@ -7,6 +7,7 @@ use App\Models\Device;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Patient;
+use App\Models\PatientNote;
 use App\Models\PatientPayment;
 use App\Models\PriceList;
 use App\Models\Session;
@@ -52,6 +53,8 @@ class PatientsController extends Controller
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['setNoteURL']           = url("patients/setnote");
+        $this->data['deleteNoteURL']           = url("patients/notes/delete");
+        $this->data['restoreNoteURL']           = url("patients/notes/restore");
         $this->data['title'] = "Patient {$this->data['patient']->PTNT_NAME}'s Profile";
         $this->data['devices']  = Device::all();
         //Services Table
@@ -247,6 +250,22 @@ class PatientsController extends Controller
         /** @var Patient */
         $patient = Patient::findOrFail($request->id);
         $patient->addNote($request->note);
+        return back();
+    }
+
+    public function deleteNote($id)
+    {
+        /** @var PatientNote */
+        $patientNote = PatientNote::findOrFail($id);
+        $patientNote->deleteNote();
+        return back();
+    }
+
+    public function restoreNote($id)
+    {
+        /** @var PatientNote */
+        $patientNote = PatientNote::withTrashed()->findOrFail($id);
+        $patientNote->restore();
         return back();
     }
 

@@ -303,7 +303,13 @@ class Patient extends Model
 
     public function notes(): HasMany
     {
-        return $this->hasMany(PatientNote::class, "PNOT_PTNT_ID");
+        $query = $this->hasMany(PatientNote::class, "PNOT_PTNT_ID");
+        /** @var DashUser */
+        $loggedIn = Auth::user();
+        if ($loggedIn->isOwner()) {
+            $query = $query->withTrashed();
+        }
+        return $query;
     }
     //transactions
     public function pay($branchID, $amount, $comment = null, $addEntry = true, $isVisa = false, $updateBalance = true)

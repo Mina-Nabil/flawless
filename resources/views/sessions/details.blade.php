@@ -124,7 +124,6 @@
                     <li class="nav-item"> <a class="nav-link active" role="tab" data-toggle="tab" href="#status">Session Status</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#services">Services</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#history">Patient</a> </li>
-                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#patient_notes">Notes</a> </li>
                     @if(Auth::user()->canAdmin() )
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
@@ -329,8 +328,35 @@
                 <!--Item Bought tab-->
                 <div class="tab-pane" id="history" role="tabpanel">
                     <div class="card-body">
-                        <h4 class="card-title">Patient's Info</h4>
+                        <h4 class="card-title">Patient's Notes</h4>
                         <h6 class="card-subtitle">Patient's Notes & Services</h6>
+
+                        <ul class="list-group">
+                            @foreach($session->patient->notes as $note)
+                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-dark">{{$note->user->DASH_USNM}}</h5>
+                                    <div>
+                                        <small>Added on {{$note->created_at}}</small>
+
+                                        @if(Auth::user()->isOwner())
+                                        @if($note->deleted_at)
+                                        Deleted on {{$note->deleted_at}}
+                                        <button class="btn btn-success fas fa-trash-restore ml-2" onclick="window.location.href='{{$restoreNoteURL.'/'.$note->id}}'"></button>
+                                        @endif
+                                        <button class="btn btn-danger fas fa-trash-alt ml-2" onclick="window.location.href='{{$deleteNoteURL.'/'.$note->id}}'"></button>
+                                        @else
+                                        <button class="btn btn-danger fas fa-eye-slash ml-2" onclick="window.location.href='{{$deleteNoteURL.'/'.$note->id}}'"></button>
+                                        @endif
+
+                                    </div>
+                                </div>
+                                <p class="mb-1">{{$note->PNOT_NOTE}}</p>
+                            </a>
+                            @endforeach
+                        </ul>
+                        <hr>
+                        <h4 class="card-title">Add a Note</h4>
                         <div class="col-12">
                             <form class="form pt-3" method="post" action="{{ $setNoteURL }}">
                                 @csrf
@@ -338,34 +364,21 @@
                                 <div class="form-group">
                                     <label>Note</label>
                                     <div class="input-group mb-3">
-                                        <textarea class="form-control" rows="8" name="note">{{  old('note') }}</textarea>
+                                        <textarea class="form-control" rows="4" name="note">{{  old('note') }}</textarea>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-success mr-2">Submit</button>
                             </form>
                         </div>
-                        <hr>
-                        <h4 class="card-title">Patient's Notes</h4>
-                        <ul class="list-group">
-                            @foreach($session->patient->notes as $note)
-                            <a href="javascript:void(0)" class="list-group-item list-group-item-action flex-column align-items-start">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1 text-dark">{{$note->user->DASH_USNM}}</h5>
-                                    <small>{{$note->created_at}}</small>
-                                </div>
-                                <p class="mb-1">{{$note->PNOT_NOTE}}</p>
-                            </a>
-                            @endforeach
-                        </ul>
-                        <hr>
 
+                        <hr>
+                        <h4 class="card-title">Previous Services</h4>
                         <div class="col-12">
-                            <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts"
-                                :cardTitle="false" />
+                            <x-datatable id="patientServicesTable" :title="'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" />
                         </div>
                     </div>
                 </div>
- 
+
 
 
 
@@ -530,7 +543,7 @@
                     </div>
                 </div>
 
-       
+
                 @endif
 
                 <div class="tab-pane" id="log" role="tabpanel">

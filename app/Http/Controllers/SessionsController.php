@@ -139,6 +139,8 @@ class SessionsController extends Controller
         $this->data['discountURL']              = "sessions/set/discount";
         $this->data['editSessionURL']           = "sessions/edit";
         $this->data['setNoteURL']           = url("patients/setnote");
+        $this->data['deleteNoteURL']           = url("patients/notes/delete");
+        $this->data['restoreNoteURL']           = url("patients/notes/restore");
         $this->data['deleteSessionURL']           = "sessions/delete/" .  $this->data['session']->id;
         $this->data['settleSessionOnBalanceURL'] = url('sessions/settle/balance/' . $this->data['session']->id);
         $this->data['settleSessionOnPackagesURL'] = url('sessions/settle/packages/' . $this->data['session']->id);
