@@ -1175,7 +1175,7 @@
             $('#patientSel').html("null");
 
             patients.forEach(patient => {
-                patOption = new Option(patient.PTNT_NAME, patient.id, false, false)
+                patOption = new Option(patient.PTNT_NAME + ' - ' + patient.PTNT_MOBN, patient.id, false, false)
                 $('#patientSel').append(patOption).trigger('change')
             });
            
