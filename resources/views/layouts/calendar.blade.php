@@ -7,7 +7,16 @@
 
 @section('content')
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-4">
+        <select class="select form-control" style="width:fit-content" onchange="changeBranch()" id=calendarRoom>
+            <option value=0 {{(0==session('branch')) ? 'selected' : '' }}>All</option>
+            @foreach($rooms as $room)
+            <option value="{{$room->id}}" {{($room->id == session('branch')) ? 'selected' : ''}}
+                > {{$branch->BRCH_NAME}}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-8">
         <div class="card">
             <div class="">
                 <div class="row">
@@ -19,15 +28,17 @@
                             </div>
                             <div class="card-body">
                                 <h4>Add a Session</h4>
-                                <a target="_blank" href="https://calendar.google.com/event?action=TEMPLATE&amp;tmeid=NWxhaW9kNzNqbGM2a2V2ODExY3Q0Mmtxb3MgZmxhd2xlc3M3Y2xpbmljQG0&amp;tmsrc=flawless7clinic%40gmail.com"><img border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en.gif"></a>
+                                <a target="_blank" href="https://calendar.google.com/event?action=TEMPLATE&amp;tmeid=NWxhaW9kNzNqbGM2a2V2ODExY3Q0Mmtxb3MgZmxhd2xlc3M3Y2xpbmljQG0&amp;tmsrc=flawless7clinic%40gmail.com"><img
+                                        border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en.gif"></a>
                             </div>
                         </div>
 
                     </div>
                     <div class="col-lg-9">
                         <div class="card-body b-l calender-sidebar">
-                            {{-- <div id="calendar"></div> --}}
-                            <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0" scrolling="yes"></iframe>
+                            <div id="calendar"></div>
+                            {{-- <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0"
+                                scrolling="yes"></iframe> --}}
                         </div>
                     </div>
                 </div>

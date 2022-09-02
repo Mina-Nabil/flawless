@@ -102,7 +102,6 @@ class SessionsController extends Controller
     //////Single Session Functions
     public function details($id)
     {
-
         $this->data['session'] = Session::with(["logs" => function ($query) {
             $query->orderBy('id', 'desc');
         }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user", "packageLogs")->findOrFail($id);

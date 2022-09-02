@@ -24,6 +24,8 @@
     <link href="{{ asset('dist/css/pages/file-upload.css')}}" rel="stylesheet">
     <link href="{{ asset('assets/node_modules/dropify/dist/css/dropify.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/node_modules/bootstrap-table/dist/bootstrap-table.min.css') }}" rel="stylesheet" type="text/css" />
+
     <link href="{{ asset('assets/node_modules/toast-master/css/jquery.toast.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
@@ -108,6 +110,10 @@
                         </li>
                         @if(Auth::user()->canAdmin())
                         <li> <a class="waves-effect waves-dark" href="{{url('calendar')}}" aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('schedule')}}">Schedule</a></li>
+                                <li><a href="{{url('exceptions')}}">Exceptions</a></li>
+                            </ul>
                         </li>
                         @endif
                         @if(Auth::user()->canAdmin())
@@ -166,15 +172,39 @@
                         <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-cog"></i><span class="hide-menu">Settings</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 @if(Auth::user()->isOwner())
-                                <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
-                                <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
-                                <li><a href="{{url('dash/users/3')}}">Owners</a></li>
-                                <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
-                                <li><a href="{{url('dash/users/1')}}">Admins</a></li>
-                                <li><a href="{{url('branches/home')}}">Branches</a></li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Flawless Services</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('sessiontypes')}}">Session Types</a></li>
+                                        <li><a href="{{url('settings/devices')}}">Devices & Areas</a></li>
+                                        <li><a href="{{url('settings/pricelists')}}">Price Lists</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Locations & Staff</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('branches/home')}}">Branches</a></li>
+                                        <li><a href="{{url('rooms')}}">Rooms</a></li>
+                                        <li><a href="{{url('availabilities')}}">Doctors Availability</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">App Users</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('dash/users/3')}}">Owners</a></li>
+                                        <li><a href="{{url('dash/users/2')}}">Doctors</a></li>
+                                        <li><a href="{{url('dash/users/1')}}">Admins</a></li>
+                                    </ul>
+                                </li>
                                 @endif
-                                <li><a href="{{url('channels/home')}}">Channels</a></li>
-                                <li><a href="{{url('locations/home')}}">Locations</a></li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Patient Info</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('channels/home')}}">Channels</a></li>
+                                        <li><a href="{{url('locations/home')}}">Locations</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         @endif
@@ -664,6 +694,7 @@
     <script src="{{ asset('dist/js/waves.js') }}"></script>
     <!--Menu sidebar -->
     <script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
+    <script src="{{ asset('assets/node_modules/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
     <!--stickey kit -->
     <script src="{{ asset('assets/node_modules/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>
     <script src="{{ asset('assets/node_modules/sparkline/jquery.sparkline.min.js') }}"></script>

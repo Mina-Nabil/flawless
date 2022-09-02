@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -54,6 +56,16 @@ class DashUser extends Authenticatable
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'DASH_BRCH_ID');
+    }
+
+    public function availabilities(): HasMany
+    {
+        return $this->hasMany(DoctorAvailability::class, "DCAV_DASH_ID");
+    }
+
+    public function session_types(): BelongsToMany
+    {
+        return $this->belongsToMany(SessionType::class, 'session_types_doctors', 'SHTD_DASH_ID', 'SHTD_SHTP_ID');
     }
 
     public function isMultiBranch()

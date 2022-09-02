@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\DashUser;
 use App\Models\Device;
 use App\Models\PriceList;
+use App\Models\Room;
+use App\Models\SessionType;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,6 +15,33 @@ use Illuminate\Validation\Rule;
 class SettingsController extends Controller
 {
 
+    /////////main session types
+    function sessions()
+    {
+        $this->data['title']        =   "Session Types";
+        $this->data['rooms']        =   SessionType::all();
+        $this->data['doctors']        =   DashUser::doctors();
+
+        $this->data['addSessionTypeURL']   =   url('sessiontypes/add');
+        $this->data['editSessionTypeURL']  =   url('sessiontypes/edit');
+        $this->data['setRoomStateURL'] = url('sessiontypes/setstate');
+
+        return view("settings.sessiontypes", $this->data);
+    }
+
+    function session($id, Request $request)
+    {
+        /** @var Room */
+        $room = Room::findOrFail($id);
+        $request->validate([
+            "branch_id" =>  "required|exists:branches,id",
+            "name"      =>  "required"
+        ]);
+        $room->updateInfo($request->branch_id, $request->name, $request->desc);
+        return redirect()->action([self::class, "rooms"]);
+    }
+   
+    /////////devices
     function devices()
     {
         $this->data['title']    =       "Devices & Areas Settings";
@@ -41,7 +71,6 @@ class SettingsController extends Controller
 
         return view("settings.pricelists", $this->data);
     }
-
     //price list functions
     function addPricelist(Request $request)
     {
@@ -50,10 +79,10 @@ class SettingsController extends Controller
         ]);
         $pricelist = new PriceList();
         $pricelist->PRLS_NAME = $request->name;
-        $pricelist->PRLS_DFLT = $request->isDefault==true ? 1 : 0;
+        $pricelist->PRLS_DFLT = $request->isDefault == true ? 1 : 0;
 
         $pricelist->save();
-        if ($request->isDefault==true)
+        if ($request->isDefault == true)
             PriceList::setDefaultPriceList($pricelist->id);
         return $pricelist->id;
     }
@@ -72,10 +101,10 @@ class SettingsController extends Controller
         ]);
 
         $pricelist->PRLS_NAME = $request->name;
-        $pricelist->PRLS_DFLT = $request->isDefault==true ? 1 : 0;
+        $pricelist->PRLS_DFLT = $request->isDefault == true ? 1 : 0;
 
         $pricelist->save();
-        if ($pricelist->PRLS_DFLT){
+        if ($pricelist->PRLS_DFLT) {
             PriceList::setDefaultPriceList($pricelist->id);
         }
         return $pricelist->id;

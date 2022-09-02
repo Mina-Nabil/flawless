@@ -1,7 +1,23 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AvailabilityExceptionsController;
+use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\CashController;
+use App\Http\Controllers\ChannelsController;
+use App\Http\Controllers\DashUsersController;
+use App\Http\Controllers\DoctorsAvailabilityController;
+use App\Http\Controllers\FeedbacksController;
+use App\Http\Controllers\FollowupsController;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\LocationsController;
+use App\Http\Controllers\PatientsController;
+use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\RoomsController;
+use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\SessionTypesController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\VisaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,144 +31,170 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Sessions
-Route::get('sessions/details/{id}', 'SessionsController@details');
-Route::post('sessions/edit', 'SessionsController@edit');
-Route::get('sessions/show/{state}', 'SessionsController@index');
-Route::get('sessions/settle/balance/{id}', 'SessionsController@settleBalance');
-Route::get('sessions/settle/packages/{id}', 'SessionsController@settlePackages');
-Route::post('sessions/add/payment', 'SessionsController@acceptPayment');
-Route::post('sessions/insert', 'SessionsController@insert');
-Route::post('sessions/update/services', 'SessionsController@manageServices');
-Route::post('sessions/set/discount', 'SessionsController@setDiscount');
-Route::post('sessions/set/doctor', 'SessionsController@setDoctor');
-Route::get('sessions/set/pending/{id}', 'SessionsController@setSessionPending');
-Route::get('sessions/set/new/{id}', 'SessionsController@setSessionNew');
-Route::get('sessions/set/done/{id}/{date?}', 'SessionsController@setSessionDone');
-Route::get('sessions/set/cancelled/{id}', 'SessionsController@setSessionCancelled');
-Route::post('sessions/api/get/services', 'SessionsController@getServices');
-Route::get('sessions/query', "SessionsController@prepareQuery");
-Route::post('sessions/query', "SessionsController@loadQuery");
-Route::get('sessions/delete/{id}', "SessionsController@delete");
+Route::get('sessions/details/{id}', [SessionsController::class, 'details']);
+Route::post('sessions/edit', [SessionsController::class, 'edit']);
+Route::get('sessions/show/{state}', [SessionsController::class, 'index']);
+Route::get('sessions/settle/balance/{id}', [SessionsController::class, 'settleBalance']);
+Route::get('sessions/settle/packages/{id}', [SessionsController::class, 'settlePackages']);
+Route::post('sessions/add/payment', [SessionsController::class, 'acceptPayment']);
+Route::post('sessions/insert', [SessionsController::class, 'insert']);
+Route::post('sessions/update/services', [SessionsController::class, 'manageServices']);
+Route::post('sessions/set/discount', [SessionsController::class, 'setDiscount']);
+Route::post('sessions/set/doctor', [SessionsController::class, 'setDoctor']);
+Route::get('sessions/set/pending/{id}', [SessionsController::class, 'setSessionPending']);
+Route::get('sessions/set/new/{id}', [SessionsController::class, 'setSessionNew']);
+Route::get('sessions/set/done/{id}/{date?}', [SessionsController::class, 'setSessionDone']);
+Route::get('sessions/set/cancelled/{id}', [SessionsController::class, 'setSessionCancelled']);
+Route::post('sessions/api/get/services', [SessionsController::class, 'getServices']);
+Route::get('sessions/query', [SessionsController::class, 'prepareQuery']);
+Route::post('sessions/query', [SessionsController::class, 'loadQuery']);
+Route::get('sessions/delete/{id}', [SessionsController::class, 'delete']);
 
 //reports
-Route::get('reports/doctors', "ReportsController@prepareDoctorQuery");
-Route::post('reports/doctors', "ReportsController@loadDoctorData");
-Route::get('reports/doctors/services', "ReportsController@prepareDoctorServicesQuery");
-Route::post('reports/doctors/services', "ReportsController@loadDoctorServicesData");
-Route::get('reports/patients', "ReportsController@preparePatients");
-Route::post('reports/patients', "ReportsController@loadPatients");
-Route::get('reports/cash', "CashController@query");
-Route::post('reports/cash', "CashController@loadQuery");
-Route::get('reports/visa', "VisaController@query");
-Route::post('reports/visa', "VisaController@loadQuery");
-Route::get('reports/revenue', "ReportsController@prepareRevenue");
-Route::post('reports/revenue', "ReportsController@loadRevenue");
-Route::get('reports/devices', "ReportsController@prepareDevicesRevenue");
-Route::post('reports/devices', "ReportsController@loadDevicesRevenue");
-Route::get('reports/missing', "ReportsController@prepareMissingPatients");
-Route::post('reports/missing', "ReportsController@loadMissingPatients");
-Route::get('reports/fromwhere', "ReportsController@preparePatientsByBranch");
-Route::post('reports/fromwhere', "ReportsController@loadPatientsByBranch");
-Route::get('reports/toppayers', "ReportsController@prepareTopPayers");
-Route::post('reports/toppayers', "ReportsController@loadTopPayers");
-Route::get('reports/newpatients', "ReportsController@prepareNewPatients");
-Route::post('reports/newpatients', "ReportsController@loadNewPatients");
+Route::get('reports/doctors', [ReportsController::class, 'prepareDoctorQuery']);
+Route::post('reports/doctors', [ReportsController::class, 'loadDoctorData']);
+Route::get('reports/doctors/services', [ReportsController::class, 'prepareDoctorServicesQuery']);
+Route::post('reports/doctors/services', [ReportsController::class, 'loadDoctorServicesData']);
+Route::get('reports/patients', [ReportsController::class, 'preparePatients']);
+Route::post('reports/patients', [ReportsController::class, 'loadPatients']);
+Route::get('reports/cash', [CashController::class, 'query']);
+Route::post('reports/cash', [CashController::class, 'loadQuery']);
+Route::get('reports/visa', [VisaController::class, 'query']);
+Route::post('reports/visa', [VisaController::class, 'loadQuery']);
+Route::get('reports/revenue', [ReportsController::class, 'prepareRevenue']);
+Route::post('reports/revenue', [ReportsController::class, 'loadRevenue']);
+Route::get('reports/devices', [ReportsController::class, 'prepareDevicesRevenue']);
+Route::post('reports/devices', [ReportsController::class, 'loadDevicesRevenue']);
+Route::get('reports/missing', [ReportsController::class, 'prepareMissingPatients']);
+Route::post('reports/missing', [ReportsController::class, 'loadMissingPatients']);
+Route::get('reports/fromwhere', [ReportsController::class, 'preparePatientsByBranch']);
+Route::post('reports/fromwhere', [ReportsController::class, 'loadPatientsByBranch']);
+Route::get('reports/toppayers', [ReportsController::class, 'prepareTopPayers']);
+Route::post('reports/toppayers', [ReportsController::class, 'loadTopPayers']);
+Route::get('reports/newpatients', [ReportsController::class, 'prepareNewPatients']);
+Route::post('reports/newpatients', [ReportsController::class, 'loadNewPatients']);
 
 //attendance
-Route::get('attendance/home', 'AttendanceController@index');
-Route::post('attendance/insert', 'AttendanceController@addAttendance');
-Route::get('attendance/query', 'AttendanceController@prepareQuery');
-Route::post('attendance/query', 'AttendanceController@loadQuery');
-Route::post('attendance/set/state', 'AttendanceController@setAttendance');
+Route::get('attendance/home', [AttendanceController::class, 'index']);
+Route::get('schedule', [AttendanceController::class, 'schedule']);
+Route::post('attendance/insert', [AttendanceController::class, 'addAttendance']);
+Route::get('attendance/query', [AttendanceController::class, 'prepareQuery']);
+Route::post('attendance/query', [AttendanceController::class, 'loadQuery']);
+Route::post('attendance/set/state', [AttendanceController::class, 'setAttendance']);
 
 //followups
-Route::get('followups/home', 'FollowupsController@index');
-Route::post('followups/insert', 'FollowupsController@insert');
-Route::get('followups/query', 'FollowupsController@prepareQuery');
-Route::post('followups/query', 'FollowupsController@loadQuery');
-Route::post('followups/set/state', 'FollowupsController@setFollowup');
+Route::get('followups/home', [FollowupsController::class, 'index']);
+Route::post('followups/insert', [FollowupsController::class, 'insert']);
+Route::get('followups/query', [FollowupsController::class, 'prepareQuery']);
+Route::post('followups/query', [FollowupsController::class, 'loadQuery']);
+Route::post('followups/set/state', [FollowupsController::class, 'setFollowup']);
 
 //feedbacks
-Route::get('feedbacks/home', 'FeedbacksController@index');
-Route::post('feedbacks/insert', 'FeedbacksController@insert');
-Route::get('feedbacks/query', 'FeedbacksController@prepareQuery');
-Route::post('feedbacks/query', 'FeedbacksController@loadQuery');
-Route::post('feedbacks/set/state', 'FeedbacksController@setFeedback');
+Route::get('feedbacks/home', [FeedbacksController::class, 'index']);
+Route::post('feedbacks/insert', [FeedbacksController::class, 'insert']);
+Route::get('feedbacks/query', [FeedbacksController::class, 'prepareQuery']);
+Route::post('feedbacks/query', [FeedbacksController::class, 'loadQuery']);
+Route::post('feedbacks/set/state', [FeedbacksController::class, 'setFeedback']);
 
+//Exceptions
+Route::get('exceptions', [AvailabilityExceptionsController::class, 'exceptions']);
+Route::post('exceptions', [AvailabilityExceptionsController::class, 'addException']);
+Route::get('exceptions/delete/{id}', [AvailabilityExceptionsController::class, 'deleteException']);
+
+//DoctorAvailability
+Route::get('availabilities', [DoctorsAvailabilityController::class, 'availabilities']);
+Route::post('availabilities', [DoctorsAvailabilityController::class, 'addDoctorAvailability']);
+Route::get('availabilities/{id}', [DoctorsAvailabilityController::class, 'availability']);
+Route::post('availabilities/update/{id}', [DoctorsAvailabilityController::class, 'updateDoctorAvailability']);
+Route::get('availabilities/delete/{id}', [DoctorsAvailabilityController::class, 'deleteAvailability']);
+
+//SessionTypes
+Route::get('sessiontypes', [SessionTypesController::class, 'sessiontypes']);
+Route::post('sessiontypes', [SessionTypesController::class, 'addSessionType']);
+Route::get('sessiontypes/{id}', [SessionTypesController::class, 'sessiontype']);
+Route::post('sessiontypes/update/{id}', [SessionTypesController::class, 'updateSessionType']);
+Route::get('sessiontypes/toggle/{id}', [SessionTypesController::class, 'sessiontypeState']);
+
+//Rooms
+Route::get('rooms', [RoomsController::class, 'rooms']);
+Route::post('rooms', [RoomsController::class, 'addRoom']);
+Route::get('rooms/{id}', [RoomsController::class, 'room']);
+Route::post('rooms/update/{id}', [RoomsController::class, 'updateRoom']);
+Route::get('rooms/toggle/{id}', [RoomsController::class, 'roomState']);
 
 //Settings
-Route::get('settings/devices', 'SettingsController@devices');
-Route::get('settings/pricelists', 'SettingsController@pricelists');
-Route::post('add/pricelist', 'SettingsController@addPricelist');
-Route::post('edit/pricelist', 'SettingsController@editPricelist');
-Route::post('delete/pricelist', 'SettingsController@deletePricelist');
-Route::post('sync/pricelist/items', 'SettingsController@syncPricelist');
-Route::post('get/pricelist/items', 'SettingsController@getPricelistItems');
-Route::post('add/device', 'SettingsController@addDevice');
-Route::post('edit/device', 'SettingsController@editDevice');
-Route::post('delete/device', 'SettingsController@deleteDevice');
-Route::post('add/area', 'SettingsController@addArea');
-Route::post('edit/area', 'SettingsController@editArea');
-Route::post('delete/area', 'SettingsController@deleteArea');
+Route::get('settings/devices', [SettingsController::class, 'devices']);
+Route::get('settings/pricelists', [SettingsController::class, 'pricelists']);
+Route::post('add/pricelist', [SettingsController::class, 'addPricelist']);
+Route::post('edit/pricelist', [SettingsController::class, 'editPricelist']);
+Route::post('delete/pricelist', [SettingsController::class, 'deletePricelist']);
+Route::post('sync/pricelist/items', [SettingsController::class, 'syncPricelist']);
+Route::post('get/pricelist/items', [SettingsController::class, 'getPricelistItems']);
+Route::post('add/device', [SettingsController::class, 'addDevice']);
+Route::post('edit/device', [SettingsController::class, 'editDevice']);
+Route::post('delete/device', [SettingsController::class, 'deleteDevice']);
+Route::post('add/area', [SettingsController::class, 'addArea']);
+Route::post('edit/area', [SettingsController::class, 'editArea']);
+Route::post('delete/area', [SettingsController::class, 'deleteArea']);
 
 //Patients
-Route::get('patients/home','PatientsController@home');
-Route::get('patients/add', 'PatientsController@add');
-Route::get('patients/profile/{id}', 'PatientsController@profile');
-Route::post('patients/pay', 'PatientsController@pay');
-Route::post('patients/setnote', 'PatientsController@setNote');
-Route::get('patients/notes/delete/{id}', 'PatientsController@deleteNote');
-Route::get('patients/notes/restore/{id}', 'PatientsController@restoreNote');
-Route::post('patients/addbalance', 'PatientsController@addBalance');
-Route::post('patients/add/package', 'PatientsController@addPackage');
-Route::post('patients/insert', 'PatientsController@insert');
-Route::post('patients/update', 'PatientsController@update');
-Route::get('patients/get/json', 'PatientsController@getJSONPatients');
+Route::get('patients/home',[PatientsController::class, 'home']);
+Route::get('patients/add', [PatientsController::class, 'add']);
+Route::get('patients/profile/{id}', [PatientsController::class, 'profile']);
+Route::post('patients/pay', [PatientsController::class, 'pay']);
+Route::post('patients/setnote', [PatientsController::class, 'setNote']);
+Route::get('patients/notes/delete/{id}', [PatientsController::class, 'deleteNote']);
+Route::get('patients/notes/restore/{id}', [PatientsController::class, 'restoreNote']);
+Route::post('patients/addbalance', [PatientsController::class, 'addBalance']);
+Route::post('patients/add/package', [PatientsController::class, 'addPackage']);
+Route::post('patients/insert', [PatientsController::class, 'insert']);
+Route::post('patients/update', [PatientsController::class, 'update']);
+Route::get('patients/get/json', [PatientsController::class, 'getJSONPatients']);
 
 //Cash Account
-Route::get("cash/home", 'CashController@home');
-Route::post("cash/insert", 'CashController@insert');
+Route::get("cash/home", [CashController::class, 'home']);
+Route::post("cash/insert", [CashController::class, 'insert']);
 
 //Visa Account
-Route::get("visa/home", 'VisaController@home');
-Route::post("visa/insert", 'VisaController@insert');
+Route::get("visa/home", [VisaController::class, 'home']);
+Route::post("visa/insert", [VisaController::class, 'insert']);
 
 //Branches
-Route::get("branches/home", 'BranchesController@index');
-Route::post("branches/insert", 'BranchesController@insert');
-Route::get("branches/edit/{id}", 'BranchesController@edit');
-Route::post("branches/update", 'BranchesController@update');
+Route::get("branches/home", [BranchesController::class, 'index']);
+Route::post("branches/insert", [BranchesController::class, 'insert']);
+Route::get("branches/edit/{id}", [BranchesController::class, 'edit']);
+Route::post("branches/update", [BranchesController::class, 'update']);
 
 //Locations
-Route::get("locations/home", 'LocationsController@index');
-Route::post("locations/insert", 'LocationsController@insert');
-Route::get("locations/edit/{id}", 'LocationsController@edit');
-Route::post("locations/update", 'LocationsController@update');
-Route::get("locations/delete/{id}", 'LocationsController@delete');
+Route::get("locations/home", [LocationsController::class, 'index']);
+Route::post("locations/insert", [LocationsController::class, 'insert']);
+Route::get("locations/edit/{id}", [LocationsController::class, 'edit']);
+Route::post("locations/update", [LocationsController::class, 'update']);
+Route::get("locations/delete/{id}", [LocationsController::class, 'delete']);
 
 //Channels
-Route::get("channels/home", 'ChannelsController@index');
-Route::post("channels/insert", 'ChannelsController@insert');
-Route::get("channels/edit/{id}", 'ChannelsController@edit');
-Route::post("channels/update", 'ChannelsController@update');
-Route::get("channels/delete/{id}", 'ChannelsController@delete');
+Route::get("channels/home", [ChannelsController::class, 'index']);
+Route::post("channels/insert", [ChannelsController::class, 'insert']);
+Route::get("channels/edit/{id}", [ChannelsController::class, 'edit']);
+Route::post("channels/update", [ChannelsController::class, 'update']);
+Route::get("channels/delete/{id}", [ChannelsController::class, 'delete']);
 
 //Dashboard users
-Route::get("dash/users/{userType}", 'DashUsersController@index');
-Route::post("dash/users/insert", 'DashUsersController@insert');
-Route::get("dash/users/edit/{id}", 'DashUsersController@edit');
-Route::post("dash/users/update", 'DashUsersController@update');
-Route::get("dash/users/toggle/{id}", 'DashUsersController@toggle');
-Route::get("dash/users/delete/{id}", 'DashUsersController@delete');
+Route::get("dash/users/{userType}", [DashUsersController::class, 'index']);
+Route::post("dash/users/insert", [DashUsersController::class, 'insert']);
+Route::get("dash/users/edit/{id}", [DashUsersController::class, 'edit']);
+Route::post("dash/users/update", [DashUsersController::class, 'update']);
+Route::get("dash/users/toggle/{id}", [DashUsersController::class, 'toggle']);
+Route::get("dash/users/delete/{id}", [DashUsersController::class, 'delete']);
 
 Route::get("set/branch/{id}", [HomeController::class, "setBranch"]);
 
-Route::post('payments/modal/add', 'HomeController@addPayment');
-Route::post('message', 'HomeController@sendMessage')->name('sendMessage');
-Route::get('calendar', 'SessionsController@calendar')->name('calendar');
-Route::post('search', 'HomeController@search')->name('search');
-Route::get('logout', 'HomeController@logout')->name('logout');
-Route::get('/login', 'HomeController@login')->name('login');
-Route::post('/login', 'HomeController@authenticate')->name('login');
-Route::get('/home', 'SessionsController@index')->name('home');
-Route::get('/', 'SessionsController@index')->name('home');
+Route::post('payments/modal/add', [HomeController::class, 'addPayment']);
+Route::post('message', [HomeController::class, 'sendMessage'])->name('sendMessage');
+Route::get('calendar', [SessionsController::class, 'calendar'])->name('calendar');
+Route::post('search', [HomeController::class, 'search'])->name('search');
+Route::get('logout', [HomeController::class, 'logout'])->name('logout');
+Route::get('/login', [HomeController::class, 'login'])->name('login');
+Route::post('/login', [HomeController::class, 'authenticate'])->name('login');
+Route::get('/home', [SessionsController::class, 'index'])->name('home');
+Route::get('/', [SessionsController::class, 'index'])->name('home');

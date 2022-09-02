@@ -3,12 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\DoctorAvailability;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session as HttpSession;
 
 class AttendanceController extends Controller
 {
+
+
+    public function schedule(Request $request)
+    {
+        /** @var Carbon */
+        $defaultStart   = (new Carbon('now'))->startOfWeek();
+        /** @var Carbon */
+        $defaultEnd    = (new Carbon('now'))->addDays(21);
+
+        //loading filters data
+        $this->data['shifts'] = DoctorAvailability::SHIFTS_ARR;
+
+        $this->data['selectedFrom'] = $request->input('from') ?? $defaultStart->format('Y-m-d');
+        $this->data['selectedTo'] = $request->input('to') ?? $defaultEnd->format('Y-m-d');
+        $this->data['selectedBranch'] = $request->input('branchID');
+        $this->data['selectedDoctor'] = $request->input('doctorID');
+        $this->data['selectedShift'] = $request->input('shift');
+
+          /** @var Carbon */
+          $start   = new Carbon($this->data['selectedFrom']);
+          /** @var Carbon */
+          $end    = new Carbon($this->data['selectedTo']);
+
+        $this->data['days'] = array();
+        $branchesCount = $this->data['branches']->count();
+        $this->data['branchesCount'] = $branchesCount;
+
+        while ($start->lessThanOrEqualTo($end)) {
+            $dateKey = $start->dayName . " - " . $start->format('Y-m-d');
+            $this->data['days'][$dateKey]['shift1'] = ($this->data['selectedShift'] == DoctorAvailability::SHIFT_2) ? [] : DoctorAvailability::getAvailableDoctors($start, DoctorAvailability::SHIFT_1, $this->data['selectedDoctor'], $this->data['selectedBranch']);
+            $this->data['days'][$dateKey]['shift2'] = ($this->data['selectedShift'] == DoctorAvailability::SHIFT_1) ? [] :DoctorAvailability::getAvailableDoctors($start, DoctorAvailability::SHIFT_2, $this->data['selectedDoctor'], $this->data['selectedBranch']);
+            $this->data['days'][$dateKey]['shift1Count'] =  count($this->data['days'][$dateKey]['shift1']);
+            $this->data['days'][$dateKey]['shift1RowSpan'] =  max(1, $this->data['days'][$dateKey]['shift1Count']);
+            $this->data['days'][$dateKey]['shift2Count'] =  count($this->data['days'][$dateKey]['shift2']);
+            $this->data['days'][$dateKey]['shift2RowSpan'] =  max(1, $this->data['days'][$dateKey]['shift2Count']);
+            $this->data['days'][$dateKey]['dayCount'] = $this->data['days'][$dateKey]['shift1Count'] + $this->data['days'][$dateKey]['shift2Count'];
+            $this->data['days'][$dateKey]['dayRowSpan'] = $this->data['days'][$dateKey]['shift1RowSpan'] + $this->data['days'][$dateKey]['shift2RowSpan'];
+
+            $start = $start->addDay();
+        }
+        // dd($this->data['days']);
+        $this->data['title'] = "Flawless Schedule";
+        return view("attendance.schedule", $this->data);
+    }
 
     public function index()
     {
@@ -34,7 +80,7 @@ class AttendanceController extends Controller
             "to" => "required",
         ]);
 
-        $this->data['items'] = Attendance::getAttendanceData( $request->type, $request->from, $request->to, $request->doctor);
+        $this->data['items'] = Attendance::getAttendanceData($request->type, $request->from, $request->to, $request->doctor);
 
         $this->data['title']        =   'Attendance Sheet Report';
         $this->data['cardTitle']    =   'Attendance';
