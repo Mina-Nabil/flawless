@@ -373,6 +373,7 @@ class Session extends Model
     public function deleteSession()
     {
         DB::transaction(function () {
+            $this->packageLogs()->delete();
             $this->items()->delete();
             $this->logs()->delete();
             $this->feedback()->delete();
