@@ -415,7 +415,8 @@
                             <div class="form-group">
                                 <label>Balance</label>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Patient Balance" name=balance value="{{ (isset($patient)) ? $patient->PTNT_BLNC : old('balance') }}" required readonly>
+                                    <input type="text" class="form-control" placeholder="Patient Balance" name=balance value="{{ (isset($patient)) ? $patient->PTNT_BLNC : old('balance') }}" required 
+                                    @if(!Auth::user()->isOwner()) readonly @endif>
                                 </div>
                                 <small class="text-danger">{{$errors->first('balance')}}</small>
                             </div>
