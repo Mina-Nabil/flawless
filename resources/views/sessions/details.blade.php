@@ -537,8 +537,9 @@
                             <hr>
 
                             <input type="hidden" value="{{$session->id}}">
+                            @if($canDelete)
                             <button type="button" class="btn btn-danger mr-2" onclick="confirmAndGoTo('{{url($deleteSessionURL)}}', 'delete this session and all its info')">Delete Session</button>
-
+                            @endif
                         </div>
                     </div>
                 </div>

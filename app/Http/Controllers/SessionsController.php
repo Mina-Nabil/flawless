@@ -125,6 +125,8 @@ class SessionsController extends Controller
         ];
 
         //page data
+        /** @var DashUser */
+        $user = Auth::user();
         $this->data['title']    = "Session Details";
         // $this->data['patients'] = Patient::all(); added by default
         $this->data['devices']  = Device::all();
@@ -150,6 +152,7 @@ class SessionsController extends Controller
         $this->data['setSessionCancelledUrl']   = "sessions/set/cancelled/" . $this->data['session']->id;
         $this->data['updateServicesURL']           = "sessions/update/services";
         $this->data['getServicesAPI']           = "sessions/api/get/services";
+        $this->data['canDelete']           = $user->isOwner();
 
 
         return view("sessions.details", $this->data);
