@@ -50,7 +50,7 @@ class Session extends Model
     public function getEventColorAttribute()
     {
         $this->loadMissing('pricelistItems');
-        Log::info(print_r($this->pricelistItems->toArray(), true));
+        LaravelLog::info(print_r($this->pricelistItems->toArray(), true));
         foreach($this->pricelistItems as $price_item){
             if($price_item->PLIT_DVIC_ID == 1) return '#055C9D';
             elseif($price_item->PLIT_DVIC_ID == 2) return '#A020F0';
