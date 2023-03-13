@@ -46,7 +46,19 @@ class Session extends Model
             default:
                 return "bg-info";
         }
-        return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
+    }
+    public function getEventColorAttribute()
+    {
+        $this->loadMissing('pricelistItems');
+        foreach($this->pricelistItems as $price_item){
+            if($price_item->PLIT_DVIC_ID == 1) return '#055C9D';
+            elseif($price_item->PLIT_DVIC_ID == 2) return '#A020F0';
+            elseif($price_item->PLIT_DVIC_ID == 19) return '#D1D100';
+            elseif($price_item->PLIT_DVIC_ID == 9) return '#7B7B7B';
+            elseif(in_array($price_item->PLIT_DVIC_ID, [20, 7, 18, 23, 22])) return '#24E500';
+            else return '#FF0D86';
+
+        }
     }
     public function getDiscountAttribute()
     {
@@ -606,6 +618,11 @@ class Session extends Model
     function items()
     {
         return $this->hasMany(SessionItem::class, "SHIT_SSHN_ID");
+    }
+
+    function pricelistItems()
+    {
+        return $this->belongsToMany(PriceListItem::class, "session_items" ,  "SHIT_PLIT_ID", "SHIT_SSHN_ID");
     }
 
     function logs()

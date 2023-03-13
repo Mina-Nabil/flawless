@@ -625,7 +625,7 @@
                                         <div class="ml-10 col-9 d-flex justify-content-end">
                                             <div class="bt-switch">
                                                 <div>
-                                                    <input type="checkbox" data-size="small" data-on-color="success" data-off-color="danger" data-on-text="Commission" data-off-text="No Commission" id="isCommission">
+                                                    <input type="checkbox" data-size="small" data-on-color="success" data-off-color="danger" data-on-text="Commission" data-off-text="No Commission" checked id="isCommission">
                                                 </div>
                                             </div>
                                         </div>
@@ -1625,7 +1625,7 @@
                             <div class="col-2">\
                                 <div class="bt-switch justify-content-end">\
                                     <input type="checkbox" data-size="medium" data-on-color="primary" data-off-color="info"\
-                                    data-on-text="Doctor" {{(Auth::user()->isDoctor()) ?"checked":""}}\
+                                    data-on-text="Doctor" checked\
                                     data-off-text="Clinic" id="isDoctor' + room + '" @if(Auth::user()->isDoctor()) readonly @endif>\
                                 </div>\
                             </div>'

@@ -60,9 +60,6 @@ class DoctorsAvailabilityController extends Controller
             $patient = Patient::with('doctors')->findOrFail($request->patient_id);
         
             foreach ($doctors as $doc) {
-                Log::info("Checking if old doc");
-                Log::info("Doctor ID: " . $doc['doctor']->id);
-                Log::info(print_r($patient->doctors->pluck('id')->toArray(), true));
                 if ($patient->doctors->contains('id', $doc['doctor']->id)) {
                     $doc['doctor']->old_doc = true;
                 } else {
