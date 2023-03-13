@@ -308,7 +308,7 @@ class Patient extends Model
 
     public function doctors(): BelongsToMany
     {
-        return $this->belongsToMany(DashUser::class, "sessions", "SSHN_DCTR_ID", "SSHN_PTNT_ID");
+        return $this->belongsToMany(DashUser::class, "sessions", "SSHN_PTNT_ID", "SSHN_DCTR_ID");
     }
 
     public function channel(): BelongsTo
