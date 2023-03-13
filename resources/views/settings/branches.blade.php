@@ -26,6 +26,18 @@
                         <small class="text-danger">{{$errors->first('name')}}</small>
                     </div>
 
+                    <div class="form-group">
+                        <label>Location*</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon11"><i class="ti-branch"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Branch location" name=location aria-label="Branchname" aria-describedby="basic-addon11"
+                                value="{{ (isset($branch)) ? $branch->BRCH_LOCT : old('location')}}" required>
+                        </div>
+                        <small class="text-danger">{{$errors->first('location')}}</small>
+                    </div>
+
 
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
                     @if($isCancel)

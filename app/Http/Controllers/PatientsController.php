@@ -10,6 +10,7 @@ use App\Models\Patient;
 use App\Models\PatientNote;
 use App\Models\PatientPayment;
 use App\Models\PriceList;
+use App\Models\Room;
 use App\Models\Session;
 use App\Rules\triplename;
 use Illuminate\Support\Facades\DB;
@@ -71,8 +72,6 @@ class PatientsController extends Controller
             'SHIT_QNTY',
             ['comment' => ['att' => "SHIT_NOTE"]]
         ];
-
-        $this->data['getServicesAPI']           = "sessions/api/get/services";
 
         //Packages Table
         $this->data['packagesList']    =   $this->data['patient']->packageItems;
@@ -185,6 +184,7 @@ class PatientsController extends Controller
         $patient = Patient::findOrFail($request->id);
         $isVisa = (isset($request->cashRadio) &&  $request->cashRadio == "visa") ? true : false;
         $branch_ID = $request->branchID ?? HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
                 $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa );;

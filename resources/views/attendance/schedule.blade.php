@@ -74,7 +74,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Loaded Schedule Schedule</h4>
+                <h4 class="card-title">Loaded Schedule</h4>
 
                 <div class="table-responsive m-t-5">
                     <table data-toggle="table" data-mobile-responsive="true" class="table-striped">

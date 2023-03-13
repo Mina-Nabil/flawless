@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DashUser;
 use App\Models\FollowUp;
 use App\Models\Patient;
+use App\Models\Room;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ class FollowupsController extends Controller
     public function index()
     {
         $branch_ID = Session::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         $yesterday = ((new DateTime())->sub(new DateInterval('P1D')))->format('Y-m-d');
         //show unconfirmed attendace
         $this->data['items'] = FollowUp::getFollowupsData($branch_ID, "New");

@@ -564,8 +564,8 @@
                 <!-- ============================================================== -->
                 <!-- ADD NEW SESSION -->
                 <!-- ============================================================== -->
-                <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
+                <div id="add-session-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; ">
+                    <div class="modal-dialog" style="max-width: 1000px">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Book a Session</h4>
@@ -573,20 +573,36 @@
                             </div>
                             <div class="modal-body">
 
-                                @if(session('branch')==0)
+
+                                <div class="form-group">
+                                    <label>Date*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate onchange="loadAvailableDoctors()" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Start Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime onchange="loadAvailableDoctors();checkModalEndTime()" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>End Time*</label>
+                                    <div class="input-group mb-3">
+                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime onchange="loadAvailableDoctors()" required>
+                                    </div>
+                                </div>
+
                                 <div class="col-12 form-group">
-                                    <label>Branch</label>
-                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=sessionBranch>
-                                        @foreach($branches as $branch)
-                                        <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
+                                    <label>Room</label>
+                                    <select class="select2 form-control  col-md-12 mb-3" style="width:100%" id=sessionRoom onchange="loadAvailableDoctors()">
+                                        @foreach($rooms as $r)
+                                        <option value="{{$r->id}}"> {{$r->branch->BRCH_NAME}} - {{$r->ROOM_NAME}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @elseif(session('branch')>0)
-                                <input type="hidden" value="{{session('branch')}}" id=sessionBranch readonly />
-                                @else
-                                <p class="text-danger">Unable to find branch! Please select branch</p>
-                                @endif
 
                                 <div class="form-group col-md-12 m-t-0">
                                     <h5>Patients</h5>
@@ -594,24 +610,32 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Date*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="date" id="sessionDate" class="form-control" placeholder="Session Day" name=sessionDate required>
-                                    </div>
+                                <div class="form-group col-md-12 m-t-0">
+                                    <h5 id=doctorsLabel>Doctors</h5>
+                                    <select class="select2 form-control modalSelect2" style="width:100%" name=doctorID id=doctorsSel>
+                                    </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Start Time*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="time" id="sessionStartTime" class="form-control" placeholder="Session Start Time" name=sessionStartTime required>
+                                <div class="form-group col-md-12 m-t-0">
+                                    <h5>Services</h5>
+                                    <div class="row ">
+                                        <div class="mb-10 col-3 ">
+                                            <button type="button" class="btn btn-success" onclick="addModalService()">Add</button>
+                                        </div>
+                                        <div class="ml-10 col-9 d-flex justify-content-end">
+                                            <div class="bt-switch">
+                                                <div>
+                                                    <input type="checkbox" data-size="small" data-on-color="success" data-off-color="danger" data-on-text="Commission" data-off-text="No Commission" id="isCommission">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>End Time*</label>
-                                    <div class="input-group mb-3">
-                                        <input type="time" id="sessionEndTime" class="form-control" placeholder="Session End Time" name=sessionEndTime required>
+                                    <hr>
+                                    <div class=row>
+                                        <div class=col-12>
+                                            <div id="modal_dynamicContainer">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -707,6 +731,7 @@
     <!-- This is for the bt switch -->
     <script src="{{ asset('assets/node_modules/bootstrap-switch/bootstrap-switch.min.js') }}"></script>
     <script src="{{ asset('assets/node_modules/toast-master/js/jquery.toast.js') }}"></script>
+    <script src="{{asset('assets/node_modules/moment/moment.js')}}"></script>
 
     <script type="text/javascript">
         $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
@@ -851,6 +876,8 @@
             $("#patientSel").select2({
                 dropdownParent: $("#add-session-modal")
             });
+
+            $("#patientSel").on('select2:select', function (e) {loadAvailableDoctors()});
 
             $("#channelIDModal").select2({
                 dropdownParent: $("#add-patient-modal")
@@ -1017,21 +1044,36 @@
         }
 
         function addNewSession(){
-            var id    = $('#patientSel').val();
+            var id      = $('#patientSel').val();
             var date    = $('#sessionDate').val();
             var start   = $('#sessionStartTime').val();
             var end     = $('#sessionEndTime').val();
-            var branch  = $('#sessionBranch').val();
+            var roomID    = $('#sessionRoom').val();
+            var docID   = $('#doctorsSel').val();
             var comment = $('#sessionComment').val();
+            var isCommission = $('#isCommission').is(":checked");
 
             var formData = new FormData();
             formData.append('_token','{{ csrf_token() }}');
             formData.append("patientID", id)
-            formData.append("branchID", branch)
+            formData.append("doctorID", docID)
+            formData.append("roomID", roomID)
             formData.append("sesDate", date)
             formData.append("start", start)
             formData.append("end", end)
             formData.append("comment", comment)
+            formData.append("isCommission", isCommission)
+            
+            let services_arr = []
+            for(let i = 0 ; i < room ; i++){
+                services_arr.push({
+                    priceListID: $('#modal_service' + i).val(),
+                    unit: $('#modal_unit' + i).val(),
+                    note: $('#modal_session_note' + i).val(),
+                    isDoctor: $('#isDoctor' + i).val(),
+                })
+            }
+            formData.append("servicesArr", JSON.stringify(services_arr))
 
             var url = "{{$addSessionFormURL}}";
 
@@ -1048,12 +1090,26 @@
                 })
                 // append sessions table   
                 resetSessionsForm()
-            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
+                $('#calendar').fullCalendar( 'refetchEvents' )
+                
+            } else if(this.readyState==4 && this.status == 422 ) {
                 try {
                     var errors = JSON.parse(this.responseText)
+
+                    if(errors.message == "Doctor not available"){
+                        return Swal.fire({
+                            title: "Doctor not available",
+                            text: "Doctor has another session at the same time" ,
+                            icon: "warning"
+                        })
+                    }
+                    
                     var errorMesage = "" ;
                     if(errors.errors["patientID"]){
                         errorMesage += errors.errors.patientID + " " ;
+                    }
+                    if(errors.errors["doctorID"]){
+                        errorMesage += errors.errors.doctorID + " " ;
                     }
                     if(errors.errors["sesDate"]){
                         errorMesage += errors.errors["sesDate"] + " " ;
@@ -1097,11 +1153,16 @@
 
         function resetSessionsForm(){
             $('#patientSel').val("");
+            $('#doctorsSel').val("");
             $('#sessionDate').val("");
             $('#sessionStartTime').val("");
             $('#sessionEndTime').val("");
             $('#sessionComment').val("");
-
+            $('#sessionComment').val("");
+            while(room >= 0){
+                removeModalService(room--)
+            }
+            room = 0
         }
 
 
@@ -1194,10 +1255,19 @@
         }
 
         var patients = [];
+        var doctors = [];
         var patientsProxy = new Proxy(patients, {
             set: function (target, key, value){
                 patients = value;
                 loadPatients();
+                return true;
+            }
+        })
+
+        var doctorsProxy = new Proxy(doctors, {
+            set: function (target, key, value){
+                doctors = value;
+                loadDoctors();
                 return true;
             }
         })
@@ -1208,6 +1278,22 @@
             patients.forEach(patient => {
                 patOption = new Option(patient.PTNT_NAME + ' - ' + patient.PTNT_MOBN, patient.id, false, false)
                 $('#patientSel').append(patOption).trigger('change')
+            });
+            loadAvailableDoctors()
+            $('#doctorsSel').trigger('change')
+
+        }
+
+        function loadDoctors(){
+            $('#doctorsSel').val("");
+            $('#doctorsSel').trigger('change')
+
+            $('#doctorsSel').html("null");
+
+            doctors.forEach(doc => {
+                var label = doc.doctor.DASH_USNM + (doc.doctor.old_doc ? ' (old doc) ' : '')
+                docOption = new Option(label, doc.doctor.id, false, false)
+                $('#doctorsSel').append(docOption).trigger('change')
             });
            
         }
@@ -1408,7 +1494,7 @@
             http.send(formData)
         }
 
-        function getPatientsArray() {
+        async function getPatientsArray() {
             var patients = []; 
 
             var url = "{{$getPatientsURL}}";
@@ -1423,8 +1509,38 @@
                 }
             }
 
-            http.send()
+            await http.send()
 
+        }
+
+        async function loadAvailableDoctors() {
+
+            var http = new XMLHttpRequest();
+            var url = "{{url($getDoctorsAPI)}}";
+            http.open('POST', url);
+            http.setRequestHeader("Accept", "application/json");
+
+            var formdata = new FormData();
+            formdata.append('_token','{{ csrf_token() }}');
+            formdata.append('date', $('#sessionDate').val());
+            formdata.append('start_time',  $('#sessionStartTime').val());
+            formdata.append('end_time', $('#sessionEndTime').val());
+            formdata.append('patient_id', $('#patientSel').val());
+            formdata.append('room_id', $('#sessionRoom').val());
+
+            http.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                try {        
+                    console.log(this.responseText)
+                    doctorsProxy.doctors = JSON.parse(this.responseText);
+                } catch(e){
+                    console.log(e); 
+                }
+            } 
+            };
+            $('#doctorsLabel').html("Loading...")
+            await http.send(formdata, true);
+            $('#doctorsLabel').html("Doctors")
         }
 
         function IsNumeric(n) {
@@ -1454,6 +1570,168 @@
 
 
     </script>
+
+    {{-- services functions --}}
+
+    <script>
+        var room = 0;
+
+        function loadModalServices(row){
+            device = $('#modal_device' + row).val();
+    
+            var http = new XMLHttpRequest();
+            var url = "{{url($getServicesAPI)}}";
+            http.open('POST', url);
+            http.setRequestHeader("Accept", "application/json");
+    
+            var formdata = new FormData();
+            formdata.append('deviceID', device);
+            formdata.append('patientID', $('#patientSel').val());
+            formdata.append('_token','{{ csrf_token() }}');
+    
+            
+    
+            http.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                try {        
+                    services = JSON.parse(this.responseText);
+                    showModalServices(row, services)
+                } catch(e){
+                    console.log(e); 
+                }
+            } 
+            };
+            http.send(formdata, true);
+    
+        }
+    
+        function showModalServices(row, services){
+            $('#modal_service' + row).html("") //clearing the select
+            $('#modal_service' + row).removeAttr('disabled')
+            services.forEach(service => {
+                var newOption = new Option(service.serviceName, service.id, false, false);
+                $('#modal_service' + row).append(newOption).trigger('change');
+            });
+    
+        }
+ 
+        function addModalService() {
+        
+            var objTo = document.getElementById('modal_dynamicContainer')
+            var divtest = document.createElement("div");
+            divtest.setAttribute("class", "row removeclass" + room);
+
+            var concatString    = '<div class="mr-3"></div>\
+                            <div class="col-2">\
+                                <div class="bt-switch justify-content-end">\
+                                    <input type="checkbox" data-size="medium" data-on-color="primary" data-off-color="info"\
+                                    data-on-text="Doctor" {{(Auth::user()->isDoctor()) ?"checked":""}}\
+                                    data-off-text="Clinic" id="isDoctor' + room + '" @if(Auth::user()->isDoctor()) readonly @endif>\
+                                </div>\
+                            </div>'
+
+
+            concatString +=   '<div class="col-lg-2">\
+                                        <div class="input-group mb-2">\
+                                            <select class="form-control select2 custom-select" style="width:100%" id="modal_device' + room + '" onchange="loadModalServices(' + room + ')" required>\
+                                                    <option disabled hidden selected value="" class="text-muted">Device</option>';
+                                                    @foreach($devices as $device)
+                                                    concatString +=   '<option value="{{ $device->id }}" > {{$device->DVIC_NAME}} </option>';
+                                                    @endforeach
+            concatString +=                 '</select>\
+                                        </div>\
+                                    </div>'
+
+            concatString +=   '<div class="col-3">\
+                                <div class="input-group mb-2">\
+                                    <select class="form-control select2 custom-select sessionServiceModal" style="width:100%" id="modal_service' + room + '" onchange="checkModalUnit(' + room + ')" disabled required>\
+                                    </select>\
+                                </div>\
+                            </div>'
+                            
+            concatString += '<div class="col-2">\
+                                <div class="input-group mb-3">\
+                                    <input id="modal_session_note' + room + '" value="" type="text"  \class="form-control" placeholder="Note" name=note[' + room + '] >\
+                                </div>\
+                            </div>'
+
+            concatString +='<div class="col-2">\
+                                <div class="input-group mb-3">\
+                                    <input id="modal_unit' + room + '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[' + room + ']>\
+                                        <div class="input-group-append">\
+                                            <button class="btn btn-danger" type="button" onclick="removeModalService('+room+');checkModalEndTime()"><i class="fa fa-minus"></i></button>\
+                                        </div>\
+                                </div>\
+                            </div>'
+
+
+            
+            divtest.innerHTML = concatString;
+            
+            objTo.appendChild(divtest);
+            $(".select2").select2()
+            $(".bt-switch input[type='checkbox'], .bt-switch input[type='radio']").bootstrapSwitch();
+                                    
+            room++
+        }
+
+        function removeModalService(rid) {
+            $('.removeclass' + rid).remove();
+        }
+
+        function checkModalUnit(rid) {
+            rowName = $('#modal_service' + rid).select2('data')[0]?.text
+        
+            if(rowName.includes("Pulse")){
+                $('#modal_unit' + rid).removeAttr('readonly')
+                $('#modal_unit' + rid).val('0')
+
+            } else {
+                $('#modal_unit' + rid).attr('readonly' , 'true')
+                $('#modal_unit' + rid).val('1') 
+            }
+
+            checkModalEndTime()
+        }
+
+        async function checkModalEndTime(rid) {
+
+            let servicesIDs = []
+
+            $(".sessionServiceModal").each((i, ss) => {
+                servicesIDs.push($(ss).val())
+            })
+            if(servicesIDs.length > 0){
+                await $.ajax({
+                    method: "POST",
+                    url: "{{$getDurationTotalAPI}}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        servicesIDs: servicesIDs
+                    }
+                }).done((data, status, xhr) => {
+                    let start_time_string = $('#sessionStartTime').val()
+                    let start_time_array = $('#sessionStartTime').val().split(':')
+                    let end_time_date = addMinutes((new Date()).setHours(start_time_array[0], start_time_array[1]), data)
+    
+                    $('#sessionEndTime').val( end_time_date.getHours().toString().padStart(2, '0') + ":" + end_time_date.getMinutes().toString().padStart(2, '0'))
+                })
+            }
+        }
+
+    
+
+        function addMinutes(date, minutes) {
+            return moment(date).add(minutes, 'm').toDate();
+        }
+
+
+        $("#add-session-modal").on('hide.bs.modal', function(){
+            resetSessionsForm()
+        });
+
+    </script>
+
 
     @yield('js_content')
     @stack('scripts')

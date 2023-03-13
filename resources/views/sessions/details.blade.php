@@ -195,6 +195,13 @@
                             @endif
                         </ul>
 
+                        <button class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($setSessionConfirmedUrl)}}', 'Set Session as Confirmed')" @if($session->SSHN_CONF) disabled @endif >
+                            @if($session->SSHN_CONF)
+                            Confirmed
+                            @else 
+                            Confirm Session
+                            @endif
+                        </button>
                         <button class="btn btn-info mr-2" onclick="confirmAndGoTo('{{url($setSessionNewUrl)}}', 'Set Session as New')" @if(!$session->canBeNew()) disabled @endif >Set Session as
                             New</button>
                         <button class="btn btn-warning mr-2" onclick="confirmAndGoTo('{{url($setSessionPendingUrl)}}', 'Set Session as Pending Payment')" @if(!$session->canBePending())
@@ -283,7 +290,7 @@
                                             @foreach($item->availableServices($session->SSHN_PTNT_ID) as $service)
                                             <option value="{{$service['id']}}" <?php if($service['id']==$item->SHIT_PLIT_ID ) { ?> selected
                                                 <?php  
-                                            if($service['serviceName'] != "Pulse") { 
+                                            if(!str_contains($service['serviceName'], "Pulse")) { 
                                             $readOnly=true;
                                             } else {
                                             $readOnly=false;  
@@ -667,16 +674,17 @@
 <script>
     $(function () {
             $(function () {
-
                 var table = $('#itemsTable').DataTable({
                     "displayLength": 25,
                     dom: 'Bfrtip',
                     buttons: [
+                        @if(Auth::user()->isOwner())
                         {
                             extend: 'excel',
                             title: 'Flawless',
                             footer: true,
                         }
+                        @endif
                     ]
                 });
             })
@@ -762,7 +770,7 @@
     function checkUnit(rid) {
         rowName = $('#service' + rid).select2('data')[0].text
       
-        if(rowName=="Pulse"){
+        if(rowName.includes("Pulse")){
             $('#unit' + rid).removeAttr('readonly')
             $('#unit' + rid).val('0')
             console.log(   $('#unit' + rid))

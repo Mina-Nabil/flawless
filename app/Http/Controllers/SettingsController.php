@@ -124,8 +124,6 @@ class SettingsController extends Controller
     function syncPricelist(Request $request)
     {
         try {
-
-
             $request->validate([
                 "id"   => "required",
             ]);
@@ -140,6 +138,7 @@ class SettingsController extends Controller
                 $pricelistItem = [
                     "PLIT_DVIC_ID"  =>  $deviceID,
                     "PLIT_PRCE"     =>  $request->price[$key],
+                    "PLIT_DURT"     =>  $request->duration[$key],
                 ];
                 if ($request->service[$key] == -1) {
                     $pricelistItem["PLIT_TYPE"] = "Pulse";
@@ -163,11 +162,13 @@ class SettingsController extends Controller
                             if ($savedItem->PLIT_TYPE == "Area") {
                                 if ($savedItem->PLIT_AREA_ID == $pricelistItem["PLIT_AREA_ID"]) {
                                     $savedItem->PLIT_PRCE =  $request->price[$key];
+                                    $savedItem->PLIT_DURT =  $request->duration[$key];
                                     $savedItem->save();
                                     $create = false;
                                 }
                             } else {
                                 $savedItem->PLIT_PRCE =  $request->price[$key];
+                                $savedItem->PLIT_DURT =  $request->duration[$key];
                                 $savedItem->save();
                                 $create = false;
                             }
@@ -220,6 +221,7 @@ class SettingsController extends Controller
                 "PLIT_DVIC_ID" => $item->PLIT_DVIC_ID,
                 "PLIT_AREA_ID" => ($item->PLIT_TYPE == "Session") ? 0 : (($item->PLIT_TYPE == "Pulse") ? -1 : $item->PLIT_AREA_ID),
                 "PLIT_PRCE" => $item->PLIT_PRCE,
+                "PLIT_DURT" => $item->PLIT_DURT,
             ]);
         }
 

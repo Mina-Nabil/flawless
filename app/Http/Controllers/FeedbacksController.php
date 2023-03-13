@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DashUser;
 use App\Models\Feedback;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session as HttpSession;
 
@@ -13,6 +14,7 @@ class FeedbacksController extends Controller
     {
         //show unconfirmed attendace
         $branchID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branchID)->get();
         $this->data['items'] = Feedback::getFeedbackData($branchID, "New", date('Y-m-d', 0), date('Y-m-d'));
         $this->data['title']            =   'Feedback Sheet';
         $this->data['cardTitle']        =   'Pending Patients Feedbacks';

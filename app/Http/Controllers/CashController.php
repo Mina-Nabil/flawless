@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cash;
+use App\Models\Room;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class CashController extends Controller
     {
         //Trans table
         $branch_ID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         $this->data['todayTrans'] = Cash::today($branch_ID)->get();
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');

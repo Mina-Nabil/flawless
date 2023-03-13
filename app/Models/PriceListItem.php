@@ -11,6 +11,10 @@ class PriceListItem extends Model
 
     public $fillable = ["PLIT_DVIC_ID", "PLIT_PRCE", "PLIT_TYPE", "PLIT_AREA_ID"] ;
 
+    public static function calculateTotalDuration($servicesIDs){
+        return self::whereIn("id", $servicesIDs)->selectRaw("SUM(PLIT_DURT) as total_duration")->first()->total_duration;
+    }
+
     public function getItemNameAttribute(){
         $this->loadMissing("device");
         $ret = $this->device->DVIC_NAME;

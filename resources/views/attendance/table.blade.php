@@ -54,8 +54,8 @@
                                 </td>
                                 <td>{{$item->ATND_SHFT}}</td>
                                 <td>
-                                    <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom"
-                                        data-content="{{$item->ATND_CMNT }}" data-original-title="Comment">
+                                    <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{$item->ATND_CMNT }}"
+                                        data-original-title="Comment">
                                         <div style="display: none">{{$item->ATND_CMNT }}</div><i class="far fa-list-alt"></i>
                                     </button>
                                 </td>
@@ -81,33 +81,34 @@
             </div>
             <div class="modal-body">
                 {{-- <form action="{{url($setAttendanceURL)}}" method="POST"> --}}
-                @csrf
-                <input type="hidden" name=id id="attendanceID">
+                    @csrf
+                    <input type="hidden" name=id id="attendanceID">
 
-                <div class="form-group">
-                    <label>Status</label>
-                    <select class="select form-control  col-md-12 mb-3" style="width:100%" name=status id=attendanceStateSel>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="display: block">
-                    <label>Shifts</label>
-                    <div class="input-group mb-3">
-                        <input type="number" min=0 max=2 step=1 placeholder="1 Or 2 Shifts" value=1 class="form-control" id=numberOfShifts>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="select form-control  col-md-12 mb-3" style="width:100%" name=status id=attendanceStateSel>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Comment</label>
-                    <div class="input-group mb-3">
-                        <textarea class="form-control" rows="2" id=attendanceComment name="comment"></textarea>
+                    <div class="form-group" style="display: block">
+                        <label>Shifts</label>
+                        <div class="input-group mb-3">
+                            <input type="number" min=0 max=2 step=1 placeholder="1 Or 2 Shifts" value=1 class="form-control" id=numberOfShifts>
+                        </div>
                     </div>
-                </div>
 
-                <button type="button" onclick="setAttendance()" class="btn btn-success mr-2">Set Status</button>
-                {{-- </form> --}}
+                    <div class="form-group">
+                        <label>Comment</label>
+                        <div class="input-group mb-3">
+                            <textarea class="form-control" rows="2" id=attendanceComment name="comment"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="setAttendance()" class="btn btn-success mr-2">Set Status</button>
+                    {{--
+                </form> --}}
             </div>
         </div>
     </div>
@@ -213,12 +214,14 @@
                     "displayLength": 25,
                     dom: 'Bfrtip',
                     buttons: [
+                        @if(Auth::user()->isOwner())
                         {
                             extend: 'excel',
                             title: 'Flawless',
                             footer: true,
                             className: 'btn-info'
                         }
+                        @endif
                     ]
                 });
             })

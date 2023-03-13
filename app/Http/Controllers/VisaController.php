@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use App\Models\Visa;
 use Carbon\Carbon;
 use DateTime;
@@ -16,6 +17,7 @@ class VisaController extends Controller
     {
         //Trans table
         $branch_ID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         $this->data['todayTrans'] = Visa::today($branch_ID)->get();
         $this->data['todayTitle'] = "Today's Transactions";
         $this->data['todaySubtitle'] = "Check all transactions from the starting of today " . Carbon::today()->format('d/M/Y');

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashUser extends Authenticatable
 {
@@ -31,7 +34,28 @@ class DashUser extends Authenticatable
         'remember_token',
     ];
 
-
+    ////static functions
+    /**
+     * @return true if available
+     */
+    public function checkUserAvailablity(Carbon $start_time, Carbon $end_time)
+    {
+        $query = DB::table('sessions')
+            ->where('SSHN_DCTR_ID', $this->id)
+            ->whereDate('SSHN_DATE', $start_time->format('Y-m-d'))
+            ->where(function ($query) use ($start_time, $end_time) {
+                $query->where(function ($query) use ($start_time) {
+                    $query->where('SSHN_STRT_TIME', "<=", $start_time->format('H:i'))
+                        ->where('SSHN_END_TIME', ">", $start_time->format('H:i'));
+                })->orWhere(function ($query) use ($end_time) {
+                    $query->where('SSHN_STRT_TIME', "<", $end_time->format('H:i'))
+                        ->where('SSHN_END_TIME', ">=", $end_time->format('H:i'));
+                });
+            })
+            ->selectRaw('COUNT(*) as sessions_count');
+            
+            return $query->first()->sessions_count == 0;
+    }
 
     /////model functions     
     public function getAuthPassword()

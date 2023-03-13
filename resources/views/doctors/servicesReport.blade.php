@@ -171,24 +171,28 @@
                     "displayLength": 25,
                     dom: 'Bfrtip',
                     buttons: [
+                        @if(Auth::user()->isOwner())
                         {
                             extend: 'excel',
                             title: 'Flawless',
                             footer: true,
                             className: 'btn-info'
                         }
+                        @endif
                     ]
                 });
                 var table = $('#attendanceTable').DataTable({
                     "displayLength": 25,
                     dom: 'Bfrtip',
                     buttons: [
+                        @if(Auth::user()->isOwner())
                         {
                             extend: 'excel',
                             title: 'Flawless',
                             footer: true,
                             className: 'btn-info'
                         }
+                        @endif
                     ]
                 });
             })

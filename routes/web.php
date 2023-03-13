@@ -45,10 +45,13 @@ Route::get('sessions/set/pending/{id}', [SessionsController::class, 'setSessionP
 Route::get('sessions/set/new/{id}', [SessionsController::class, 'setSessionNew']);
 Route::get('sessions/set/done/{id}/{date?}', [SessionsController::class, 'setSessionDone']);
 Route::get('sessions/set/cancelled/{id}', [SessionsController::class, 'setSessionCancelled']);
+Route::get('sessions/set/confirm/{id}', [SessionsController::class, 'confirmSession']);
 Route::post('sessions/api/get/services', [SessionsController::class, 'getServices']);
+Route::post('sessions/api/get/duration', [SessionsController::class, 'getServicesDuration']);
 Route::get('sessions/query', [SessionsController::class, 'prepareQuery']);
 Route::post('sessions/query', [SessionsController::class, 'loadQuery']);
 Route::get('sessions/delete/{id}', [SessionsController::class, 'delete']);
+Route::post('sessions/api', [SessionsController::class, 'getSessionsAPI']);
 
 //reports
 Route::get('reports/doctors', [ReportsController::class, 'prepareDoctorQuery']);
@@ -102,6 +105,7 @@ Route::post('exceptions', [AvailabilityExceptionsController::class, 'addExceptio
 Route::get('exceptions/delete/{id}', [AvailabilityExceptionsController::class, 'deleteException']);
 
 //DoctorAvailability
+Route::post('availabilities/doctors/check', [DoctorsAvailabilityController::class, 'getDoctorAvailability']);
 Route::get('availabilities', [DoctorsAvailabilityController::class, 'availabilities']);
 Route::post('availabilities', [DoctorsAvailabilityController::class, 'addDoctorAvailability']);
 Route::get('availabilities/{id}', [DoctorsAvailabilityController::class, 'availability']);
@@ -192,6 +196,7 @@ Route::get("set/branch/{id}", [HomeController::class, "setBranch"]);
 Route::post('payments/modal/add', [HomeController::class, 'addPayment']);
 Route::post('message', [HomeController::class, 'sendMessage'])->name('sendMessage');
 Route::get('calendar', [SessionsController::class, 'calendar'])->name('calendar');
+Route::get('calendar/{room}', [SessionsController::class, 'calendar'])->name('calendar');
 Route::post('search', [HomeController::class, 'search'])->name('search');
 Route::get('logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/login', [HomeController::class, 'login'])->name('login');

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Helpers\SmsHandler;
+use App\Jobs\SendSMSJob;
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as LaravelLog;
 
 class Session extends Model
 {
@@ -19,6 +22,32 @@ class Session extends Model
     protected $dates = ['SSHN_DATE'];
 
     //Query functions
+    public function getClassNameAttribute()
+    {
+        switch ($this->SSHN_STTS) {
+            case 'New':
+                return "bg-info";
+
+            case 'Pending Payment':
+                return "bg-dark";
+
+            case 'Cancelled':
+                return "bg-danger";
+
+            case 'Late Cancel':
+                return "bg-danger";
+
+            case 'No Show':
+                return "bg-danger";
+
+            case 'Done':
+                return "bg-success";
+
+            default:
+                return "bg-info";
+        }
+        return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
+    }
     public function getDiscountAttribute()
     {
         return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
@@ -42,6 +71,12 @@ class Session extends Model
         return $this->SSHN_TOTL > 0 ? 100 * round((($this->SSHN_TOTL - $this->SSHN_PAID - $this->SSHN_PTNT_BLNC) / $this->SSHN_TOTL), 2) : 0;
     }
 
+    public function getCarbonDateAttribute()
+    {
+        $timeArr = explode(':', $this->SSHN_STRT_TIME);
+        return (new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]);
+    }
+
     public function getTotalAfterDiscount()
     {
         return $this->total;
@@ -49,30 +84,33 @@ class Session extends Model
 
     public static function getNewSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, "asc", "New", $startDate, $endDate, null, null, $userID);
+        return self::getSessions($branchID, null, "asc", "New", $startDate, $endDate, null, null, $userID);
     }
 
     public static function getPendingPaymentSessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, "asc", "Pending Payment", null, null, null, null, $userID);
+        return self::getSessions($branchID, null, "asc", "Pending Payment", null, null, null, null, $userID);
     }
 
     public static function getTodaySessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, "asc", null, date('Y-m-d'), date('Y-m-d'), null, null, $userID);
+        return self::getSessions($branchID, null, "asc", null, date('Y-m-d'), date('Y-m-d'), null, null, $userID);
     }
 
     public static function getDoneSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, "desc", "Done", $startDate, $endDate, null, null, $userID);
+        return self::getSessions($branchID, null, "desc", "Done", $startDate, $endDate, null, null, $userID);
     }
 
-    public static function getSessions($branchID, $order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
+    public static function getSessions($branchID, $roomID = null, $order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
     {
         $rels = ["doctor", "patient", "creator", "accepter", "branch"];
         if ($loadServices)
             array_push($rels, "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area");
         $query = self::with($rels);
+
+        if ($roomID != null && $roomID != 0)
+            $query = $query->where("SSHN_ROOM_ID", "=", $roomID);
 
         if ($branchID != null && $branchID != 0)
             $query = $query->where("SSHN_BRCH_ID", "=", $branchID);
@@ -206,10 +244,13 @@ class Session extends Model
         return self::max('SSHN_TOTL');
     }
 
-    public static function createNewSession($branchID, $patientID, $date, $startTime, $endTime, $comment = null)
+    public static function createNewSession($roomID, $patientID, $doctorID, $date, $startTime, $endTime, $comment = null, $servicesArr = [], $isCommission = false)
     {
+        $room = Room::findOrFail($roomID);
         $res = self::insertGetId([
-            "SSHN_BRCH_ID"      =>  $branchID,
+            "SSHN_BRCH_ID"      =>  $room->ROOM_BRCH_ID,
+            "SSHN_ROOM_ID"      =>  $room->id,
+            "SSHN_DCTR_ID"      =>  $doctorID,
             "SSHN_PTNT_ID"      =>  $patientID,
             "SSHN_DATE"         =>  $date,
             "SSHN_STRT_TIME"    =>  $startTime,
@@ -219,6 +260,19 @@ class Session extends Model
         ]);
         if ($res) {
             $session = Session::findOrFail($res);
+            SendSMSJob::dispatch($session, SmsHandler::MODE_NEW);    
+            $session->clearServices();
+        
+            LaravelLog::debug("Printing services");
+            LaravelLog::debug("Array: ");
+            LaravelLog::debug(print_r($servicesArr, true));
+            foreach ($servicesArr as $serviceObj) {
+                LaravelLog::debug(print_r($serviceObj, true));
+                $session->addService($serviceObj->priceListID, $serviceObj->unit, $serviceObj->note, false, $serviceObj->isDoctor == "on" ? true : false, false);
+            }
+            $session->setCommission($isCommission);
+
+            $session->calculateTotal();
             $session->logEvent("Created Session");
             return 1;
         } else return 0;
@@ -356,6 +410,12 @@ class Session extends Model
             });
     }
 
+    public function confirmSession()
+    {
+        $this->SSHN_CONF = 1;
+        $this->save();
+    }
+
     public function calculateTotal()
     {
         $total = 0;
@@ -464,6 +524,7 @@ class Session extends Model
                 $this->SSHN_TEXT = $this->SSHN_TEXT . ". Cancellation Note: " . $comment;
             if ($this->save()) {
                 $this->logEvent("Set Session as Cancelled");
+                SendSMSJob::dispatch($this, SmsHandler::MODE_CANCEL);
                 return true;
             }
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\DoctorAvailability;
+use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,7 @@ class AttendanceController extends Controller
     {
         //show unconfirmed attendace
         $branchID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branchID)->get();
         $this->data['items']        = Attendance::getAttendanceData("New");
         $this->data['title']        =   'Attendance Sheet';
         $this->data['cardTitle']    =   'Unconfirmed Attendance';

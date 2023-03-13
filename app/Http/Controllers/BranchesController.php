@@ -50,6 +50,7 @@ class BranchesController extends Controller
         ]);
 
         $Branch->BRCH_NAME = $request->name;
+        $Branch->BRCH_LOCT = $request->location;
         $Branch->save();
 
         return redirect("branches/home");
@@ -66,6 +67,7 @@ class BranchesController extends Controller
         $Branch = Branch::findOrFail($request->id);
 
         $Branch->BRCH_NAME = $request->name;
+        $Branch->BRCH_LOCT = $request->location;
 
         $Branch->save();
 

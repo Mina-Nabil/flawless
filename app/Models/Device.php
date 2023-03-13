@@ -37,11 +37,11 @@ class Device extends Model
             foreach ($patientList->pricelistItems()->where("PLIT_DVIC_ID", $this->id)->get() as $item) {
 
                 if ($item->PLIT_TYPE == "Pulse") {
-                    $ret["Pulse"] = ["serviceName" => "Pulse", "id" => $item->id];
+                    $ret["Pulse"] = ["serviceName" => "Pulse ($item->PLIT_DURT mins)", "id" => $item->id];
                 } else if ($item->PLIT_TYPE == "Session") {
-                    $ret["Session"] =  ["serviceName" => "Session", "id" => $item->id];
+                    $ret["Session"] =  ["serviceName" => "Session ($item->PLIT_DURT mins)", "id" => $item->id];
                 } else {
-                    $ret[$item->area->AREA_NAME] =  ["serviceName" => $item->area->AREA_NAME, "id" => $item->id];
+                    $ret[$item->area->AREA_NAME] =  ["serviceName" => $item->area->AREA_NAME . " ($item->PLIT_DURT mins)", "id" => $item->id];
                 }
             }
 

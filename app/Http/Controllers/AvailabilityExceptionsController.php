@@ -30,7 +30,6 @@ class AvailabilityExceptionsController extends Controller
     }
 
 
-
     function deleteException($id)
     {
         /** @var AvailabilityException */

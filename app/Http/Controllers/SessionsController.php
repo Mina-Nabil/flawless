@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SmsHandler;
+use App\Jobs\SendSMSJob;
 use App\Models\Area;
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\Cash;
 use App\Models\DashUser;
 use App\Models\Device;
 use App\Models\Feedback;
 use App\Models\FollowUp;
 use App\Models\Patient;
+use App\Models\PriceListItem;
+use App\Models\Room;
 use App\Models\Session;
 use App\Models\Visa;
 use App\Providers\SessionClosed;
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session as HttpSession;
+use stdClass;
 
 class SessionsController extends Controller
 {
@@ -26,6 +33,7 @@ class SessionsController extends Controller
     public function index($items = null)
     {
         $branch_ID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         //title
         $this->data['title'] = "FLAWLESS Dashboard";
 
@@ -59,11 +67,6 @@ class SessionsController extends Controller
         $this->data['cashBalance'] = Cash::currentBalance($branch_ID);
 
 
-        //followups
-
-        //attendance
-
-
         if ($items == null || $items == "new") {
             $this->data['sessions'] = Session::getNewSessions($branch_ID, $startOfLast2Month, $endOfMonth);
         } else if ($items == "today") {
@@ -89,13 +92,16 @@ class SessionsController extends Controller
         return view("home", $this->data);
     }
 
-    public function calendar()
+    public function calendar($roomID = null)
     {
         $branch_ID = HttpSession::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         $this->data['title']    =   "Calendar";
+        $this->data['branch']    =   Branch::find($branch_ID);
+        $this->data['room']    =   Room::find($roomID);
         $startOfYear = (new DateTime())->format('Y-01-01');
         $endOfYear = (new DateTime())->format('Y-12-31');
-        $this->data['sessions'] =   Session::getSessions($branch_ID, 'desc', null, $startOfYear, $endOfYear);
+        $this->data['sessions'] =   Session::getSessions($branch_ID, null, 'desc', null, $startOfYear, $endOfYear);
         return view('layouts.calendar', $this->data);
     }
 
@@ -129,8 +135,7 @@ class SessionsController extends Controller
         $user = Auth::user();
         $this->data['title']    = "Session Details";
         // $this->data['patients'] = Patient::all(); added by default
-        $this->data['devices']  = Device::all();
-        $this->data['areas']    = Area::all();
+
         $this->data['doctors']    = DashUser::where("DASH_TYPE_ID", 2)->with('dash_types')->get();
 
         //URLs
@@ -150,8 +155,9 @@ class SessionsController extends Controller
         $this->data['setSessionDoneUrl']        = "sessions/set/done/" . $this->data['session']->id;
         $this->data['setSessionNewUrl']         = "sessions/set/new/" . $this->data['session']->id;
         $this->data['setSessionCancelledUrl']   = "sessions/set/cancelled/" . $this->data['session']->id;
+        $this->data['setSessionConfirmedUrl']   = "sessions/set/confirm/" . $this->data['session']->id;
         $this->data['updateServicesURL']           = "sessions/update/services";
-        $this->data['getServicesAPI']           = "sessions/api/get/services";
+
         $this->data['canDelete']           = $user->isOwner();
 
 
@@ -188,6 +194,15 @@ class SessionsController extends Controller
 
         $session = Session::findOrFail($sessionID);
         $session->payFromPatientBalance();
+
+        return $this->redirectToDetails($session->id);
+    }
+
+    public function confirmSession($sessionID)
+    {
+        /** @var Session */
+        $session = Session::findOrFail($sessionID);
+        $session->confirmSession();
 
         return $this->redirectToDetails($session->id);
     }
@@ -267,7 +282,7 @@ class SessionsController extends Controller
         ]);
 
         //query
-        $this->data['items'] = Session::getSessions($request->branchID, "asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
+        $this->data['items'] = Session::getSessions($request->branchID, null, "asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
@@ -349,14 +364,21 @@ class SessionsController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            "branchID" =>  "required|numeric",
-            "patientID" =>  "required|exists:patients,id",
-            "sesDate"      =>  "required|date",
-            "start"     =>  "required",
-            "end"       =>  "required|after:start",
+            "roomID"        =>  "required|exists:rooms,id",
+            "patientID"     =>  "required|exists:patients,id",
+            "doctorID"      =>  "required|exists:dash_users,id",
+            "sesDate"       =>  "required|date",
+            "start"         =>  "required",
+            "end"           =>  "required|after:start",
         ]);
+        /** @var DashUser */
+        $doctor = DashUser::findOrFail($request->doctorID);
 
-        echo Session::createNewSession($request->branchID, $request->patientID, $request->sesDate, $request->start, $request->end, $request->comment);
+        if (!$doctor->checkUserAvailablity(new Carbon($request->sesDate . ' ' . $request->start), new Carbon($request->sesDate . ' ' . $request->end))) {
+            abort(422, "Doctor not available");
+        }
+
+        echo Session::createNewSession($request->roomID, $request->patientID, $request->doctorID, $request->sesDate, $request->start, $request->end, $request->comment, $request->servicesArr ? json_decode($request->servicesArr) : [], $request->isCommission ? 1 : 0);
     }
 
     public function edit(Request $request)
@@ -370,6 +392,12 @@ class SessionsController extends Controller
         ]);
 
         $session = Session::findOrFail($request->id);
+        $newDate = new Carbon($request->sessionDate . ' ' . $request->sessionStartTime);
+        $oldDate = $session->carbon_date->clone();
+        $sendSMS = false;
+        if ($newDate->notEqualTo($session->carbon_date)) {
+            $sendSMS = true;
+        }
 
         $session->SSHN_PTNT_ID = $request->patientID;
         $session->SSHN_DATE = $request->sessionDate;
@@ -377,7 +405,10 @@ class SessionsController extends Controller
         $session->SSHN_END_TIME = $request->sessionEndTime;
         $session->SSHN_TEXT = $request->sessionComment;
 
-        $session->save();
+        if ($session->save() && $sendSMS) {
+            SendSMSJob::dispatch($session, SmsHandler::MODE_UPDATE);
+            $session->logEvent("Date changed from " . $oldDate->format('l, Y-m-d H:i') . ' to ' . $newDate->format('l, Y-m-d H:i'));
+        }
 
         return redirect("sessions/details/" . $session->id);
     }
@@ -391,6 +422,27 @@ class SessionsController extends Controller
     }
 
     /////API functions
+    public function getSessionsAPI(Request $request)
+    {
+        $request->validate([
+            "branchID"  =>  "required",
+            "roomID"    =>  "required",
+            "start_date"     =>  "required",
+            "end_date"       =>  "required"
+        ]);
+
+        $session = Session::getSessions($request->branchID, $request->roomID, 'desc', null, $request->start, $request->end);
+        return response()->json($session->map(function ($s) {
+            $tmpSession = new stdClass;
+            $tmpSession->id = $s->id;
+            $tmpSession->title = ($s->SSHN_CONF ? '(c) ' : '') .  $s->doctor->DASH_USNM . ' - ' . $s->patient->PTNT_NAME;
+            $tmpSession->start = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_STRT_TIME;
+            $tmpSession->end = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_END_TIME;
+            $tmpSession->class_name = $s->class_name;
+            return $tmpSession;
+        }));
+    }
+
     public function getServices(Request $request)
     {
 
@@ -402,6 +454,16 @@ class SessionsController extends Controller
         $device = Device::findOrFail($request->deviceID);
 
         return json_encode($device->availableServices($request->patientID), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getServicesDuration(Request $request)
+    {
+        $request->validate([
+            "servicesIDs"   =>  "required|array",
+            "servicesIDs.*"   =>  "exists:pricelist_items,id",
+        ]);
+
+        return response()->json(PriceListItem::calculateTotalDuration($request->servicesIDs));
     }
 
     //redirects

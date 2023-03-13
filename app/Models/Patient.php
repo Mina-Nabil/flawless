@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Auth;
@@ -134,6 +135,20 @@ class Patient extends Model
     public function getAvailablePackagesAttribute()
     {
         return $this->packageItems()->with("pricelistItem", "pricelistItem.area", "pricelistItem.device")->where("PTPK_QNTY", ">", "0")->get();
+    }
+
+    public function getFirstNameAttribute()
+    {
+        return explode(' ', $this->PTNT_NAME)[0];
+    }
+
+    public function getSmsMobileNumberAttribute()
+    {
+        if (str_starts_with($this->PTNT_MOBN, '01')) {
+            return '2' . $this->PTNT_MOBN;
+        } else {
+            return $this->PTNT_MOBN;
+        }
     }
 
     /**
@@ -289,6 +304,11 @@ class Patient extends Model
     public function pricelist(): BelongsTo
     {
         return $this->belongsTo("App\Models\PriceList", "PTNT_PRLS_ID");
+    }
+
+    public function doctors(): BelongsToMany
+    {
+        return $this->belongsToMany(DashUser::class, "sessions", "SSHN_DCTR_ID", "SSHN_PTNT_ID");
     }
 
     public function channel(): BelongsTo

@@ -283,7 +283,7 @@
                 items = JSON.parse(this.responseText)
                 console.log(items)
                 items.forEach(function (itemaya, index){
-                    addListItemRow(itemaya.PLIT_DVIC_ID, itemaya.PLIT_AREA_ID, itemaya.PLIT_PRCE);
+                    addListItemRow(itemaya.PLIT_DVIC_ID, itemaya.PLIT_AREA_ID, itemaya.PLIT_PRCE, itemaya.PLIT_DURT);
                 })
             }
         }
@@ -294,7 +294,7 @@
         addListItemRow();
     }
 
-    function addListItemRow(deviceID = null, areaID = null, price = null){
+    function addListItemRow(deviceID = null, areaID = null, price = null, duration = null){
 
         room++;
         var objTo = document.getElementById('itemsContainer')
@@ -303,7 +303,7 @@
         var rdiv = 'removeItem' + room;
         var concatString = "";
         concatString +=   '<div class=row>\
-                            <div class=col-4>\
+                            <div class=col-3>\
                                 <div class="form-group">\
                                     <div class="input-group mb-3">\
                                         <select name=device[] class="select form-control custom-select" style="width: 100%; height:36px;" required>\
@@ -316,7 +316,7 @@
                                 </div>\
                             </div>';
 
-            concatString += '<div class=col-4>\
+            concatString += '<div class=col-3>\
                                 <div class="form-group">\
                                     <div class="input-group mb-3">\
                                         <select name=service[] class="select form-control custom-select" style="width: 100%; height:36px;" required>\
@@ -331,7 +331,13 @@
                                 </div>\
                             </div>';
             
-        concatString +=    '    <div class="col-lg-4">\
+        concatString +=    `    <div class="col-lg-3">\
+                                    <div class="input-group mb-3">\
+                                        <input type="number" step="1" class="form-control" placeholder="Service Duration*" name=duration[] value="` + duration + `" required>
+                                    </div>
+                                </div>
+                                    `
+        concatString +=    '    <div class="col-lg-3">\
                                 <div class="input-group mb-3">\
                                     <input type="number" step="0.01" class="form-control" placeholder="Service Price*" name=price[] value="' + price + '" required>\
                                     <div class="input-group-append">'
