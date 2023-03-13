@@ -624,7 +624,7 @@ class Session extends Model
 
     function pricelistItems()
     {
-        return $this->belongsToMany(PriceListItem::class, "session_items" ,  "SHIT_PLIT_ID", "SHIT_SSHN_ID");
+        return $this->belongsToMany(PriceListItem::class, "session_items" ,  "SHIT_SSHN_ID", "SHIT_PLIT_ID");
     }
 
     function logs()
