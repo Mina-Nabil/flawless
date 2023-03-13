@@ -57,8 +57,9 @@ class Session extends Model
             elseif($price_item->PLIT_DVIC_ID == 9) return '#7B7B7B';
             elseif(in_array($price_item->PLIT_DVIC_ID, [20, 7, 18, 23, 22])) return '#24E500';
             else return '#FF0D86';
-
+            
         }
+        return '#FF0D86';
     }
     public function getDiscountAttribute()
     {
