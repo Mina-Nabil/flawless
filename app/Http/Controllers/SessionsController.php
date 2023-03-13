@@ -438,7 +438,7 @@ class SessionsController extends Controller
             $tmpSession->title = ($s->SSHN_CONF ? '(c) ' : '') .  $s->doctor->DASH_USNM . ' - ' . $s->patient->PTNT_NAME;
             $tmpSession->start = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_STRT_TIME;
             $tmpSession->end = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_END_TIME;
-            $tmpSession->class_name = $s->class_name;
+            // $tmpSession->class_name = $s->class_name;
             $tmpSession->eventBackgroundColor = $s->event_color;
             return $tmpSession;
         }));
