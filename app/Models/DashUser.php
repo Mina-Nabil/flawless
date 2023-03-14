@@ -43,6 +43,7 @@ class DashUser extends Authenticatable
         $query = DB::table('sessions')
             ->where('SSHN_DCTR_ID', $this->id)
             ->whereDate('SSHN_DATE', $start_time->format('Y-m-d'))
+            ->whereIn('SSHN_STTS', Session::ACTIVE_STATES)
             ->where(function ($query) use ($start_time, $end_time) {
                 $query->where(function ($query) use ($start_time) {
                     $query->where('SSHN_STRT_TIME', "<=", $start_time->format('H:i'))

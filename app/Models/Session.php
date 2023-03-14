@@ -15,8 +15,14 @@ use Illuminate\Support\Facades\Log as LaravelLog;
 class Session extends Model
 {
     public const STATE_DONE = "Done";
+    public const STATE_NEW = "New";
+    public const STATE_PENDING_PYMT = "Pending Payment";
+    public const STATE_CANCELLED = "Cancelled";
+    public const STATE_LATE_CANCEL = "Late Cancel";
 
-
+    public const ACTIVE_STATES = [
+        self::STATE_NEW, self::STATE_PENDING_PYMT
+    ];
 
     public $timestamps = false;
     protected $dates = ['SSHN_DATE'];
@@ -98,25 +104,25 @@ class Session extends Model
 
     public static function getNewSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, null, "asc", "New", $startDate, $endDate, null, null, $userID);
+        return self::getSessions($branchID, null, "asc", ["New"], $startDate, $endDate, null, null, $userID);
     }
 
     public static function getPendingPaymentSessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, null, "asc", "Pending Payment", null, null, null, null, $userID);
+        return self::getSessions($branchID, null, "asc", ["Pending Payment"], null, null, null, null, $userID);
     }
 
     public static function getTodaySessions($branchID, $userID = null)
     {
-        return self::getSessions($branchID, null, "asc", null, date('Y-m-d'), date('Y-m-d'), null, null, $userID);
+        return self::getSessions($branchID, null, "asc", [], date('Y-m-d'), date('Y-m-d'), null, null, $userID);
     }
 
     public static function getDoneSessions($branchID, $startDate, $endDate, $userID = null)
     {
-        return self::getSessions($branchID, null, "desc", "Done", $startDate, $endDate, null, null, $userID);
+        return self::getSessions($branchID, null, "desc", ["Done"], $startDate, $endDate, null, null, $userID);
     }
 
-    public static function getSessions($branchID, $roomID = null, $order = 'desc', $state = null, $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
+    public static function getSessions($branchID, $roomID = null, $order = 'desc', array $state = [], $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
     {
         $rels = ["doctor", "patient", "creator", "accepter", "branch"];
         if ($loadServices)

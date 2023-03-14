@@ -42,7 +42,7 @@ class ReportsController extends Controller
         $endDate = $request->to;
         $doctor = DashUser::findOrFail($request->doctorID);
 
-        $this->data['sessions']         =   Session::getSessions(0, null, 'asc', 'Done', $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
+        $this->data['sessions']         =   Session::getSessions(0, null, 'asc', ['Done'], $startDate, $endDate, null, $request->doctorID, null, null, null, null, true, true);
         $this->data['totalPaid']        =   Session::getDoctorSum($startDate, $endDate, $doctor->id);
         $this->data['sessionsCount']    =   $this->data['sessions']->count();
 
@@ -112,7 +112,7 @@ class ReportsController extends Controller
             "to"        =>  "required",
         ]);
 
-        $this->data['sessions'] = Session::getSessions($request->branchID, null, "asc", Session::STATE_DONE, $request->from, $request->to);
+        $this->data['sessions'] = Session::getSessions($request->branchID, null, "asc", [Session::STATE_DONE], $request->from, $request->to);
 
         //table info
         $this->data['from'] = (new DateTime($request->from))->format('d-M-Y');

@@ -101,7 +101,7 @@ class SessionsController extends Controller
         $this->data['room']    =   Room::find($roomID);
         $startOfYear = (new DateTime())->format('Y-01-01');
         $endOfYear = (new DateTime())->format('Y-12-31');
-        $this->data['sessions'] =   Session::getSessions($branch_ID, null, 'desc', null, $startOfYear, $endOfYear);
+        $this->data['sessions'] =   Session::getSessions($branch_ID, null, 'desc', [], $startOfYear, $endOfYear);
         return view('layouts.calendar', $this->data);
     }
 
@@ -282,7 +282,7 @@ class SessionsController extends Controller
         ]);
 
         //query
-        $this->data['items'] = Session::getSessions($request->branchID, null, "asc", $request->state, $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
+        $this->data['items'] = Session::getSessions($request->branchID, null, "asc", [$request->state], $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
@@ -431,7 +431,7 @@ class SessionsController extends Controller
             "end_date"       =>  "required"
         ]);
 
-        $session = Session::getSessions($request->branchID, $request->roomID, 'desc', null, $request->start, $request->end);
+        $session = Session::getSessions($request->branchID, $request->roomID, 'desc', [Session::STATE_DONE, Session::STATE_NEW, Session::STATE_PENDING_PYMT], $request->start, $request->end);
         return response()->json($session->map(function ($s) {
             $tmpSession = new stdClass;
             $tmpSession->id = $s->id;
