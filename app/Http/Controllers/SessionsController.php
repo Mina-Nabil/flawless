@@ -30,7 +30,7 @@ class SessionsController extends Controller
 {
 
     //home pages
-    public function index($items = null)
+    public function index($items = "today")
     {
         $branch_ID = HttpSession::get('branch');
         $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
@@ -110,7 +110,7 @@ class SessionsController extends Controller
     {
         $this->data['session'] = Session::with(["logs" => function ($query) {
             $query->orderBy('id', 'desc');
-        }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user", "packageLogs")->findOrFail($id);
+        }], "items", "patient", "doctor", "creator", "items.pricelistItem", "items.pricelistItem.device", "items.pricelistItem.area", "logs.user", "packageLogs", "room")->findOrFail($id);
         $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->findOrFail($this->data['session']->SSHN_PTNT_ID);
 
         $this->data['patient_packages'] = $this->data['patient']->available_packages;

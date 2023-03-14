@@ -73,6 +73,12 @@
                         <p class="text-muted">{{$session->patient->PTNT_MOBN}}</p>
                     </div>
                     <div class="col-md-2">
+                        <div class="font-bold mb-2">
+                            Room
+                        </div>
+                        <p class="text-muted">{{$session->room ? $session->room->ROOM_NAME : 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-2">
                         @if(Auth::user()->canAdmin())
                         <div class="font-bold mb-2">
                             Total {{($session->discount > 0) ? "({$session->SSHN_DISC}% Discount)" : ""}}

@@ -612,6 +612,11 @@ class Session extends Model
         return $this->belongsTo(Branch::class, "SSHN_BRCH_ID");
     }
 
+    function room()
+    {
+        return $this->belongsTo(Room::class, "SSHN_ROOM_ID");
+    }
+
     function feedback()
     {
         return $this->hasOne("App\Models\Feedback", "FDBK_SSHN_ID");
