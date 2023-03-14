@@ -135,8 +135,8 @@ class Session extends Model
         if ($branchID != null && $branchID != 0)
             $query = $query->where("SSHN_BRCH_ID", "=", $branchID);
 
-        if ($state != null && $state != "All")
-            $query = $query->where("SSHN_STTS", "=", $state);
+        if (count($state) != 0)
+            $query = $query->whereIn("SSHN_STTS", $state);
 
         if ($startDate != null)
             $query = $query->where("SSHN_DATE", ">=", $startDate);
