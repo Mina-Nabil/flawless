@@ -48,7 +48,7 @@ class DoctorsAvailabilityController extends Controller
             "end_time"      =>  "required",
         ]);
 
-        $midShifts = (new Carbon($request->date))->setHour(14);
+        $midShifts = (new Carbon($request->date))->setHour(16);
         $start_time = new Carbon($request->date . ' ' . $request->start_time);
         $shift = $start_time->isBefore($midShifts) ? DoctorAvailability::SHIFT_1 : DoctorAvailability::SHIFT_2;
 
