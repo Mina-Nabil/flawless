@@ -521,7 +521,7 @@
                                 <div class="form-group">
                                     <label>Start Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{$session->SSHN_STRT_TIME}}" name=sessionStartTime required>
+                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{(new Carbon(date('Y-m-d ') . $session->SSHN_STRT_TIME))->format('H:i A'))}}" name=sessionStartTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionStartTime')}}</small>
                                 </div>
@@ -529,7 +529,7 @@
                                 <div class="form-group">
                                     <label>End Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" class="form-control" placeholder="Session End Time" value="{{$session->SSHN_END_TIME}}" name=sessionEndTime required>
+                                        <input type="time" class="form-control" placeholder="Session End Time" value="{{(new Carbon(date('Y-m-d ') . $session->SSHN_END_TIME))->format('H:i A'))}}" name=sessionEndTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionEndTime')}}</small>
                                 </div>

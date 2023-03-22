@@ -149,9 +149,16 @@ class Session extends Model
 
         if ($patient != null && $patient > 0)
             $query = $query->where("SSHN_PTNT_ID", $patient);
-
-        if ($doctor != null && $doctor > 0)
-            $query = $query->where("SSHN_DCTR_ID", $doctor);
+            
+            /** @var DashUser */
+            $user = Auth::user();
+        if ($user->isDoctor() || ($doctor != null && $doctor > 0)){
+            if($user->isDoctor()){
+                $query = $query->where("SSHN_DCTR_ID", $user->id);
+            } else {
+                $query = $query->where("SSHN_DCTR_ID", $doctor);
+            }
+        }
 
         if ($openedBy != null && $openedBy > 0)
             $query = $query->where("SSHN_OPEN_ID", $openedBy);

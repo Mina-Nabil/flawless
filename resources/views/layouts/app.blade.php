@@ -205,6 +205,13 @@
                                         <li><a href="{{url('locations/home')}}">Locations</a></li>
                                     </ul>
                                 </li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Stock</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('stockitems/home')}}">Items</a></li>
+                                        <li><a href="{{url('stocktypes/home')}}">Categories</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         @endif
