@@ -180,7 +180,9 @@ class DashUsersController extends Controller
                 'desc',
                 [Session::STATE_DONE, Session::STATE_NEW, Session::STATE_PENDING_PYMT],
                 $request->start_date,
-                $request->end_date
+                $request->end_date,
+                null, 
+                $request->doctorID
             );
             $sessions = $sessions->concat($sessionsTmp);
         }
