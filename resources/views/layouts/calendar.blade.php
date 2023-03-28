@@ -24,7 +24,7 @@
             <div class="col-lg-12">
                 <select class="select form-control" style="width:fit-content" onchange="changeSelectedDoctor()" id=calendarDoctor>
                     <option disabled selected>Show times doctor</option>
-                    <option value=-1>None</option>
+                    <option value=0>None</option>
                     @foreach($doctors as $d)
                     <option value="{{$d->id}}"> {{$d->DASH_USNM}} </option>
                     @endforeach
