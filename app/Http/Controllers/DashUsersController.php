@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\DashType;
 use App\Models\DashUser;
+use App\Models\DoctorAvailability;
+use App\Models\Session;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use stdClass;
 
 class DashUsersController extends Controller
 {
@@ -153,5 +160,41 @@ class DashUsersController extends Controller
         } catch (Exception $e) {
         }
         return redirect("dash/users/" . $dashUser->DASH_TYPE_ID);
+    }
+
+    ////////API
+    public function getDoctorTimes(Request $request)
+    {
+        $request->validate([
+            "doctorID"      =>  "required|exists:dash_users,id",
+            "start_date"    =>  "required",
+            "end_date"      =>  "required"
+        ]);
+
+        $branches = Branch::all();
+        $sessions = new Collection();
+        foreach ($branches as $branch) {
+            $sessionsTmp = Session::getSessions(
+                $branch->id,
+                null,
+                'desc',
+                [Session::STATE_DONE, Session::STATE_NEW, Session::STATE_PENDING_PYMT],
+                $request->start_date,
+                $request->end_date
+            );
+            $sessions = $sessions->concat($sessionsTmp);
+        }
+
+        return response()->json($sessions->map(function ($s) use ($request) {
+            $tmpSession = new stdClass;
+            $tmpSession->id = $s->id;
+            $tmpSession->title = ($s->SSHN_CONF ? '(c) ' : '') .  $s->doctor->DASH_USNM . ' - ' . $s->patient->PTNT_NAME;
+            $tmpSession->start = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_STRT_TIME;
+            $tmpSession->end = $s->SSHN_DATE->format("Y-m-d") . 'T' . $s->SSHN_END_TIME;
+            // $tmpSession->class_name = $s->class_name;
+            $tmpSession->backgroundColor = $s->SSHN_BRCH_ID == $request->branchID ? $s->event_color : '#000000';
+            $tmpSession->rendering = 'background';
+            return $tmpSession;
+        }));
     }
 }

@@ -8,13 +8,29 @@
 @section('content')
 <div class="row">
     <div class="col-md-2">
-        <select class="select form-control" style="width:fit-content" onchange="changeRoom()" id=calendarRoom>
-            <option value=0 {{(0==session('branch')) ? 'selected' : '' }}>All rooms</option>
-            @foreach($rooms as $r)
-            <option value="{{$r->id}}" {{($room && $r->id == $room->id) ? 'selected' : ''}}
-                > {{$r->branch->BRCH_NAME}} - {{$r->ROOM_NAME}} </option>
-            @endforeach
-        </select>
+        <div class="row">
+            <div class="col-lg-12">
+                <select class="select form-control" style="width:fit-content" onchange="changeRoom()" id=calendarRoom>
+                    <option value=0 {{(0==session('branch')) ? 'selected' : '' }}>All rooms</option>
+                    @foreach($rooms as $r)
+                    <option value="{{$r->id}}" {{($room && $r->id == $room->id) ? 'selected' : ''}}
+                        > {{$r->branch->BRCH_NAME}} - {{$r->ROOM_NAME}} </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-lg-12">
+                <br>
+            </div>
+            <div class="col-lg-12">
+                <select class="select form-control" style="width:fit-content" onchange="changeSelectedDoctor()" id=calendarDoctor>
+                    <option disabled selected>Show times doctor</option>
+                    <option value=-1>None</option>
+                    @foreach($doctors as $d)
+                    <option value="{{$d->id}}"> {{$d->DASH_USNM}} </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
     </div>
     <div class="col-md-10">
         <div class="card">
@@ -24,7 +40,7 @@
                         <div class="card-body b-l calender-sidebar">
                             @if($room !== null)
                             <div id="calendar"></div>
-                            @else 
+                            @else
                             Please select a room
                             @endif
                             {{-- <iframe src="https://calendar.google.com/calendar/embed?src=flawless7clinic%40gmail.com&ctz=Africa%2FCairo" style="border: 0" width="800" height="600" frameborder="0"
@@ -46,6 +62,38 @@
 <script>
     !function($) {
         "use strict";
+        
+        var roomEventsCallback = (start, end, tz, successCallback ) => {
+            $.ajax({
+            method: "POST",
+            url: "{{$getSessionsAPI}}",
+            data: {
+                _token: "{{ csrf_token() }}" ,
+                start_date: start.format('YYYY-MM-DD'),
+                end_date: end.format('YYYY-MM-DD'),
+                branchID: "{{ isset($branch) ? $branch->id : 0 }}",
+                roomID: "{{ isset($room) ? $room->id : -1 }}",
+            }
+            }).done((data, status, xhr) => {
+                successCallback(data)
+            })
+        }
+        
+        var doctorEventsCallback = (start, end, tz, successCallback ) => {
+            if(!$('#calendarDoctor').val()) return successCallback([])
+            $.ajax({
+            method: "POST",
+            url: "{{$getDoctorTimesAPI}}",
+            data: {
+                _token: "{{ csrf_token() }}" ,
+                start_date: start.format('YYYY-MM-DD'),
+                end_date: end.format('YYYY-MM-DD'),
+                doctorID: $('#calendarDoctor').val(),
+            }
+            }).done((data, status, xhr) => {
+                successCallback(data)
+            })
+        }
 
         var CalendarApp = function() {
             this.$body = $("body")
@@ -70,23 +118,6 @@
             var form = '';
             var today = new Date($.now());
 
-            var defaultEvents =  (start, end, tz, successCallback ) => {
-
-                 $.ajax({
-                    method: "POST",
-                    url: "{{$getSessionsAPI}}",
-                    data: {
-                        _token: "{{ csrf_token() }}" ,
-                        start_date: start.format('YYYY-MM-DD'),
-                        end_date: end.format('YYYY-MM-DD'),
-                        branchID: "{{ isset($branch) ? $branch->id : 0 }}",
-                        roomID: "{{ isset($room) ? $room->id : -1 }}",
-                    }
-                }).done((data, status, xhr) => {
-                    successCallback(data)
-                })
-            }
-
             var $this = this;
             $this.$calendarObj = $this.$calendar.fullCalendar({
                 slotDuration: '00:15:00', /* If we want to split day time each 15minutes */
@@ -100,7 +131,7 @@
                     center: 'title',
                     right: 'agendaWeek,agendaDay'
                 },
-                events: defaultEvents,
+                eventSources: [roomEventsCallback, doctorEventsCallback],
                 expandRows: true,
                 editable: false,
                 droppable: false, // this allows things to be dropped onto the calendar !!!
@@ -120,15 +151,19 @@
         
         },
 
-    //init CalendarApp
+        //init CalendarApp
         $.CalendarApp = new CalendarApp, $.CalendarApp.Constructor = CalendarApp
         
-    }(window.jQuery),
+    }(window.jQuery)
 
     //initializing CalendarApp
-    function($) {
+    var CalendarInitModule = function($) {
         "use strict";
         $.CalendarApp.init()
+        return {
+            reloadEvents: () => $.CalendarApp.$calendarObj.fullCalendar('refetchEvents')
+        }
+
     }(window.jQuery);
 
 
@@ -149,6 +184,9 @@
         window.location.assign("{{url('calendar')}}" + "/"+ calendarRoom)
     }
 
+    function changeSelectedDoctor(){
+        CalendarInitModule.reloadEvents()
+    }
 
 
 </script>

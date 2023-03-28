@@ -431,7 +431,7 @@ class SessionsController extends Controller
             "end_date"       =>  "required"
         ]);
 
-        $session = Session::getSessions($request->branchID, $request->roomID, 'desc', [Session::STATE_DONE, Session::STATE_NEW, Session::STATE_PENDING_PYMT], $request->start, $request->end);
+        $session = Session::getSessions($request->branchID, $request->roomID, 'desc', [Session::STATE_DONE, Session::STATE_NEW, Session::STATE_PENDING_PYMT], $request->start_date, $request->end_date);
         return response()->json($session->map(function ($s) {
             $tmpSession = new stdClass;
             $tmpSession->id = $s->id;

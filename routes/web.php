@@ -52,6 +52,7 @@ Route::get('sessions/query', [SessionsController::class, 'prepareQuery']);
 Route::post('sessions/query', [SessionsController::class, 'loadQuery']);
 Route::get('sessions/delete/{id}', [SessionsController::class, 'delete']);
 Route::post('sessions/api', [SessionsController::class, 'getSessionsAPI']);
+Route::post('doctors/times/api', [DashUsersController::class, 'getDoctorTimes']);
 
 //reports
 Route::get('reports/doctors', [ReportsController::class, 'prepareDoctorQuery']);

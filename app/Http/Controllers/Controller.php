@@ -38,6 +38,7 @@ class Controller extends BaseController
         $this->data['addPatientFormURL']    = url('patients/insert');
         $this->data['getPatientsURL']       = url('patients/get/json');
         $this->data['getSessionsAPI']        = url('sessions/api');
+        $this->data['getDoctorTimesAPI']        = url('doctors/times/api');
         $this->data['getDoctorsAPI']        = url('availabilities/doctors/check');
         $this->data['getDurationTotalAPI']  = url('sessions/api/get/duration');
         $this->data['addSessionFormURL']    = url('sessions/insert');
