@@ -16,6 +16,7 @@ use App\Models\Patient;
 use App\Models\PriceListItem;
 use App\Models\Room;
 use App\Models\Session;
+use App\Models\StockItem;
 use App\Models\Visa;
 use App\Providers\SessionClosed;
 use Carbon\Carbon;
@@ -114,10 +115,10 @@ class SessionsController extends Controller
         $this->data['patient'] = Patient::with("sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area")->findOrFail($this->data['session']->SSHN_PTNT_ID);
 
         $this->data['patient_packages'] = $this->data['patient']->available_packages;
+        $this->data['stockItems'] = StockItem::active()->session()->get();
 
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
-        $this->data['cardTitle'] = false;
         $this->data['servicesCols'] = ['Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit', 'Comment'];
         $this->data['servicesAtts'] = [
             ['foreignDate' => ['rel' => 'session', 'att' => 'SSHN_DATE', 'format' => 'd-M-Y']],
@@ -130,6 +131,15 @@ class SessionsController extends Controller
             ['comment' => ['att' => "SHIT_NOTE"]]
         ];
 
+        $this->data['stockTrans']    =   StockItem::loadTransaction("100" . $this->data['session']->id);
+        $this->data['stockCols'] = ['#', 'User', 'Items', 'Total'];
+        $this->data['stockAtts'] = [
+            ['attUrl' => ['url' => "stock/transaction", "shownAtt" => 'STTR_CODE', "urlAtt" => 'STTR_CODE']],
+            'DASH_USNM',
+            'STCK_NAME',
+            ['number'   =>  ['att'  =>  'STTR_AMNT']]
+        ];
+        
         //page data
         /** @var DashUser */
         $user = Auth::user();
@@ -141,6 +151,7 @@ class SessionsController extends Controller
         //URLs
         $this->data['manageServicesURL']        = "sessions/manage/items";
         $this->data['paymentURL']               = "sessions/add/payment";
+        $this->data['stockURL']               = "stock/entry";
         $this->data['doctorURL']               = "sessions/set/doctor";
         $this->data['discountURL']              = "sessions/set/discount";
         $this->data['editSessionURL']           = "sessions/edit";

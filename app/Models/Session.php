@@ -68,6 +68,7 @@ class Session extends Model
         }
         return '#FF0D86';
     }
+
     public function getDiscountAttribute()
     {
         return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
@@ -95,6 +96,18 @@ class Session extends Model
     {
         $timeArr = explode(':', $this->SSHN_STRT_TIME);
         return (new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]);
+    }
+
+    public function getCarbonStartTimeAttribute()
+    {
+        $timeArr = explode(':', $this->SSHN_STRT_TIME);
+        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
+    }
+
+    public function getCarbonEndTimeAttribute()
+    {
+        $timeArr = explode(':', $this->SSHN_END_TIME);
+        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
     }
 
     public function getTotalAfterDiscount()
@@ -149,9 +162,16 @@ class Session extends Model
 
         if ($patient != null && $patient > 0)
             $query = $query->where("SSHN_PTNT_ID", $patient);
-
-        if ($doctor != null && $doctor > 0)
-            $query = $query->where("SSHN_DCTR_ID", $doctor);
+            
+            /** @var DashUser */
+            $user = Auth::user();
+        if ($user->isDoctor() || ($doctor != null && $doctor > 0)){
+            if($user->isDoctor()){
+                $query = $query->where("SSHN_DCTR_ID", $user->id);
+            } else {
+                $query = $query->where("SSHN_DCTR_ID", $doctor);
+            }
+        }
 
         if ($openedBy != null && $openedBy > 0)
             $query = $query->where("SSHN_OPEN_ID", $openedBy);

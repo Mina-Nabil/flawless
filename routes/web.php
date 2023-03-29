@@ -17,6 +17,7 @@ use App\Http\Controllers\RoomsController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\SessionTypesController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\VisaController;
 use Illuminate\Support\Facades\Route;
 
@@ -163,6 +164,26 @@ Route::post("cash/insert", [CashController::class, 'insert']);
 //Visa Account
 Route::get("visa/home", [VisaController::class, 'home']);
 Route::post("visa/insert", [VisaController::class, 'insert']);
+
+///Stock
+Route::get("stock", [StockController::class, 'stock']);
+Route::get("stock/transactions", [StockController::class, 'transactions']);
+Route::get("stock/transaction/{code}", [StockController::class, 'transaction']);
+Route::get("stock/entry", [StockController::class, 'entry']);
+Route::post("stock/entry", [StockController::class, 'insertEntry']);
+
+//Stock items
+Route::get("stockitems/home", [StockController::class, 'items']);
+Route::post("stockitems/insert", [StockController::class, 'insertItem']);
+Route::get("stockitems/edit/{id}", [StockController::class, 'item']);
+Route::get("stockitems/toggle/{id}", [StockController::class, 'toggleItem']);
+Route::post("stockitems/update", [StockController::class, 'updateItem']);
+
+//Stock items
+Route::get("stocktypes/home", [StockController::class, 'stocktypes']);
+Route::post("stocktypes/insert", [StockController::class, 'insertType']);
+Route::get("stocktypes/edit/{id}", [StockController::class, 'stocktype']);
+Route::post("stocktypes/update", [StockController::class, 'updateType']);
 
 //Branches
 Route::get("branches/home", [BranchesController::class, 'index']);
