@@ -13,7 +13,7 @@ class CreateStockTables extends Migration
      */
     public function up()
     {
-   
+        
         Schema::create('stock_types', function (Blueprint $table){
             $table->id();
             $table->string("STTP_NAME")->unique();
@@ -22,6 +22,7 @@ class CreateStockTables extends Migration
         Schema::create('stock_items', function (Blueprint $table) {
             $table->id();
             $table->string("STCK_NAME");
+            $table->string("STCK_UNIT");
             $table->foreignId("STCK_STTP_ID")->constrained("stock_types");
             $table->boolean("STCK_SSHN")->default(1); //if stock item can be used in sessions
             $table->boolean("STCK_ACTV")->default(1); //if stock item can be used 3amatan
@@ -46,6 +47,8 @@ class CreateStockTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stock_tables');
+        Schema::dropIfExists('stock_transactions');
+        Schema::dropIfExists('stock_items');
+        Schema::dropIfExists('stock_types');
     }
 }

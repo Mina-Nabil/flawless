@@ -68,6 +68,7 @@ class Session extends Model
         }
         return '#FF0D86';
     }
+
     public function getDiscountAttribute()
     {
         return round($this->SSHN_TOTL * ($this->SSHN_DISC / 100), 2);
@@ -95,6 +96,18 @@ class Session extends Model
     {
         $timeArr = explode(':', $this->SSHN_STRT_TIME);
         return (new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]);
+    }
+
+    public function getCarbonStartTimeAttribute()
+    {
+        $timeArr = explode(':', $this->SSHN_STRT_TIME);
+        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
+    }
+
+    public function getCarbonEndTimeAttribute()
+    {
+        $timeArr = explode(':', $this->SSHN_END_TIME);
+        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
     }
 
     public function getTotalAfterDiscount()

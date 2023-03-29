@@ -164,10 +164,18 @@ Route::post("cash/insert", [CashController::class, 'insert']);
 Route::get("visa/home", [VisaController::class, 'home']);
 Route::post("visa/insert", [VisaController::class, 'insert']);
 
+///Stock
+Route::get("stock", [StockController::class, 'stock']);
+Route::get("stock/transactions", [StockController::class, 'transactions']);
+Route::get("stock/transaction/{code}", [StockController::class, 'transaction']);
+Route::get("stock/entry", [StockController::class, 'entry']);
+Route::post("stock/entry", [StockController::class, 'insertEntry']);
+
 //Stock items
 Route::get("stockitems/home", [StockController::class, 'items']);
 Route::post("stockitems/insert", [StockController::class, 'insertItem']);
 Route::get("stockitems/edit/{id}", [StockController::class, 'item']);
+Route::get("stockitems/toggle/{id}", [StockController::class, 'toggleItem']);
 Route::post("stockitems/update", [StockController::class, 'updateItem']);
 
 //Stock items

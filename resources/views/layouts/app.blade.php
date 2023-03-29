@@ -157,6 +157,14 @@
                                         <li><a href="{{url('reports/visa')}}">Visa</a></li>
                                     </ul>
                                 </li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Stock</a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{url('stock')}}">Current</a></li>
+                                        <li><a href="{{url('stock/transactions')}}">Transactions</a></li>
+                                        <li><a href="{{url('stock/entry')}}">Entry</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="{{url('attendance/query')}}">Attendance</a></li>
                                 <li><a href="{{url('followups/query')}}">Follow-Ups</a></li>
                                 <li><a href="{{url('feedbacks/query')}}">Feedbacks</a></li>

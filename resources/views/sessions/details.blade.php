@@ -133,6 +133,7 @@
                     @if(Auth::user()->canAdmin() )
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#payment ">Payment</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#doctor ">Doctor</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#stock">Stock</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#settings">Session Info</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#balancelogs">Balance Log</a> </li>
                     @endif
@@ -204,7 +205,7 @@
                         <button class="btn btn-success mr-2" onclick="confirmAndGoTo('{{url($setSessionConfirmedUrl)}}', 'Set Session as Confirmed')" @if($session->SSHN_CONF) disabled @endif >
                             @if($session->SSHN_CONF)
                             Confirmed
-                            @else 
+                            @else
                             Confirm Session
                             @endif
                         </button>
@@ -485,6 +486,91 @@
                     </div>
                 </div>
 
+                <!--Stock tab-->
+                <div class="tab-pane " id="stock" role="tabpanel">
+                    <div class="card-body">
+                        <div class="card-body">
+                            <h4 class="card-title">Stock </h4>
+                            <h6 class="card-subtitle">Add stock transaction</h6>
+
+                            <h4 class="card-title">Attached Stock</h4>
+                            <div class="col-12">
+                                <x-datatable id="stockTable" :title="'Stock'"  :subtitle='""' :cols="$stockCols" :items="$stockTrans" :atts="$stockAtts" :cardTitle="false" />
+                            </div>
+
+                            <hr>
+
+                            <div class=row>
+                                <button class="btn btn-success" onclick=addToab()> Add Stock</button>
+                            </div>
+                            @if( $session->canEditInfo() )
+                            <form class="form pt-3" method="post" action="{{ url($stockURL) }}">
+                                @csrf
+                                <input name=session_id type="hidden" value="{{$session->id}}">
+                                <div class="row">
+
+                                    <div id="dynamicStockContainer" class="nopadding row col-lg-12">
+                                    </div>
+
+
+                                </div>
+                                <button type="submit" class="btn btn-success mr-2">Submit</button>
+
+                            </form>
+                            <script>
+                                var stockaya = 0;
+                               function addToab() {
+                               
+                                stockaya++;
+                                var objTo = document.getElementById('dynamicStockContainer')
+                                var divtest = document.createElement("div");
+                                divtest.setAttribute("class", "nopadding row col-lg-12 removestockclass" + stockaya);
+                                var rdiv = 'removestockclass' + stockaya;
+                                var concatString = "";
+                                concatString +=   `<div class="row col-lg-12">
+                                                            <div class="col-lg-6">
+                                                                <div class="input-group mb-2">
+                                                                    <select name=stock_ids[] class="form-control select2  custom-select" required>
+                                                                        <option disabled hidden selected value="">Stock Items</option>
+                                                                        @foreach($stockItems as $item)
+                                                                        <option value="{{ $item->id }}">
+                                                                            {{$item->STCK_NAME}} - in {{$item->STCK_UNIT}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" step=1 class="form-control amount" placeholder="Items amount" name=amount[] aria-describedby="basic-addon11" required>
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-danger" id="dynamicAddButton" type="button" onclick="removeToab( ` + stockaya + ` );"><i class="fa fa-minus"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div`;
+                                
+                                divtest.innerHTML = concatString;
+                                
+                                objTo.appendChild(divtest);
+                                $(".select2").select2()
+                            
+                               }
+                            
+                               function removeToab(rid) {
+                                $('.removestockclass' + rid).remove();
+                            
+                            }
+                               
+                            </script>
+
+                            @else
+                            <p class="text-muted">Old Session Info can't be modified</p>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+
                 <!--Settings tab-->
                 <div class="tab-pane " id="settings" role="tabpanel">
                     <div class="card-body">
@@ -521,7 +607,7 @@
                                 <div class="form-group">
                                     <label>Start Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{(new Carbon(date('Y-m-d ') . $session->SSHN_STRT_TIME))->format('H:i A'))}}" name=sessionStartTime required>
+                                        <input type="time" class="form-control" placeholder="Session Start Time" value="{{$session->carbon_start_time->format('H:i A')}}" name=sessionStartTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionStartTime')}}</small>
                                 </div>
@@ -529,7 +615,7 @@
                                 <div class="form-group">
                                     <label>End Time*</label>
                                     <div class="input-group mb-3">
-                                        <input type="time" class="form-control" placeholder="Session End Time" value="{{(new Carbon(date('Y-m-d ') . $session->SSHN_END_TIME))->format('H:i A'))}}" name=sessionEndTime required>
+                                        <input type="time" class="form-control" placeholder="Session End Time" value="{{$session->carbon_end_time->format('H:i A')}}" name=sessionEndTime required>
                                     </div>
                                     <small class="text-danger">{{$errors->first('sessionEndTime')}}</small>
                                 </div>
