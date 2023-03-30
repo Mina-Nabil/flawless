@@ -79,6 +79,21 @@
             })
         }
         
+        var allDayEventsCallback = (start, end, tz, successCallback ) => {
+            $.ajax({
+            method: "GET",
+            url: "{{$allDayEventsAPI}}",
+            data: {
+                _token: "{{ csrf_token() }}" ,
+                start_date: start.format('YYYY-MM-DD'),
+                end_date: end.format('YYYY-MM-DD'),
+                roomID: "{{ isset($room) ? $room->id : null }}",
+            }
+            }).done((data, status, xhr) => {
+                successCallback(data)
+            })
+        }
+        
         var doctorEventsCallback = (start, end, tz, successCallback ) => {
             if(!$('#calendarDoctor').val()) return successCallback([])
             $.ajax({
@@ -131,7 +146,7 @@
                     center: 'title',
                     right: 'agendaWeek,agendaDay'
                 },
-                eventSources: [roomEventsCallback, doctorEventsCallback],
+                eventSources: [roomEventsCallback, doctorEventsCallback, allDayEventsCallback],
                 expandRows: true,
                 editable: false,
                 droppable: false, // this allows things to be dropped onto the calendar !!!
@@ -141,9 +156,17 @@
                 selectable: true,
                 nowIndicator: true,
                 drop: function(date) { $this.onDrop($(this), date); },
-                select: function (start, end, allDay) { openBookingForm(start, end) },
+                select: function (start, end, allDay) { if(allDay) {
+                    openDayNoteForm(start.format('YYYY-MM-DD'), "{{ isset($room) ? $room->id : null }}")
+                } else openBookingForm(start, end) },
                 eventClick: function(calEvent, jsEvent, view) { 
-                    window.open('{{url("sessions/details") . "/" }}' + calEvent.id,  '_blank');
+                    if(calEvent.id.startsWith('all-day')){
+                        var id = calEvent.id.substring(7)
+                        console.log(calEvent)
+                        openDayNoteForm(calEvent.start.format('YYYY-MM-DD'), calEvent.roomID ?? 0, id, calEvent.original_title, calEvent.note)
+                    } else {
+                        window.open('{{url("sessions/details") . "/" }}' + calEvent.id,  '_blank');
+                    }
                  },
 
             });

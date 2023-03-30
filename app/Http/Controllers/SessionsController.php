@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Cash;
 use App\Models\DashUser;
+use App\Models\DayNote;
 use App\Models\Device;
 use App\Models\Feedback;
 use App\Models\FollowUp;
@@ -139,7 +140,7 @@ class SessionsController extends Controller
             'STCK_NAME',
             ['number'   =>  ['att'  =>  'STTR_AMNT']]
         ];
-        
+
         //page data
         /** @var DashUser */
         $user = Auth::user();
@@ -293,7 +294,21 @@ class SessionsController extends Controller
         ]);
 
         //query
-        $this->data['items'] = Session::getSessions($request->branchID, null, "asc", [$request->state], $request->from, $request->to, $request->patient, $request->doctor, $request->opener, $request->moneyMan, $request->totalBegin, $request->totalEnd, $request->isCommission);
+        $this->data['items'] = Session::getSessions(
+            $request->branchID,
+            null,
+            "asc",
+            $request->state == 'All' ? [] : [$request->state],
+            $request->from,
+            $request->to,
+            $request->patient,
+            $request->doctor,
+            $request->opener,
+            $request->moneyMan,
+            $request->totalBegin,
+            $request->totalEnd,
+            $request->isCommission
+        );
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
@@ -453,6 +468,56 @@ class SessionsController extends Controller
             $tmpSession->backgroundColor = $s->event_color;
             return $tmpSession;
         }));
+    }
+
+    public function getDayNotesAPI(Request $request)
+    {
+        $request->validate([
+            "roomID"    =>  "nullable",
+            "start_date"     =>  "required",
+            "end_date"       =>  "required"
+        ]);
+
+        $notes = DayNote::loadNotes(new Carbon($request->start_date), new Carbon($request->end_date), $request->roomID);
+        return response()->json($notes->map(function ($s) {
+            $tmpNote = new stdClass;
+            $tmpNote->allDay = true;
+            $tmpNote->id = 'all-day' . $s->id;
+            $tmpNote->title = $s->ADNT_TTLE . ' - ' .  $s->user->DASH_USNM;
+            $tmpNote->original_title = $s->ADNT_TTLE;
+            $tmpNote->start = $s->ADNT_DATE;
+            $tmpNote->roomID = $s->ADNT_ROOM_ID;
+            $tmpNote->desc = $s->ADNT_NOTE;
+            return $tmpNote;
+        }));
+    }
+
+    public function setNoteAPI(Request $request)
+    {
+        $request->validate([
+            "id"        =>  "nullable|exists:day_notes",
+            "roomID"    =>  "nullable|exists:rooms,id",
+            "title"     =>  "required",
+            "note_date" =>  "required",
+            "note"      =>  "nullable"
+        ]);
+
+        if (isset($request->id)) {
+            /** @var DayNote */
+            $note = DayNote::findOrFail($request->id);
+            $note->updateInfo($request->title, (new Carbon($request->note_date)), $request->roomID, $request->note);
+        } else {
+            DayNote::newNote($request->title, (new Carbon($request->note_date)), $request->roomID, $request->note);
+        }
+
+        return response()->json();
+    }
+
+    public function deleteNoteAPI($noteID)
+    {
+        $note = DayNote::findOrFail($noteID);
+        $note->delete();
+        return response()->json();
     }
 
     public function getServices(Request $request)

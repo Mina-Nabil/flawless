@@ -304,7 +304,9 @@
                             @endif
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-payment-modal" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Add
                                 Payment</a>
-                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Send Msg. </a>
+                            {{-- <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Send Msg.
+                            </a> --}}
+                            <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#day-note" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Day Note </a>
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#add-attendance" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Attendance </a>
 
                         </div>
@@ -576,6 +578,61 @@
                     </div>
                 </div>
 
+                <div id="day-note" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">All day note</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id=dayNoteID />
+
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" class="form-control" id="dayNoteDate" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Room</label>
+                                    <select class="select2 form-control  col-md-12 mb-3 modalSelect2" style="width:100%" id="dayNoteRoom">
+                                        <option value=0> All rooms </option>
+                                        @foreach($rooms as $room)
+                                        <option value="{{$room->id}}"> {{$room->ROOM_NAME}} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" id="dayNoteTitle" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Extra Note</label>
+                                    <div class="input-group mb-3">
+                                        <textarea class="form-control" rows="2" id="dayNoteNote"></textarea>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-4>
+                                        <button type="button" onclick="setNote()" class="btn btn-success mr-2">Save Note</button>
+                                    </div>
+                                    <div class=col-3>
+                                        <button style="display: none" id="deleteNoteBtn" type="button" onclick="deleteNote()" class="btn btn-danger mr-2">Delete</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ============================================================== -->
                 <!-- ADD NEW SESSION -->
                 <!-- ============================================================== -->
@@ -640,7 +697,8 @@
                                         <div class="ml-10 col-9 d-flex justify-content-end">
                                             <div class="bt-switch">
                                                 <div>
-                                                    <input type="checkbox" data-size="small" data-on-color="success" data-off-color="danger" data-on-text="Commission" data-off-text="No Commission" checked id="isCommission">
+                                                    <input type="checkbox" data-size="small" data-on-color="success" data-off-color="danger" data-on-text="Commission" data-off-text="No Commission" checked
+                                                        id="isCommission">
                                                 </div>
                                             </div>
                                         </div>
@@ -1442,6 +1500,118 @@
             }
 
             http.send(formData)
+        }
+
+        function openDayNoteForm(date=null, room=null, id = null, title = null, note = null)
+        {
+            if(id){
+                $('#dayNoteID').val(id);
+                $('#deleteNoteBtn').css('display', 'block');
+            }else{
+                $('#dayNoteID').val('');
+                $('#deleteNoteBtn').css('display', 'none');
+            }
+            $('#dayNoteTitle').val(title);
+            $('#dayNoteNote').val(note);
+            $('#dayNoteRoom').val(room);
+            $('#dayNoteRoom').trigger('change');
+            $('#dayNoteDate').val(date);
+
+            $('#day-note').modal('show')
+        }
+
+        function setNote(){
+            var id          =   $('#dayNoteID').val();
+            var title       =   $('#dayNoteTitle').val();
+            var note        =   $('#dayNoteNote').val();
+            var roomID      =   $('#dayNoteRoom').val();
+            var note_date   =   $('#dayNoteDate').val();
+
+            var formData = new FormData();
+            formData.append('_token','{{ csrf_token() }}');
+            if(id){
+                formData.append("id", id)
+            }
+            formData.append("title", title)
+            formData.append("note", note)
+            formData.append("note_date", note_date)
+            if(roomID != 0)
+                formData.append("roomID", roomID)
+
+            var url = "{{$allDayEventsAPI}}";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", url);
+            http.setRequestHeader("Accept", "application/json");
+
+            http.onreadystatechange = function (){
+            if(this.readyState==4 && this.status == 200){
+                Swal.fire({
+                    title: "Success!",
+                    text: "Note saved successfully",
+                    icon: "success"
+                }) 
+                $('#day-note').modal('hide')
+                if(CalendarInitModule){
+                    CalendarInitModule.reloadEvents()
+                }
+           
+            } else if(this.readyState==4 && this.status == 422 && isJson(this.responseText)) {
+                try {
+                    var errors = JSON.parse(this.responseText)
+                    var errorMesage = "" ;
+                    if(errors.errors["title"]){
+                        errorMesage += errors.errors.title + " " ;
+                    }
+                    if(errors.errors["note_date"]){
+                        errorMesage += errors.errors["note_date"] + " " ;
+                    }
+                 
+                    errorMesage = errorMesage.replace('note_date', 'Date')
+
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMesage ,
+                        icon: "error"
+                    })
+                } catch (r){
+                    console.log(r)
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+                } else if(this.readyState==4) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Oops Something went wrong! Please try again",
+                        icon: "error"
+                    })
+                }
+            }
+
+            http.send(formData)
+        }
+
+        function deleteNote(){
+            $.ajax({
+            method: "DELETE",
+            url: "{{$allDayEventsAPI}}" + '/' + $('#dayNoteID').val(),
+            data: {
+                _token: "{{ csrf_token() }}" 
+            }
+            }).done((data, status, xhr) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Followup delete successfully",
+                    icon: "success"
+                }) 
+                $('#day-note').modal('hide')
+                if(CalendarInitModule){
+                    CalendarInitModule.reloadEvents()
+                }
+            })
         }
 
 

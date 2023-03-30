@@ -157,9 +157,6 @@ class Session extends Model
         if ($endDate != null)
             $query = $query->where("SSHN_DATE", "<=", $endDate);
 
-        if ($endDate != null)
-            $query = $query->where("SSHN_DATE", "<=", $endDate);
-
         if ($patient != null && $patient > 0)
             $query = $query->where("SSHN_PTNT_ID", $patient);
             

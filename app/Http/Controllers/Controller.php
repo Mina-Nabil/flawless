@@ -37,8 +37,9 @@ class Controller extends BaseController
         $this->data['addPatientFormTitle']  = "Add New Patient";
         $this->data['addPatientFormURL']    = url('patients/insert');
         $this->data['getPatientsURL']       = url('patients/get/json');
-        $this->data['getSessionsAPI']        = url('sessions/api');
-        $this->data['getDoctorTimesAPI']        = url('doctors/times/api');
+        $this->data['getSessionsAPI']       = url('sessions/api');
+        $this->data['allDayEventsAPI']      = url('allday/api');
+        $this->data['getDoctorTimesAPI']    = url('doctors/times/api');
         $this->data['getDoctorsAPI']        = url('availabilities/doctors/check');
         $this->data['getDurationTotalAPI']  = url('sessions/api/get/duration');
         $this->data['addSessionFormURL']    = url('sessions/insert');
@@ -48,7 +49,7 @@ class Controller extends BaseController
         $this->data['searchURL']            = url('search');
         $this->data['sendMessageURL']       = url('message');
         $this->data['addPaymentModalURL']   = url('payments/modal/add');
-        $this->data['getServicesAPI']           = "sessions/api/get/services";
+        $this->data['getServicesAPI']       = "sessions/api/get/services";
         $this->data['allPricelists']        =   PriceList::all();
         $this->data['channels']             =   Channel::all();
         $this->data['locations']            =   Location::all();

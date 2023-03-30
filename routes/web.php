@@ -54,6 +54,9 @@ Route::post('sessions/query', [SessionsController::class, 'loadQuery']);
 Route::get('sessions/delete/{id}', [SessionsController::class, 'delete']);
 Route::post('sessions/api', [SessionsController::class, 'getSessionsAPI']);
 Route::post('doctors/times/api', [DashUsersController::class, 'getDoctorTimes']);
+Route::get('allday/api', [SessionsController::class, 'getDayNotesAPI']);
+Route::post('allday/api', [SessionsController::class, 'setNoteAPI']);
+Route::delete('allday/api/{id}', [SessionsController::class, 'deleteNoteAPI']);
 
 //reports
 Route::get('reports/doctors', [ReportsController::class, 'prepareDoctorQuery']);
