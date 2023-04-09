@@ -64,7 +64,7 @@ class Attendance extends Model
         if (!is_null($type))
             if ($type == 'NotCancelled') {
                 $query = $query->where("ATND_STTS", "!=", "Cancelled");
-            } elseif ($type == 'NotCancelled') {
+            } elseif ($type == 'New') {
                 $query = $query->where("ATND_STTS", $type);
             }
 
