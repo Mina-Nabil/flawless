@@ -156,7 +156,8 @@
                 selectable: true,
                 nowIndicator: true,
                 drop: function(date) { $this.onDrop($(this), date); },
-                select: function (start, end, allDay) { if(allDay) {
+                select: function (start, end, allDay) { 
+                    if(!start.hasTime()) {
                     openDayNoteForm(start.format('YYYY-MM-DD'), "{{ isset($room) ? $room->id : null }}")
                 } else openBookingForm(start, end) },
                 eventClick: function(calEvent, jsEvent, view) { 
