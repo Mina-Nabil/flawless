@@ -161,9 +161,8 @@
                     openDayNoteForm(start.format('YYYY-MM-DD'), "{{ isset($room) ? $room->id : null }}")
                 } else openBookingForm(start, end) },
                 eventClick: function(calEvent, jsEvent, view) { 
-                    if(calEvent.id.startsWith('all-day')){
+                    if(typeof calEvent.id == 'string' && calEvent.id.startsWith('all-day')){
                         var id = calEvent.id.substring(7)
-                        console.log(calEvent)
                         openDayNoteForm(calEvent.start.format('YYYY-MM-DD'), calEvent.roomID ?? 0, id, calEvent.original_title, calEvent.note)
                     } else {
                         window.open('{{url("sessions/details") . "/" }}' + calEvent.id,  '_blank');
