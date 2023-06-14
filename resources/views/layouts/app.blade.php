@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oregano" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oswald" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Signika" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script>
         Pusher.logToConsole = false;
