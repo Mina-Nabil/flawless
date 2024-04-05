@@ -293,10 +293,10 @@ class SessionsController extends Controller
             "to"    =>  "required"
         ]);
         $devices_ids = [];
-        if (count($request->devices_ids) == 0 || in_array(0, $request->devices_ids)) {
+        if (count($request->device_ids) == 0 || in_array(0, $request->device_ids)) {
             $devices_ids = [];
         } else {
-            $devices_ids = $request->devices_ids;
+            $devices_ids = $request->device_ids;
         }
         //query
         $this->data['items'] = Session::getSessions(
