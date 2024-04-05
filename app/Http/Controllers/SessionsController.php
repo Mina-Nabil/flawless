@@ -307,7 +307,8 @@ class SessionsController extends Controller
             $request->moneyMan,
             $request->totalBegin,
             $request->totalEnd,
-            $request->isCommission
+            $request->isCommission,
+            false, $request->device_ids
         );
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
