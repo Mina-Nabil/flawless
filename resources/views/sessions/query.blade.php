@@ -74,6 +74,16 @@
                         </select>
                     </div>
 
+                    <div class="form-group col-md-6 m-t-0">
+                        <label>Devices</label>
+                        <select class="select2  select2-multiple form-control" multiple="multiple" name=device_ids[]>
+                          <option value="0" selected>All Devices</option>
+                          <?php foreach ($devices as $device) { ?>
+                            <option value="<?= $device->id ?>"><?= $device->DVIC_NAME ?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+
                     <div class=row>
                         <div class="col-9 form-group">
                             <label>Doctor</label>

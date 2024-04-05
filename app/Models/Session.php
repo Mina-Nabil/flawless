@@ -57,14 +57,13 @@ class Session extends Model
     {
         $this->loadMissing('pricelistItems');
         LaravelLog::info(print_r($this->pricelistItems->toArray(), true));
-        foreach($this->pricelistItems as $price_item){
-            if($price_item->PLIT_DVIC_ID == 1) return '#055C9D';
-            elseif($price_item->PLIT_DVIC_ID == 2) return '#A020F0';
-            elseif($price_item->PLIT_DVIC_ID == 19) return '#D1D100';
-            elseif($price_item->PLIT_DVIC_ID == 9) return '#7B7B7B';
-            elseif(in_array($price_item->PLIT_DVIC_ID, [20, 7, 18, 23, 22])) return '#24E500';
+        foreach ($this->pricelistItems as $price_item) {
+            if ($price_item->PLIT_DVIC_ID == 1) return '#055C9D';
+            elseif ($price_item->PLIT_DVIC_ID == 2) return '#A020F0';
+            elseif ($price_item->PLIT_DVIC_ID == 19) return '#D1D100';
+            elseif ($price_item->PLIT_DVIC_ID == 9) return '#7B7B7B';
+            elseif (in_array($price_item->PLIT_DVIC_ID, [20, 7, 18, 23, 22])) return '#24E500';
             else return '#FF0D86';
-            
         }
         return '#FF0D86';
     }
@@ -95,19 +94,19 @@ class Session extends Model
     public function getCarbonDateAttribute()
     {
         $timeArr = explode(':', $this->SSHN_STRT_TIME);
-        return (new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]);
+        return (new Carbon($this->SSHN_DATE))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]);
     }
 
     public function getCarbonStartTimeAttribute()
     {
         $timeArr = explode(':', $this->SSHN_STRT_TIME);
-        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
+        return ((new Carbon($this->SSHN_DATE))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
     }
 
     public function getCarbonEndTimeAttribute()
     {
         $timeArr = explode(':', $this->SSHN_END_TIME);
-        return ((new Carbon($this->SSHN_DATE ))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
+        return ((new Carbon($this->SSHN_DATE))->SetTime($timeArr[0], $timeArr[1], $timeArr[2]));
     }
 
     public function getTotalAfterDiscount()
@@ -135,7 +134,7 @@ class Session extends Model
         return self::getSessions($branchID, null, "desc", ["Done"], $startDate, $endDate, null, null, $userID);
     }
 
-    public static function getSessions($branchID, $roomID = null, $order = 'desc', array $state = [], $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false)
+    public static function getSessions($branchID, $roomID = null, $order = 'desc', array $state = [], $startDate = null, $endDate = null, $patient = null, $doctor = null, $openedBy = null, $moneyBy = null, $totalBegin = null, $totalEnd = null, $isCommision = "0", $loadServices = false, $devices_ids = [])
     {
         $rels = ["doctor", "patient", "creator", "accepter", "branch"];
         if ($loadServices)
@@ -151,6 +150,13 @@ class Session extends Model
         if (count($state) != 0)
             $query = $query->whereIn("SSHN_STTS", $state);
 
+        if (count($devices_ids) != 0) {
+            $query->join('session_items', 'SHIT_SSHN_ID', '=', 'sessions.id')
+                ->join('pricelist_items', 'SHIT_PLIT_ID', '=', 'pricelist_items.id')
+                ->groupby('sessions.id')->select('sessions.*');
+            $query = $query->whereIn("PLIT_DVIC_ID", $devices_ids);
+        }
+
         if ($startDate != null)
             $query = $query->where("SSHN_DATE", ">=", $startDate);
 
@@ -159,11 +165,11 @@ class Session extends Model
 
         if ($patient != null && $patient > 0)
             $query = $query->where("SSHN_PTNT_ID", $patient);
-            
-            /** @var DashUser */
-            $user = Auth::user();
-        if ($user->isDoctor() || ($doctor != null && $doctor > 0)){
-            if($user->isDoctor()){
+
+        /** @var DashUser */
+        $user = Auth::user();
+        if ($user->isDoctor() || ($doctor != null && $doctor > 0)) {
+            if ($user->isDoctor()) {
                 $query = $query->where("SSHN_DCTR_ID", $user->id);
             } else {
                 $query = $query->where("SSHN_DCTR_ID", $doctor);
@@ -297,9 +303,9 @@ class Session extends Model
         ]);
         if ($res) {
             $session = Session::findOrFail($res);
-            SendSMSJob::dispatch($session, SmsHandler::MODE_NEW);    
+            SendSMSJob::dispatch($session, SmsHandler::MODE_NEW);
             $session->clearServices();
-        
+
             LaravelLog::debug("Printing services");
             LaravelLog::debug("Array: ");
             LaravelLog::debug(print_r($servicesArr, true));
@@ -652,7 +658,7 @@ class Session extends Model
 
     function pricelistItems()
     {
-        return $this->belongsToMany(PriceListItem::class, "session_items" ,  "SHIT_SSHN_ID", "SHIT_PLIT_ID");
+        return $this->belongsToMany(PriceListItem::class, "session_items",  "SHIT_SSHN_ID", "SHIT_PLIT_ID");
     }
 
     function logs()
