@@ -292,7 +292,12 @@ class SessionsController extends Controller
             "from"  =>  "required",
             "to"    =>  "required"
         ]);
-
+        $devices_ids = [];
+        if (count($request->devices_ids) == 0 || in_array(0, $request->devices_ids)) {
+            $devices_ids = [];
+        } else {
+            $devices_ids = $request->devices_ids;
+        }
         //query
         $this->data['items'] = Session::getSessions(
             $request->branchID,
@@ -308,7 +313,8 @@ class SessionsController extends Controller
             $request->totalBegin,
             $request->totalEnd,
             $request->isCommission,
-            false, $request->device_ids
+            false,
+            $devices_ids
         );
 
         $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
