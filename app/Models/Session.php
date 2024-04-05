@@ -153,7 +153,7 @@ class Session extends Model
         if (count($devices_ids) != 0) {
             $query->join('session_items', 'SHIT_SSHN_ID', '=', 'sessions.id')
                 ->join('pricelist_items', 'SHIT_PLIT_ID', '=', 'pricelist_items.id')
-                ->groupby('sessions.id')->select('sessions.*');
+                ->groupby('sessions.*')->select('sessions.*');
             $query = $query->whereIn("PLIT_DVIC_ID", $devices_ids);
         }
 
