@@ -55,7 +55,7 @@
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
                             <option value="0">All</option>
                             @foreach($admins as $admin)
-                            <option value="{{$admin->id}}"> {{$patient->DASH_USNM}} </option>
+                            <option value="{{$admin->id}}"> {{$admin->DASH_USNM}} </option>
                             @endforeach
                         </select>
                     </div>
