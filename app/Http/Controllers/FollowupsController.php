@@ -63,8 +63,9 @@ class FollowupsController extends Controller
             "from" => "required",
             "to" => "required",
         ]);
+        $branch_ID = Session::get('branch');
 
-        $this->data['items'] = FollowUp::getFollowupsData($request->state, $request->from, $request->to, $request->caller);
+        $this->data['items'] = FollowUp::getFollowupsData($branch_ID, $request->state, $request->from, $request->to, $request->caller);
 
         $this->data['title']        =   'Followups Sheet Report';
         $this->data['cardTitle']    =   'Followups';
