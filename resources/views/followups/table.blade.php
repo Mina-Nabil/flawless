@@ -17,7 +17,7 @@
                                 <th>Caller</th>
                                 <th>On</th>
                                 <th>Status</th>
-                                {{-- <th>Comment</th> --}}
+                                <th>Comment</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,7 +52,7 @@
 
                                 </td>
 
-                                {{-- <td>
+                                <td>
                                     <button type="button" style="padding:.1rem" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{$item->FLUP_TEXT }}
                                         Session Date: {{$item->session->SSHN_DATE->format('d-M-Y')}}
                                         Session Note: {{$item->session->SSHN_TEXT}}" data-original-title="Comment">
@@ -60,7 +60,7 @@
                                             Session Date: {{$item->session->SSHN_DATE->format('d-M-Y')}}
                                             Session Note: {{$item->session->SSHN_TEXT}}</div><i class="far fa-list-alt"></i>
                                     </button>
-                                </td> --}}
+                                </td>
                             </tr>
                             @endforeach
                             </body>
