@@ -78,7 +78,7 @@ class PatientsController extends Controller
         $this->data['cardTitle'] = false;
         $this->data['followupsCols'] = ['Date', 'State', 'Caller', 'Comment'];
         $this->data['followupsAtts'] = [
-            ['date' => ['att' => 'FLUP_CALL', 'format' => 'd-M-Y']],
+            ['date' => ['att' => 'FLUP_DATE', 'format' => 'd-M-Y']],
             [
                 'state'     => [
                     "att"   =>  "FLUP_STTS",
