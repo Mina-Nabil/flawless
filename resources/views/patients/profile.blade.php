@@ -76,8 +76,13 @@
                     {{-- <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li> --}}
                     <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Info</a>
                     </li>
-                    <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#balancelogs" role="tab">Balance
-                            Log</a> </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#balancelogs" role="tab">
+                            Balance Log</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#followups" role="tab">Follow-ups</a>
+                    </li>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">
@@ -152,8 +157,8 @@
                             <h4 class="card-title">Patient's Services</h4>
                             <h6 class="card-subtitle">All Services applied to the Patient</h6>
                             <div class="col-12">
-                                <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''" :cols="$servicesCols"
-                                    :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" />
+                                <x-datatable id="patientServicesTable" :title="$title ?? 'Services History'" :subtitle="$subTitle ?? ''"
+                                    :cols="$servicesCols" :items="$servicesList" :atts="$servicesAtts" :cardTitle="false" />
                             </div>
                         </div>
                     </div>
@@ -348,49 +353,7 @@
                             </div>
                         </div>
                     </div>
-                    {{--
-                <div class="tab-pane" id="addBalance" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4 class="card-title">{{ $addBalanceTitle }}</h4>
-                                    <form class="form pt-3" method="post" action="{{ url($addBalanceURL) }}" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type=hidden name=patientID value="{{(isset($patient)) ? $patient->id : ''}}">
 
-                                        <div class="form-group">
-                                            <label>Title*</label>
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control" placeholder="Title" name=title required>
-                                            </div>
-                                            <small class="text-danger">{{$errors->first('title')}}</small>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Amount*</label>
-                                            <div class="input-group mb-3">
-                                                <input type="number" step=0.01 class="form-control" placeholder="Balance Amount" name=amount value="0" required>
-                                            </div>
-                                            <small class="text-danger">{{$errors->first('amount')}}</small>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Comment</label>
-                                            <div class="input-group mb-3">
-                                                <textarea class="form-control" rows="2" name="comment"></textarea>
-                                            </div>
-                                            <small class="text-danger">{{$errors->first('comment')}}</small>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-success mr-2">Add Payment</button>
-
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
 
                     <div class="tab-pane" id="settings" role="tabpanel">
                         <div class="card-body">
@@ -465,8 +428,8 @@
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="Patient Balance"
                                             name=balance
-                                            value="{{ isset($patient) ? $patient->PTNT_BLNC : old('balance') }}"
-                                            required @if (!Auth::user()->isOwner()) readonly @endif>
+                                            value="{{ isset($patient) ? $patient->PTNT_BLNC : old('balance') }}" required
+                                            @if (!Auth::user()->isOwner()) readonly @endif>
                                     </div>
                                     <small class="text-danger">{{ $errors->first('balance') }}</small>
                                 </div>
@@ -512,6 +475,7 @@
                             </ul>
                         </div>
                     </div>
+
                     <div class="tab-pane" id="balancelogs" role="tabpanel">
                         <div class="card-body">
                             <h4 class="card-title">Patient's Balance Log</h4>
@@ -532,6 +496,17 @@
                                 @endforeach
 
                             </ul>
+                        </div>
+                    </div>
+
+                    <!--Item Bought tab-->
+                    <div class="tab-pane" id="followups" role="tabpanel">
+                        <div class="card-body">
+                            <h4 class="card-title">Patient's Followups</h4>
+                            <h6 class="card-subtitle">All followups related to the Patient</h6>
+                            <div class="col-12">
+                                <x-datatable id="patientFollowupsTable" :title="$title ?? 'Followups History'" :subtitle="$subTitle ?? ''" :cols="$followupsCols" :items="$followupsList" :atts="$followupsAtts" :cardTitle="false" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -626,41 +601,43 @@
 
             concatString +=
                 '<div class="col-lg-3">\
-                                        <div class="input-group mb-2">\
-                                            <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' +
+                                                        <div class="input-group mb-2">\
+                                                            <select name=device[] class="form-control select2 custom-select" style="width:100%" id="device' +
                 room + '" onchange="loadServices(' + room +
                 ')" required>\
-                                                    <option disabled hidden selected value="" class="text-muted">Device</option>';
+                                                                    <option disabled hidden selected value="" class="text-muted">Device</option>';
             @foreach ($devices as $device)
                 concatString += '<option value="{{ $device->id }}" > {{ $device->DVIC_NAME }} </option>';
             @endforeach
             concatString += '</select>\
-                                        </div>\
-                                    </div>'
+                                                        </div>\
+                                                    </div>'
 
             concatString +=
                 '<div class="col-3">\
-                                <div class="input-group mb-2">\
-                                    <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' +
+                                                <div class="input-group mb-2">\
+                                                    <select name=service[] class="form-control select2 custom-select" style="width:100%" id="service' +
                 room + '"  disabled required>\
-                                    </select>\
-                                </div>\
-                            </div>'
+                                                    </select>\
+                                                </div>\
+                                            </div>'
 
             concatString += '<div class="col-2">\
-                                <div class="input-group mb-3">\
-                                    <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
-                                </div>\
-                            </div>'
+                                                <div class="input-group mb-3">\
+                                                    <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
+                                                </div>\
+                                            </div>'
 
             concatString += '<div class="col-2">\
-                                <div class="input-group mb-3">\
-                                    <input id="unit' + room + '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
-                                        <div class="input-group-append">\
-                                            <button class="btn btn-danger" type="button" onclick="removeService(' + room + ');"><i class="fa fa-minus"></i></button>\
-                                        </div>\
-                                </div>\
-                            </div>'
+                                                <div class="input-group mb-3">\
+                                                    <input id="unit' + room +
+                '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
+                                                        <div class="input-group-append">\
+                                                            <button class="btn btn-danger" type="button" onclick="removeService(' +
+                room + ');"><i class="fa fa-minus"></i></button>\
+                                                        </div>\
+                                                </div>\
+                                            </div>'
 
             divtest.innerHTML = concatString;
 

@@ -50,7 +50,7 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device")->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device", "followUps", 'followUps.caller')->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['setNoteURL']           = url("patients/setnote");
@@ -71,6 +71,31 @@ class PatientsController extends Controller
             ['foreignForeign' => ['rel1' => 'pricelistItem', 'rel2' => 'area', 'att' => 'AREA_NAME']],
             'SHIT_QNTY',
             ['comment' => ['att' => "SHIT_NOTE"]]
+        ];
+
+        //Followups Table
+        $this->data['followupsList']    =   $this->data['patient']->followUps;
+        $this->data['cardTitle'] = false;
+        $this->data['servicesCols'] = ['Date', 'State', 'Caller', 'Comment'];
+        $this->data['servicesAtts'] = [
+            ['date' => ['att' => 'FLUP_CALL', 'format' => 'd-M-Y']],
+            [
+                'state'     => [
+                    "att"   =>  "FLUP_STTS",
+                    "text" => [
+                        "New" => "New",
+                        "Satisfied" => "Satisfied",
+                        "7azeen" => "7azeen",
+                    ],
+                    "classes" => [
+                        "New" => "label-info",
+                        "7azeen" => "label-danger",
+                        "Satisfied" => "label-success",
+                    ],
+                ]
+            ],
+            ['foreign' => ['rel' => 'caller', 'att' => 'DASH_USNM']],
+            ['comment' => ['att' => "FLUP_TEXT"]]
         ];
 
         //Packages Table
