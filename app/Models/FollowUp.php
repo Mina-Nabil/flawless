@@ -45,7 +45,7 @@ class FollowUp extends Model
     public static function getFollowupsData($branchID = 0, $state = null, $from = null, $to = null, $caller = null)
     {
         $query = self::with('caller', 'patient', 'branch');
-        if (!is_null($state) || $state != 'All') {
+        if (!is_null($state) && $state != 'All') {
             $query = $query->where("FLUP_STTS", $state);
         }
 

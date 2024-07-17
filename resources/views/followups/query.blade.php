@@ -31,7 +31,7 @@
                     <div class="form-group">
                         <label>Followup State*</label>
                         <div class="input-group mb-3">
-                            <select name=type class="select form-control custom-select" style="width: 100%; height:36px;" required>
+                            <select name=state class="select form-control custom-select" style="width: 100%; height:36px;" required>
                                 <option value="All" selected>All</option>
                                 @foreach($states as $state)
                                 <option value="{{$state}}">{{$state}}</option>
@@ -40,19 +40,19 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>Patient</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
+                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=patient>
                             <option value="0">All</option>
                             @foreach($patients as $patient)
                             <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
 
                     <div class="form-group">
                         <label>Caller</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=doctor>
+                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=caller>
                             <option value="0">All</option>
                             @foreach($admins as $admin)
                             <option value="{{$admin->id}}"> {{$admin->DASH_USNM}} </option>
