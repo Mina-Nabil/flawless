@@ -84,13 +84,13 @@ class PatientsController extends Controller
                     "att"   =>  "FLUP_STTS",
                     "text" => [
                         "New" => "New",
-                        "Satisfied" => "Satisfied",
+                        "Satified" => "Satified",
                         "7azeen" => "7azeen",
                     ],
                     "classes" => [
                         "New" => "label-info",
                         "7azeen" => "label-danger",
-                        "Satisfied" => "label-success",
+                        "Satified" => "label-success",
                     ],
                 ]
             ],
