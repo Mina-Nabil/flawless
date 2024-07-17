@@ -74,6 +74,7 @@ class FollowupsController extends Controller
         $this->data['canCall']        =   false;
         $this->data['showCaller']    =   true;
         $this->data['setFollowupsURL'] =   'followups/set/state';
+        $this->data['states']           = FollowUp::$STATES;
 
         return view("followups.table", $this->data);
     }
