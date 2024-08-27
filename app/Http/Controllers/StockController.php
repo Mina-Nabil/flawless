@@ -49,13 +49,15 @@ class StockController extends Controller
         ]);
 
         $insertArr = [];
+        $sessionID = $request->session_id;
+
+
         foreach ($request->stock_ids as $key => $id) {
             array_push($insertArr, [
                 "stock_id"  =>  $id,
-                "amount"    =>  $request->amount[$key]
+                "amount"    =>  $sessionID ? -1 * $request->amount[$key] : $request->amount[$key]
             ]);
         }
-        $sessionID = $request->session_id;
 
         StockItem::newTransaction($insertArr, $sessionID ? "100" . $sessionID : null);
 

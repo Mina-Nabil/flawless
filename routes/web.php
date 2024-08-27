@@ -174,6 +174,7 @@ Route::get("stock/transactions", [StockController::class, 'transactions']);
 Route::get("stock/transaction/{code}", [StockController::class, 'transaction']);
 Route::get("stock/entry", [StockController::class, 'entry']);
 Route::post("stock/entry", [StockController::class, 'insertEntry']);
+Route::post("stock/entry/{type}", [StockController::class, 'insertEntry']);
 
 //Stock items
 Route::get("stockitems/home", [StockController::class, 'items']);
