@@ -76,7 +76,7 @@ class StockController extends Controller
             'STCK_NAME',
             'STCK_UNIT',
             ['foreign' => ['rel' => 'type', 'att' => 'STTP_NAME']],
-            ['number'   =>  ['att'  =>  'STTP_CUNT']]
+            ['number'   =>  ['att'  =>  'STCK_CUNT']]
         ];
     }
 

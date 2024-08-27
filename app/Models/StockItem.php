@@ -26,14 +26,20 @@ class StockItem extends Model
                 ->orderByDesc('id')->limit(1)->first();
 
             $balance = $lastTrans ? ($lastTrans->STTR_BLNC + $trans['amount']) : $trans['amount'];
-            DB::table('stock_transactions')->insert([
-                "STTR_CODE"     =>  $transactionCode,
-                "STTR_DATE"     =>  $date,
-                "STTR_DASH_ID"  =>  $userID,
-                "STTR_STCK_ID"  =>  $trans['stock_id'],
-                "STTR_AMNT"     =>  $trans['amount'],
-                "STTR_BLNC"     =>  $balance
-            ]);
+            Db::transaction(function () use ($transactionCode, $date, $userID, $trans, $balance) {
+
+                DB::table('stock_transactions')->insert([
+                    "STTR_CODE"     =>  $transactionCode,
+                    "STTR_DATE"     =>  $date,
+                    "STTR_DASH_ID"  =>  $userID,
+                    "STTR_STCK_ID"  =>  $trans['stock_id'],
+                    "STTR_AMNT"     =>  $trans['amount'],
+                    "STTR_BLNC"     =>  $balance
+                ]);
+
+                $stockItem = self::findOrFail($trans['stock_id']);
+                $stockItem->updateBalance($balance);
+            });
         }
     }
 
@@ -50,6 +56,12 @@ class StockItem extends Model
             report($e);
             return false;
         }
+    }
+
+    public function updateBalance($balance)
+    {
+        $this->STCK_CUNT = $balance;
+        $this->save();
     }
 
     public function toggleState()
