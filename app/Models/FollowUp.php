@@ -29,7 +29,9 @@ class FollowUp extends Model
     public const NOT_SATISFIED = "7azeen";
 
     public static $STATES = [
-        self::NEW_STATE, self::SATISFIED, self::NOT_SATISFIED
+        self::NEW_STATE,
+        self::SATISFIED,
+        self::NOT_SATISFIED
     ];
 
     public function setCalled($state, $comment = null)
@@ -42,9 +44,9 @@ class FollowUp extends Model
     }
 
     //Query 
-    public static function getFollowupsData($branchID = 0, $state = null, $from = null, $to = null, $caller = null)
+    public static function getFollowupsData($branchID = 0, $state = null, $from = null, $to = null, $caller = null, $leadID = null)
     {
-        $query = self::with('caller', 'patient', 'branch');
+        $query = self::with('caller', 'patient', 'branch', 'lead');
         if (!is_null($state) && $state != 'All') {
             $query = $query->where("FLUP_STTS", $state);
         }
@@ -59,19 +61,25 @@ class FollowUp extends Model
 
         if (!is_null($from) && !is_null($to)) {
             $query = $query->whereBetween("FLUP_DATE", [
-                $from, $to
+                $from,
+                $to
             ]);
-        } else {
+        } else if(!$leadID) {
             $query = $query->whereRaw("FLUP_DATE <= CURDATE()");
+        }
+
+        if(!is_null($leadID)){
+            $query = $query->where("FLUP_LEAD_ID", $leadID);
         }
         return $query->get();
     }
 
-    public static function createFollowup($branchID, $patientID, $date, $comment = null)
+    public static function createFollowup($branchID, $patientID, $date, $comment = null, $leadID = null)
     {
         return self::insert([
             "FLUP_BRCH_ID"  =>  $branchID,
             "FLUP_PTNT_ID"  =>  $patientID,
+            "FLUP_LEAD_ID"  =>  $leadID,
             "FLUP_DATE"     =>  $date,
             "FLUP_TEXT"     =>  $comment
         ]);
@@ -86,6 +94,17 @@ class FollowUp extends Model
         return $query->get()->count();
     }
 
+    static function getLeadFollowupsCount($user_id = 0)
+    {
+        $query = self::join('leads', 'FLUP_LEAD_ID', '=', 'leads.id')
+            ->where("FLUP_STTS", "NEW")
+            ->whereRaw("FLUP_DATE <= CURDATE()")
+            ->when($user_id, function ($q, $v) {
+                $q->where("leads.LEAD_USER_ID", $v);
+            });
+        return $query->get()->count();
+    }
+
     ///relations
     function caller()
     {
@@ -95,6 +114,11 @@ class FollowUp extends Model
     function patient()
     {
         return $this->belongsTo(Patient::class, "FLUP_PTNT_ID");
+    }
+
+    function lead()
+    {
+        return $this->belongsTo(Lead::class, "FLUP_LEAD_ID");
     }
 
     function branch()

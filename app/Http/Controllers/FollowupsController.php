@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DashUser;
 use App\Models\FollowUp;
+use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\Room;
 use DateInterval;
@@ -22,6 +23,26 @@ class FollowupsController extends Controller
         $this->data['items'] = FollowUp::getFollowupsData($branch_ID, "New");
         $this->data['title']            =   'Followup Sheet';
         $this->data['cardTitle']        =   'Pending Patients Follow-ups';
+        $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';
+        $this->data['setFollowupsURL'] =   'followups/set/state';
+
+        $this->data['canCall'] = true;
+        $this->data['states']           = FollowUp::$STATES;
+
+        return view("followups.table", $this->data);
+    }
+
+    public function bylead($leadID)
+    {
+        /** @var Lead */
+        $lead = Lead::findOrFail($leadID);
+        $branch_ID = Session::get('branch');
+        $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
+
+        //show unconfirmed attendace
+        $this->data['items'] = FollowUp::getFollowupsData(leadID: $leadID);
+        $this->data['title']            =   'Followup Sheet';
+        $this->data['cardTitle']        =   "$lead->LEAD_NAME Follow-ups";
         $this->data['cardSubtitle']        =   'Showing all Pending Follow-ups';
         $this->data['setFollowupsURL'] =   'followups/set/state';
 

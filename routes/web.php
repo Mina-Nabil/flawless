@@ -10,6 +10,7 @@ use App\Http\Controllers\DoctorsAvailabilityController;
 use App\Http\Controllers\FeedbacksController;
 use App\Http\Controllers\FollowupsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\PatientsController;
 use App\Http\Controllers\ReportsController;
@@ -159,6 +160,19 @@ Route::post('patients/add/package', [PatientsController::class, 'addPackage']);
 Route::post('patients/insert', [PatientsController::class, 'insert']);
 Route::post('patients/update', [PatientsController::class, 'update']);
 Route::get('patients/get/json', [PatientsController::class, 'getJSONPatients']);
+
+//Leads Account
+Route::get('leads',[LeadsController::class, 'home']);
+Route::get('leads/download/export',[LeadsController::class, 'downloadLeads']);
+Route::post('leads/import/template',[LeadsController::class, 'importLeads']);
+Route::get('leads/download/template',[LeadsController::class, 'downloadTemplate']);
+Route::post('leads/insert',[LeadsController::class, 'insert']);
+Route::post('leads/update',[LeadsController::class, 'update']);
+Route::post('leads/setstatus',[LeadsController::class, 'setStatus']);
+Route::post('leads/addfollowup',[LeadsController::class, 'addLeadFollowup']);
+Route::get('leads/addaspatient/{id}',[LeadsController::class, 'addToPatients']);
+Route::get('leads/{id}/followups',[FollowupsController::class, 'bylead']);
+Route::get('leads/delete/{id}',[LeadsController::class, 'deleteLead']);
 
 //Cash Account
 Route::get("cash/home", [CashController::class, 'home']);

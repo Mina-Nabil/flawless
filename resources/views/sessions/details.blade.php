@@ -39,7 +39,7 @@
                         </div>
                         <p class="text-muted">
                             <a target="_blank" href="{{url('patients/profile/' . $session->SSHN_PTNT_ID )}}">
-                                {{$session->patient->PTNT_NAME }}
+                                {{$session->patient->PTNT_NAME }} 
                             </a>
                             @if($session->patient->PTNT_BLNC != 0)
                             <br>
@@ -47,6 +47,16 @@
                             @endif
                         </p>
                     </div>
+                    @if($session->patient->PTNT_PRMO)
+                    <div class="col-md-2">
+                        <div class="font-bold mb-2">
+                            PROMO
+                        </div>
+                        <p class="text-muted">
+                                {{$session->patient->PTNT_PRMO }} 
+                        </p>
+                    </div>
+                    @endif
                     <div class="col-md-2">
                         <div class="font-bold mb-2">
                             Session Date
@@ -589,7 +599,7 @@
                                         <option value="{{$patient->id}}" @if($patient->id == $session->SSHN_PTNT_ID)
                                             selected
                                             @endif
-                                            >{{$patient->PTNT_NAME}}
+                                            >{{$patient->PTNT_NAME}} 
                                         </option>
                                         @endforeach
                                     </select>

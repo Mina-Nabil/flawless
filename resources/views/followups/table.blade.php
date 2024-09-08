@@ -27,8 +27,14 @@
                                     <tr>
                                         <td>{{ $item->branch->BRCH_NAME }}</td>
                                         <td>{{ $item->FLUP_DATE->format('d-M-Y') }}</td>
-                                        <td><a href="{{ $item->patient->profileURL() }}">{{ $item->patient->PTNT_NAME }}
-                                        </td>
+                                        @if ($item->patient)
+                                            <td><a
+                                                    href="{{ $item->patient->profileURL() }}">{{ $item->patient->PTNT_NAME }}</a>
+                                            </td>
+                                        @elseif($item->lead)
+                                            <td>{{ $item->lead->LEAD_NAME }}</td>
+                                        @endif
+
                                         <td>{{ $item->caller->DASH_USNM ?? '' }}</td>
                                         <td>{{ $item->FLUP_CALL ?? '' }}</td>
                                         <td>

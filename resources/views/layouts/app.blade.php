@@ -118,6 +118,12 @@
                         @endif
                         @if(Auth::user()->canAdmin())
                         <li> <a class="waves-effect waves-dark" href="{{url('patients/home')}}" aria-expanded="false"><i class="icon-people"></i>Patients</a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{url('leads')}}">Leads</a></li>
+                            </ul>
+                        </li>
+                        @else
+                        <li> <a class="waves-effect waves-dark" href="{{url('leads')}}" aria-expanded="false"><i class="icon-people"></i>Leads</a>
                         </li>
                         @endif
                         @if(Auth::user()->isOwner())
@@ -453,6 +459,14 @@
                                         <option value="{{$location->id}}">{{$location->LOCT_NAME}}</option>
                                         @endforeach
                                     </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Promocode</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="promoModal" class="form-control" placeholder="Promocode" name=promo required>
+                                    </div>
+                                    <small class="text-danger">{{$errors->first('promo')}}</small>
                                 </div>
 
                                 <div class="form-group">
@@ -1004,13 +1018,15 @@
                 var listID = $('#listIDModal').val();
                 var channelID = $('#channelIDModal').val();
                 var locationID = $('#locationIDModal').val();
+                var promo = $('#promoModal').val();
             } else {
                 var name = $('#patientName').val();
                 var adrs = $('#patientAdrs').val();
                 var mobn = $('#patientMobn').val();
                 var balance = $('#patientBlnc').val();
                 var listID = $('#listID').val();
-                var locationID = $('#channelID').val();
+                var locationID = $('#locationID').val();
+                var promo = $('#promo').val();
             }
 
             var formData = new FormData();
@@ -1022,6 +1038,7 @@
             formData.append("listID", listID)
             formData.append("channelID", channelID)
             formData.append("locationID", locationID)
+            formData.append("promo", promo)
 
             var url = "{{$addPatientFormURL}}";
 
@@ -1848,8 +1865,6 @@
                                         </div>\
                                 </div>\
                             </div>'
-
-
             
             divtest.innerHTML = concatString;
             

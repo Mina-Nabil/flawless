@@ -424,6 +424,15 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Promocode</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Promocode" name=promo
+                                            value="{{ isset($patient) ? $patient->PTNT_PRMO : old('promo') }}">
+                                    </div>
+                                    <small class="text-danger">{{ $errors->first('promo') }}</small>
+                                </div>
+
+                                <div class="form-group">
                                     <label>Balance</label>
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="Patient Balance"

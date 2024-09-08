@@ -31,7 +31,7 @@ class PatientsController extends Controller
 
         $this->data['patientsTitle'] = "Manage Patients";
         $this->data['patientsSubtitle'] = "Showing All Patients Data";
-        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Area', 'Since'];
+        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Area', 'Since', 'Promo'];
         $this->data['patientsAtts'] = [
             'id',
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
@@ -39,6 +39,7 @@ class PatientsController extends Controller
             ['number' => ['att' => 'PTNT_BLNC']],
             ['foreign' => ['att' => 'LOCT_NAME', 'rel' => 'location']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+            'PTNT_PRMO',
         ];
         $this->data['homeURL'] = $this->homeURL;
 
@@ -235,6 +236,7 @@ class PatientsController extends Controller
         $patient->PTNT_CHNL_ID = $request->channelID;
         $patient->PTNT_LOCT_ID = $request->locationID;
         $patient->PTNT_NOTE = $request->note;
+        $patient->PTNT_PRMO = $request->promo;
         $patient->save();
 
         return $patient->id;
