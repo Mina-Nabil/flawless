@@ -209,7 +209,7 @@ class Lead extends Model
     {
         /** @var DashUser */
         $user = Auth::user();
-        if ($user->isAdmin()) return $query;
+        if ($user->isOwner()) return $query;
 
         return $query->where('LEAD_USER_ID', $user->id);
     }
