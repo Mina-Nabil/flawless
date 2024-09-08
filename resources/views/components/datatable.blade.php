@@ -196,24 +196,26 @@
                                             value="{{ $item->{$att['hiddenRel']['rel']}->{$att['hiddenRel']['valueAtt']} }}" />
                                     @elseif(array_key_exists('leadsActions', $att))
                                         <td>
-                                            <a class="openLeadFollowup" href="javascript:void(0)" data-toggle="modal"
-                                                data-target="#add-lead-followup" data-id="{{ $item->id }}">
+                                            <a class="openLeadFollowup mr-2" href="javascript:void(0)"
+                                                data-toggle="modal" data-target="#add-lead-followup"
+                                                data-id="{{ $item->id }}">
                                                 <i class="fas fa-phone text-info"></i> </a>
 
-                                                <a href="{{url('leads/' . $item->id . '/followups')}}">
-                                            <i class="fas fa-list text-info"></i>
-                                                </a>
+                                            <a href="{{ url('leads/' . $item->id . '/followups') }}" class="mr-2">
+                                                <i class="fas fa-list text-info"></i>
+                                            </a>
 
-                                            <a href="javascript:void(0);">
+                                            <a href="javascript:void(0);" class="mr-2">
                                                 <i class="fas fa-user-plus text-success"
                                                     onclick="confirmAndGoTo('{{ url('leads/addaspatient/' . $item->id) }}', 'create a new patient from this lead\'s data')"></i>
                                             </a>
 
-
-                                            <a href="javascript:void(0);">
-                                                <i class="fas fa-trash text-danger"
-                                                    onclick="confirmAndGoTo('{{ url('leads/delete/'. $item->id) }}', 'delete the lead')"></i>
-                                            </a>
+                                            @if (Auth::user()->isOwner())
+                                                <a href="javascript:void(0);">
+                                                    <i class="fas fa-trash text-danger"
+                                                        onclick="confirmAndGoTo('{{ url('leads/delete/' . $item->id) }}', 'delete the lead')"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     @endif
                                 @else
