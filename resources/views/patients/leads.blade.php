@@ -107,7 +107,7 @@
                         <div class="tab-content" style="min-height: 500px">
                             <div class="tab-pane active" id="leads" role="tabpanel">
                                 <div class="row">
-                                    @if (Auth::user()->isAdmin())
+                                    @if (Auth::user()->isOwner())
                                     <div class="col-12">
                                         <div class="m-5">
 

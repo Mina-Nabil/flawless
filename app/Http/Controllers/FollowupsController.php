@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\DashUser;
 use App\Models\FollowUp;
 use App\Models\Lead;
-use App\Models\Patient;
 use App\Models\Room;
 use DateInterval;
 use DateTime;
