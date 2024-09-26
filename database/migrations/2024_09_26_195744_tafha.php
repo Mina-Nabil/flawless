@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE leads MODIFY COLUMN unit ENUM(\"" . implode('","', Lead::STATUSES) . "\")");
+        DB::statement("ALTER TABLE leads MODIFY COLUMN LEAD_STTS ENUM(\"" . implode('","', Lead::STATUSES) . "\")");
     }
 
     /**
