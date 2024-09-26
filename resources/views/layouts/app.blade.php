@@ -468,7 +468,7 @@
                                     </div>
                                     <small class="text-danger">{{$errors->first('promo')}}</small>
                                 </div>
-
+                                @if(Auth::user()->isOwner())
                                 <div class="form-group">
                                     <label>Balance*</label>
                                     <div class="input-group mb-3">
@@ -477,7 +477,9 @@
                                     <small class="text-muted">In case patient owes us or we owe him money, default is 0</small>
                                     <small class="text-danger">{{$errors->first('balance')}}</small>
                                 </div>
-
+                                @else
+                                <input type="hidden" id="patientBlncModal" name=balance value="0">
+                                @endif
                                 <div class="form-group">
                                     <label>Note</label>
                                     <div class="input-group mb-3">
@@ -1366,7 +1368,7 @@
             $('#patientSel').html("null");
 
             patients.forEach(patient => {
-                patOption = new Option(patient.PTNT_NAME + ' - ' + patient.PTNT_MOBN, patient.id, false, false)
+                patOption = new Option(patient.PTNT_NAME + ' - ' + patient.PTNT_MOBN, patient.id, false, {{$pagePageID ?? -1}} == patient.id)
                 $('#patientSel').append(patOption).trigger('change')
             });
             loadAvailableDoctors()

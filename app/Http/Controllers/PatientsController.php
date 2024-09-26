@@ -61,6 +61,7 @@ class PatientsController extends Controller
         $this->data['devices']  = Device::all();
         //Services Table
         $this->data['servicesList']    =   $this->data['patient']->services;
+        $this->data['pagePageID'] = $this->data['patient']->id;
         $this->data['cardTitle'] = false;
         $this->data['servicesCols'] = ['Date', 'Session#', 'Doctor', 'Device',  'Type', 'Area', 'Unit', 'Comment'];
         $this->data['servicesAtts'] = [
