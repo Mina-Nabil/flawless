@@ -27,11 +27,13 @@ class FollowUp extends Model
     public const NEW_STATE = "New";
     public const SATISFIED = "Satified";
     public const NOT_SATISFIED = "7azeen";
+    public const NO_ANSWER = "No Answer";
 
     public static $STATES = [
         self::NEW_STATE,
         self::SATISFIED,
-        self::NOT_SATISFIED
+        self::NOT_SATISFIED,
+        self::NO_ANSWER,
     ];
 
     public function setCalled($state, $comment = null)

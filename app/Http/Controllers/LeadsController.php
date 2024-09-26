@@ -28,7 +28,7 @@ class LeadsController extends Controller
 
         $this->data['leadsTitle'] = "Manage Leads";
         $this->data['leadsSubtitle'] = "Showing All leads Data";
-        $this->data['leadsCols'] = ['Promo', 'Name', 'Mob#', 'Status', 'Since', 'Patient Profile', "Actions"];
+        $this->data['leadsCols'] = ['Promo', 'Name', 'Mob#', 'Status', 'Since', 'Location', 'Channel', 'Patient Profile', "Actions"];
         $this->data['leadsAtts'] = [
             'LEAD_PRMO',
             'LEAD_NAME',
@@ -54,6 +54,8 @@ class LeadsController extends Controller
             ],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
             ['foreign' => ['att' => 'PTNT_NAME', 'rel' => 'patient']],
+            ['foreign' => ['att' => 'LOCT_NAME', 'rel' => 'location']],
+            ['foreign' => ['att' => 'CHNL_NAME', 'rel' => 'channel']],
             ['leadsActions' => ["N/A"]],
         ];
         $this->data['homeURL'] = $this->homeURL;
@@ -105,7 +107,7 @@ class LeadsController extends Controller
         /** @var DashUser */
         $user = Auth::user();
 
-        Lead::newLead($request->user_id && $user->isAdmin() ? $request->user_id : $user->id, $request->name, $request->mobn, $request->promo, $request->address, $request->note);
+        Lead::newLead($request->user_id && $user->isAdmin() ? $request->user_id : $user->id, $request->name, $request->mobn, $request->promo, $request->address, $request->note, $request->channel_id, $request->location_id);
 
         return redirect()->action([self::class, 'home']);
     }

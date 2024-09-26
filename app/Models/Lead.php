@@ -7,6 +7,7 @@ use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -134,7 +135,7 @@ class Lead extends Model
     }
 
 
-    public static function newLead($user_id, $name, $mob, $promo = null, $adrs = null, $note = null)
+    public static function newLead($user_id, $name, $mob, $promo = null, $adrs = null, $note = null, $channelID = null, $locationID = null)
     {
         $lead = new self();
         $lead->LEAD_USER_ID = $user_id;
@@ -144,6 +145,8 @@ class Lead extends Model
         $lead->LEAD_STTS = self::STTS_NEW;
         $lead->LEAD_NOTE = $note;
         $lead->LEAD_PRMO = $promo;
+        $lead->LEAD_CHNL_ID = $channelID;
+        $lead->LEAD_LOCT_ID = $locationID;
         $lead->save();
         return $lead;
     }
@@ -163,6 +166,8 @@ class Lead extends Model
         $patient->PTNT_NAME = $this->LEAD_NAME;
         $patient->PTNT_ADRS = $this->LEAD_ADRS;
         $patient->PTNT_MOBN = $this->LEAD_MOBN;
+        $patient->PTNT_CHNL_ID = $this->LEAD_CHNL_ID;
+        $patient->PTNT_LOCT_ID = $this->LEAD_LOCT_ID;
         $patient->PTNT_BLNC =  0;
         $patient->PTNT_PRLS_ID = (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_NOTE = $this->LEAD_NOTE;
@@ -187,7 +192,7 @@ class Lead extends Model
         $this->save();
     }
 
-    public function editLead($name, $mob, $promo = null, $adrs = null, $note = null, $user_id = null)
+    public function editLead($name, $mob, $promo = null, $adrs = null, $note = null, $user_id = null, $channelID = null, $locationID = null)
     {
 
         $this->LEAD_NAME = $name;
@@ -197,6 +202,8 @@ class Lead extends Model
         $this->LEAD_NOTE = $note;
         $this->LEAD_PRMO = $promo;
         $this->LEAD_USER_ID = $user_id;
+        $this->LEAD_CHNL_ID = $channelID;
+        $this->LEAD_LOCT_ID = $locationID;
         return $this->save();
     }
 
@@ -231,4 +238,15 @@ class Lead extends Model
     {
         return $this->hasMany(FollowUp::class, 'FLUP_LEAD_ID');
     }
+
+    public function channel(): BelongsTo
+    {
+        return $this->belongsTo("App\Models\Channel", "LEAD_CHNL_ID");
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo("App\Models\Location", "LEAD_LOCT_ID");
+    }
+
 }

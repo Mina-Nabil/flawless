@@ -108,22 +108,25 @@
                             <div class="tab-pane active" id="leads" role="tabpanel">
                                 <div class="row">
                                     @if (Auth::user()->isOwner())
-                                    <div class="col-12">
-                                        <div class="m-5">
+                                        <div class="col-12">
+                                            <div class="m-5">
 
-                                            <a href="{{ url($download) }}" class="btn btn-info">Download Leads</a>
-                                            <a href="{{ url($template) }}" class="btn btn-info">Download Import Template</a>
-                                            <form method="POST" action="{{ url($import) }}" enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="input-group m-3">
-                                                    <input type="file" id="input-file-now-custom-1" name=import_file
-                                                        class="dropify" />
-                                                    <small class="text-danger">{{ $errors->first('import_file') }}</small>
-                                                </div>
-                                                <button type="submit" class="btn btn-info">Import Leads</button>
-                                            </form>
+                                                <a href="{{ url($download) }}" class="btn btn-info">Download Leads</a>
+                                                <a href="{{ url($template) }}" class="btn btn-info">Download Import
+                                                    Template</a>
+                                                <form method="POST" action="{{ url($import) }}"
+                                                    enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="input-group m-3">
+                                                        <input type="file" id="input-file-now-custom-1" name=import_file
+                                                            class="dropify" />
+                                                        <small
+                                                            class="text-danger">{{ $errors->first('import_file') }}</small>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-info">Import Leads</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
                                     @endif
                                     <div class="col-12">
                                         <x-datatable id="leadsTable" :title="$leadsTitle" :subtitle="$leadsSubtitle" :cols="$leadsCols"
@@ -172,13 +175,29 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label>Address</label>
-                                                        <div class="input-group mb-3">
-                                                            <textarea class="form-control" rows="2" name="adrs" id="patientAdrs">{{ old('adrs') }}</textarea>
-                                                        </div>
 
-                                                        <small class="text-danger">{{ $errors->first('adrs') }}</small>
+                                                    <div class="form-group">
+                                                        <label>Channels</label>
+                                                        <select class="select2 form-control  col-md-12 mb-3 modalSelect2"
+                                                            style="width:100%" name=channel_id >
+                                                            <option selected disabled>Please select a channel</option>
+                                                            @foreach ($channels as $channel)
+                                                                <option value="{{ $channel->id }}">
+                                                                    {{ $channel->CHNL_NAME }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Locations</label>
+                                                        <select class="select2 form-control  col-md-12 mb-3 modalSelect2"
+                                                            style="width:100%" name=location_id >
+                                                            <option selected disabled>Please select a location</option>
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ $location->id }}">
+                                                                    {{ $location->LOCT_NAME }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
 
                                                     <div class="form-group">
