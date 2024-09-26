@@ -40,12 +40,14 @@ class LeadsController extends Controller
                         Lead::STTS_NEW => "New",
                         Lead::STTS_INTERESTED => "Interested",
                         Lead::STTS_NOT_INTERESTED => "Not interested",
+                        Lead::STTS_NO_ANSWER => "No Answer",
                         Lead::STTS_PATIENT => "Patient",
                     ],
                     "classes" => [
                         Lead::STTS_NEW => "label-info",
                         Lead::STTS_INTERESTED => "label-info",
                         Lead::STTS_NOT_INTERESTED => "label-danger",
+                        Lead::STTS_NO_ANSWER => "label-dark",
                         Lead::STTS_PATIENT => "label-success",
                     ],
                 ]

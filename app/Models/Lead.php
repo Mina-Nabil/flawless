@@ -20,12 +20,14 @@ class Lead extends Model
     const STTS_NEW = 'New';
     const STTS_INTERESTED = 'Interested';
     const STTS_NOT_INTERESTED = 'Not-interested';
+    const STTS_NO_ANSWER = 'No-Answer';
     const STTS_PATIENT = 'Patient';
 
     const STATUSES = [
         self::STTS_NEW,
         self::STTS_INTERESTED,
         self::STTS_NOT_INTERESTED,
+        self::STTS_NO_ANSWER,
         self::STTS_PATIENT
     ];
 
