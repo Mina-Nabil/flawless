@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
 use App\Models\Device;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\PatientNote;
 use App\Models\PatientPayment;
 use App\Models\PriceList;
 use App\Models\Room;
-use App\Models\Session;
-use App\Rules\triplename;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session as HttpSession;
 use Illuminate\Validation\Rule;
 
@@ -78,7 +73,7 @@ class PatientsController extends Controller
         //Followups Table
         $this->data['followupsList']    =   $this->data['patient']->followUps;
         $this->data['cardTitle'] = false;
-        $this->data['followupsCols'] = ['Date', 'State', 'Caller', 'Comment'];
+        $this->data['followupsCols'] = ['Date', 'State', 'Caller', 'On', 'Comment'];
         $this->data['followupsAtts'] = [
             ['date' => ['att' => 'FLUP_DATE', 'format' => 'd-M-Y']],
             [
@@ -97,6 +92,7 @@ class PatientsController extends Controller
                 ]
             ],
             ['foreign' => ['rel' => 'caller', 'att' => 'DASH_USNM']],
+            ['date' => ['att' => 'FLUP_CALL', 'format' => 'd-M-Y']],
             ['comment' => ['att' => "FLUP_TEXT"]]
         ];
 
@@ -300,7 +296,7 @@ class PatientsController extends Controller
 
     //////?API function
 
-    public function getJSONPatients($patient_page=null)
+    public function getJSONPatients()
     {
         return json_encode(Patient::select('PTNT_MOBN', 'PTNT_NAME', 'id')->orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
     }

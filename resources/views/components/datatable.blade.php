@@ -148,7 +148,7 @@
                                             </a>
                                         </td>
                                     @elseif(array_key_exists('date', $att))
-                                        <td>{{ $item->{$att['date']['att']}->format($att['date']['format'] ?? 'd-M-y h:i A') }}</a>
+                                        <td>{{ $item->{$att['date']['att']} ? $item->{$att['date']['att']}->format($att['date']['format'] ?? 'd-M-y h:i A') : "N/A" }}</a>
                                         </td>
                                     @elseif(array_key_exists('number', $att))
                                         <td>{{ number_format($item->{$att['number']['att']}, $att['number']['decimals'] ?? 2) }}</a>
