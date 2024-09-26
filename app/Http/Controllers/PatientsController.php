@@ -300,8 +300,8 @@ class PatientsController extends Controller
 
     //////?API function
 
-    public function getJSONPatients()
+    public function getJSONPatients($patient_page=null)
     {
-        return json_encode(Patient::orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
+        return json_encode(Patient::select('PTNT_MOBN', 'PTNT_NAME', 'id')->orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
     }
 }
