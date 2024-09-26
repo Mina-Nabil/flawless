@@ -92,7 +92,7 @@ class PatientsController extends Controller
                 ]
             ],
             ['foreign' => ['rel' => 'caller', 'att' => 'DASH_USNM']],
-            ['date' => ['att' => 'FLUP_CALL', 'format' => 'd-M-Y']],
+            'FLUP_CALL',
             ['comment' => ['att' => "FLUP_TEXT"]]
         ];
 
@@ -210,7 +210,7 @@ class PatientsController extends Controller
         $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa );;
+                $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa);;
             }
         return redirect("patients/profile/" . $patient->id);
     }
