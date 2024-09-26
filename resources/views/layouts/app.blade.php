@@ -1489,8 +1489,8 @@
                 $('#patientSel').append(patOption).trigger('change')
             });
             loadAvailableDoctors()
-            if ({{ $pagePageID ?? -1 }} != -1) {
-                $('#patientSel').val({{ $pagePageID }})
+            if ({{ isset($pagePageID) ? $pagePageID : -1 }} != -1) {
+                $('#patientSel').val({{ isset($pagePageID) ? $pagePageID : null }})
                 $('#patientSel').trigger('change')
             }
             $('#doctorsSel').trigger('change')
