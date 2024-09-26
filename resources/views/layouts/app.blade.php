@@ -121,12 +121,12 @@
                         @if (Auth::user()->canAdmin())
                             <li> <a class="waves-effect waves-dark" href="{{ url('calendar') }}"
                                     aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
-                                @if (Auth::user()->isOwner())
                                     <ul aria-expanded="false" class="collapse">
                                         <li><a href="{{ url('schedule') }}">Schedule</a></li>
+                                        @if (Auth::user()->isOwner())
                                         <li><a href="{{ url('exceptions') }}">Exceptions</a></li>
+                                        @endif
                                     </ul>
-                                @endif
                             </li>
                         @endif
                         @if (Auth::user()->canAdmin())
@@ -241,6 +241,7 @@
                                             </ul>
                                         </li>
                                     @endif
+                                    @if (Auth::user()->isOwner())
                                     <li>
                                         <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Patient
                                             Info</a>
@@ -249,6 +250,7 @@
                                             <li><a href="{{ url('locations/home') }}">Locations</a></li>
                                         </ul>
                                     </li>
+                                    @endif
                                     <li>
                                         <a class="has-arrow waves-effect waves-dark"
                                             href="javascript:void(0)">Stock</a>
