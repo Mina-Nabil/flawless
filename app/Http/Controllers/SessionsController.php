@@ -23,6 +23,7 @@ use App\Providers\SessionClosed;
 use Carbon\Carbon;
 use DateInterval;
 use DateTime;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session as HttpSession;
@@ -522,6 +523,9 @@ class SessionsController extends Controller
 
     public function deleteNoteAPI($noteID)
     {
+        /** @var DashUser */
+        $user = Auth::user();
+        if(!$user->isOwner()) return response()->json([], 403);
         $note = DayNote::findOrFail($noteID);
         $note->delete();
         return response()->json();
