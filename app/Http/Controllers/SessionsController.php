@@ -494,7 +494,7 @@ class SessionsController extends Controller
             $tmpNote->original_title = $s->ADNT_TTLE;
             $tmpNote->start = $s->ADNT_DATE;
             $tmpNote->roomID = $s->ADNT_ROOM_ID;
-            $tmpNote->desc = $s->ADNT_NOTE;
+            $tmpNote->note = $s->ADNT_NOTE;
             return $tmpNote;
         }));
     }
