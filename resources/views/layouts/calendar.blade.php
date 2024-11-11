@@ -191,7 +191,7 @@
 
 
     async function openBookingForm(start_date, end_date){
-        await getPatientsArray();
+        // await getPatientsArray();
         $('#sessionDate').val(start_date.format('YYYY-MM-DD'));
         $('#sessionStartTime').val(start_date.format('HH:mm'));
         $('#sessionEndTime').val(end_date.format('HH:mm'));

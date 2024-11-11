@@ -65,7 +65,7 @@ class HomeController extends Controller
         ]);
 
         $this->data['title'] = "FLAWLESS Dashboard";
-        $this->data['items'] = Patient::orderByDesc('id')->whereRaw("PTNT_NAME LIKE '%{$request->searchVal}%' OR PTNT_MOBN LIKE '%{$request->searchVal}%' ")->get();
+        $this->data['items'] = Patient::orderByDesc('id')->searchBy($request->searchVal)->get();
         $this->data['allCount'] = $this->data['patients']->count();
 
         $this->data['tableTitle'] = "Search Results";

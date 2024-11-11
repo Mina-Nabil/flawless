@@ -263,6 +263,13 @@ class Patient extends Model
         }
     }
 
+    ////////scopes
+
+    public function scopeSearchBy($query, $searchVal)
+    {
+        return $query->whereRaw("PTNT_NAME LIKE '%{$searchVal}%' OR PTNT_MOBN LIKE '%{$searchVal}%' ");
+    }
+
     ///////relations
 
     public function payments(): HasMany

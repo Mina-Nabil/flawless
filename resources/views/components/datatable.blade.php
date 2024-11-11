@@ -148,7 +148,7 @@
                                             </a>
                                         </td>
                                     @elseif(array_key_exists('date', $att))
-                                        <td>{{ $item->{$att['date']['att']}?->format($att['date']['format'] ?? 'd-M-y h:i A') ?? "N/A" }}</a>
+                                        <td>{{ $item->{$att['date']['att']}?->format($att['date']['format'] ?? 'd-M-y h:i A') ?? 'N/A' }}</a>
                                         </td>
                                     @elseif(array_key_exists('number', $att))
                                         <td>{{ number_format($item->{$att['number']['att']}, $att['number']['decimals'] ?? 2) }}</a>
@@ -227,6 +227,9 @@
                 </tbody>
             </table>
         </div>
+        @if (method_exists($items, 'links'))
+            {{ $items->links() }}
+        @endif
     </div>
 </div>
 <script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
@@ -248,6 +251,10 @@
                         }
                     @endif
                 ]
+
+                @if (method_exists($items, 'links'))
+                    pagination: false
+                @endif
             });
         })
     })

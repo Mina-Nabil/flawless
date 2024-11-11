@@ -21,8 +21,8 @@ class PatientsController extends Controller
 
         $this->data['title'] = "All Registered Patients";
         $this->data['newCount'] = Patient::getPatientsCountCreatedThisMonth();
-        $this->data['patients'] = Patient::with('location')->orderByDesc('id')->get();
-        $this->data['allCount'] = $this->data['patients']->count();
+        $this->data['patients'] = Patient::with('location')->orderByDesc('id')->cursorPaginate(50);
+        $this->data['allCount'] = Patient::count();
 
         $this->data['patientsTitle'] = "Manage Patients";
         $this->data['patientsSubtitle'] = "Showing All Patients Data";
@@ -296,8 +296,11 @@ class PatientsController extends Controller
 
     //////?API function
 
-    public function getJSONPatients()
+    public function getJSONPatients(Request $request)
     {
-        return json_encode(Patient::select('PTNT_MOBN', 'PTNT_NAME', 'id')->orderByDesc('id')->get(), JSON_UNESCAPED_UNICODE);
+        $search = $request->input("search");
+        return json_encode(Patient::orderByDesc('id')->when($search, function ($q, $v) {
+            $q->searchBy($v);
+        })->get(), JSON_UNESCAPED_UNICODE);
     }
 }

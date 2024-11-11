@@ -121,12 +121,12 @@
                         @if (Auth::user()->canAdmin())
                             <li> <a class="waves-effect waves-dark" href="{{ url('calendar') }}"
                                     aria-expanded="false"><i class="fas fa-calendar-alt"></i>Calendar</a>
-                                    <ul aria-expanded="false" class="collapse">
-                                        <li><a href="{{ url('schedule') }}">Schedule</a></li>
-                                        @if (Auth::user()->isOwner())
+                                <ul aria-expanded="false" class="collapse">
+                                    <li><a href="{{ url('schedule') }}">Schedule</a></li>
+                                    @if (Auth::user()->isOwner())
                                         <li><a href="{{ url('exceptions') }}">Exceptions</a></li>
-                                        @endif
-                                    </ul>
+                                    @endif
+                                </ul>
                             </li>
                         @endif
                         @if (Auth::user()->canAdmin())
@@ -242,14 +242,15 @@
                                         </li>
                                     @endif
                                     @if (Auth::user()->isOwner())
-                                    <li>
-                                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">Patient
-                                            Info</a>
-                                        <ul aria-expanded="false" class="collapse">
-                                            <li><a href="{{ url('channels/home') }}">Channels</a></li>
-                                            <li><a href="{{ url('locations/home') }}">Locations</a></li>
-                                        </ul>
-                                    </li>
+                                        <li>
+                                            <a class="has-arrow waves-effect waves-dark"
+                                                href="javascript:void(0)">Patient
+                                                Info</a>
+                                            <ul aria-expanded="false" class="collapse">
+                                                <li><a href="{{ url('channels/home') }}">Channels</a></li>
+                                                <li><a href="{{ url('locations/home') }}">Locations</a></li>
+                                            </ul>
+                                        </li>
                                     @endif
                                     <li>
                                         <a class="has-arrow waves-effect waves-dark"
@@ -1082,7 +1083,34 @@
             $(".select2").select2();
 
             $("#patientSel").select2({
-                dropdownParent: $("#add-session-modal")
+                dropdownParent: $("#add-session-modal"),
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{ url($getPatientsURL) }}",
+                    data: function(params) {
+                        var query = {
+                            search: params.term,
+                        }
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    },
+                    processResults: function(data) {
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        let retArr = JSON.parse(data)
+
+                        let dataArr = retArr.map((p) => {
+                           return {
+                            text: p.PTNT_NAME + ' - ' + p.PTNT_MOBN,
+                            id: p.id
+                           }
+                        })
+
+                        return {
+                            results: dataArr
+                        };
+                    }
+                }
             });
 
             $("#patientSel").on('select2:select', function(e) {
@@ -1229,18 +1257,18 @@
             var patientTable = $('#patientsTableBody')
             console.log(patientTable);
             $('#patientsTableBody').prepend("<tr>\
-                      <td>" + id + "</td>\
-                      <td><a href='{{ url('patients/profile') }}/" + id + "' > " + name + "</a></td>\
-                      <td>" + mobile + "</td>\
-                      <td>" + balance + "</td>\
-                      <td>\
-                        <button type='button' style='padding:.1rem' class='btn btn-secondary' data-container='body' data-toggle='popover' data-placement='bottom'\
-                            data-content='" + address + "' data-original-title='Address:'> <i class='far fa-list-alt'></i>\
-                        </button>\
-                    </td>\
-                    <td>Just Now</td>\
-                </tr>\
-                ")
+                              <td>" + id + "</td>\
+                              <td><a href='{{ url('patients/profile') }}/" + id + "' > " + name + "</a></td>\
+                              <td>" + mobile + "</td>\
+                              <td>" + balance + "</td>\
+                              <td>\
+                                <button type='button' style='padding:.1rem' class='btn btn-secondary' data-container='body' data-toggle='popover' data-placement='bottom'\
+                                    data-content='" + address + "' data-original-title='Address:'> <i class='far fa-list-alt'></i>\
+                                </button>\
+                            </td>\
+                            <td>Just Now</td>\
+                        </tr>\
+                        ")
         }
 
         function resetPatientForm() {
@@ -1884,7 +1912,7 @@
 
         $(document).on("click", ".addSessionButton", function() {
 
-            getPatientsArray();
+            // getPatientsArray();
 
         });
 
@@ -1945,55 +1973,56 @@
             divtest.setAttribute("class", "row removeclass" + room);
 
             var concatString = '<div class="mr-3"></div>\
-                                <div class="col-2">\
-                                    <div class="bt-switch justify-content-end">\
-                                        <input type="checkbox" data-size="medium" data-on-color="primary" data-off-color="info"\
-                                        data-on-text="Doctor" checked\
-                                        data-off-text="Clinic" id="isDoctor' + room + '" @if (Auth::user()->isDoctor()) readonly @endif>\
-                                    </div>\
-                                </div>'
+                                        <div class="col-2">\
+                                            <div class="bt-switch justify-content-end">\
+                                                <input type="checkbox" data-size="medium" data-on-color="primary" data-off-color="info"\
+                                                data-on-text="Doctor" checked\
+                                                data-off-text="Clinic" id="isDoctor' + room + '" @if (Auth::user()->isDoctor()) readonly @endif>\
+                                            </div>\
+                                        </div>'
 
 
             concatString +=
                 '<div class="col-lg-2">\
-                                            <div class="input-group mb-2">\
-                                                <select class="form-control select2 custom-select" style="width:100%" id="modal_device' +
+                                                    <div class="input-group mb-2">\
+                                                        <select class="form-control select2 custom-select" style="width:100%" id="modal_device' +
                 room + '" onchange="loadModalServices(' + room +
                 ')" required>\
-                                                        <option disabled hidden selected value="" class="text-muted">Device</option>';
+                                                                <option disabled hidden selected value="" class="text-muted">Device</option>';
             @foreach ($devices as $device)
                 concatString += '<option value="{{ $device->id }}" > {{ $device->DVIC_NAME }} </option>';
             @endforeach
             concatString += '</select>\
-                                            </div>\
-                                        </div>'
+                                                    </div>\
+                                                </div>'
 
             concatString +=
                 '<div class="col-3">\
-                                    <div class="input-group mb-2">\
-                                        <select class="form-control select2 custom-select sessionServiceModal" style="width:100%" id="modal_service' +
+                                            <div class="input-group mb-2">\
+                                                <select class="form-control select2 custom-select sessionServiceModal" style="width:100%" id="modal_service' +
                 room + '" onchange="checkModalUnit(' + room + ')" disabled required>\
-                                        </select>\
-                                    </div>\
-                                </div>'
+                                                </select>\
+                                            </div>\
+                                        </div>'
 
             concatString += '<div class="col-2">\
-                                    <div class="input-group mb-3">\
-                                        <input id="modal_session_note' + room +
+                                            <div class="input-group mb-3">\
+                                                <input id="modal_session_note' + room +
                 '" value="" type="text"  \class="form-control" placeholder="Note" name=note[' + room + '] >\
-                                    </div>\
-                                </div>'
+                                            </div>\
+                                        </div>'
 
             concatString += '<div class="col-2">\
-                                    <div class="input-group mb-3">\
-                                        <input id="modal_unit' + room +
+                                            <div class="input-group mb-3">\
+                                                <input id="modal_unit' + room +
                 '" type="number" step="0.01" class="form-control amount" placeholder="Unit" name=unit[' + room +
                 ']>\
-                                            <div class="input-group-append">\
-                                                <button class="btn btn-danger" type="button" onclick="removeModalService(' + room + ');checkModalEndTime()"><i class="fa fa-minus"></i></button>\
+                                                    <div class="input-group-append">\
+                                                        <button class="btn btn-danger" type="button" onclick="removeModalService(' +
+                room + ');checkModalEndTime()"><i class="fa fa-minus"></i></button>\
+                                                    </div>\
                                             </div>\
-                                    </div>\
-                                </div>'
+                                        </div>'
 
             divtest.innerHTML = concatString;
 
