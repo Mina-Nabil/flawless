@@ -631,16 +631,16 @@
                                                 </div>\
                                             </div>'
 
-            concatString += '<div class="col-2">\
-                                                <div class="input-group mb-3">\
-                                                    <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Price" name=price[] required>\
+            concatString += '<div class="col-3">\
+                                                <div class="input-group mb-4">\
+                                                    <input id="price' + room + '" type="number" step="0.01" class="form-control" placeholder="Whole Price of Package" name=price[] required>\
                                                 </div>\
                                             </div>'
 
-            concatString += '<div class="col-2">\
-                                                <div class="input-group mb-3">\
+            concatString += '<div class="col-3">\
+                                                <div class="input-group mb-4">\
                                                     <input id="unit' + room +
-                '" type="number" step="1" class="form-control amount" placeholder="Unit" name=unit[] value=1 required>\
+                '" type="number" step="1" class="form-control amount" placeholder="How many pulses/sessions?" name=unit[]  required>\
                                                         <div class="input-group-append">\
                                                             <button class="btn btn-danger" type="button" onclick="removeService(' +
                 room + ');"><i class="fa fa-minus"></i></button>\
