@@ -185,7 +185,7 @@
                                             <button class="{{$class}}">{{ $session->SSHN_STTS }}</button>
                                         </a>
                                     </td>
-                                    <td>{{$session->SSHN_STRT_TIME}}</td>
+                                    <td>{{ date("g:i a", strtotime($session->SSHN_STRT_TIME))}}</td>
                                     {{-- <td>{{$session->SSHN_END_TIME}}</td> --}}
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
                                     @if(Auth::user()->canAdmin())
