@@ -264,7 +264,7 @@
                             </li>
                         @endif
                         <li class="ml-auto" style="width: 320px">
-                            <form class="app-search d-none d-md-block d-lg-block" action="{{ $searchURL }}"
+                            <form class="app-search d-md-block d-lg-block" action="{{ $searchURL }}"
                                 method="POST">
                                 @csrf
                                 <input type="text" name=searchVal class="form-control"
