@@ -353,7 +353,7 @@
                                                     name="isCollected[{{ $i }}]">
                                             @endif
                                         </div>
-                                        <input type="hidden" name="isDoctor[{{ $i }}]" value="off">
+                                        <input type="hidden" name="isDoctor[{{ $i }}]" value="on">
                                         <div class="col-1">
                                             <div class="bt-switch justify-content-end">
                                                 <input type="checkbox" name="isDoctor[{{ $i }}]"
