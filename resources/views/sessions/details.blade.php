@@ -940,7 +940,7 @@
                 divtest.setAttribute("class", "row removeclass" + room);
 
                 var concatString = ' <input type="hidden" value="0" name="isCollected[' + room + ']">\
-                                <input type="hidden" value="off" name="isDoctor[' + room + ']">';
+                                <input type="hidden" value="on" name="isDoctor[' + room + ']">';
 
                 concatString += '<div class="mr-3"></div>\
                             <div class="col-1">\
