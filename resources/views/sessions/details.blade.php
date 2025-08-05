@@ -358,7 +358,7 @@
                                             <div class="bt-switch justify-content-end">
                                                 <input type="checkbox" name="isDoctor[{{ $i }}]"
                                                     data-size="medium" data-on-color="primary" data-off-color="info"
-                                                    data-on-text="Doctor" {{ $item->is_doctor ? 'checked' : 'off' }}
+                                                    data-on-text="Doctor" checked
                                                     data-off-text="Clinic" id="isDoctor{{ $i }}"
                                                     @if (!$session->canEditServices()) disabled @endif
                                                     @if (Auth::user()->isDoctor()) readonly @endif>
@@ -946,7 +946,7 @@
                             <div class="col-1">\
                                 <div class="bt-switch justify-content-end">\
                                     <input type="checkbox" name=isDoctor[' + room + '] data-size="medium" data-on-color="primary" data-off-color="info"\
-                                    data-on-text="Doctor" {{ Auth::user()->isDoctor() ? 'checked' : '' }}\
+                                    data-on-text="Doctor" checked\
                                     data-off-text="Clinic" id="isDoctor' + room + '" @if (Auth::user()->isDoctor()) readonly @endif>\
                                 </div>\
                             </div>'
