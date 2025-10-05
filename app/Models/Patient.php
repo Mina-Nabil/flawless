@@ -20,6 +20,10 @@ class Patient extends Model
     protected $table = "patients";
     public $timestamps = true;
 
+    protected $casts = [
+        'PTNT_BDAY' => 'date',
+    ];
+
     public function profileURL()
     {
         return url('patients/profile/' . $this->id);
