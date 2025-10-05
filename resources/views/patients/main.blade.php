@@ -108,6 +108,14 @@
                                                 </div>
 
                                                 <div class="form-group">
+                                                    <label>Birth Date</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="date" id="patientBirthdate" class="form-control" placeholder="Patient Birth Date" name=birthdate value="{{old('birthdate')}}">
+                                                    </div>
+                                                    <small class="text-danger">{{$errors->first('birthdate')}}</small>
+                                                </div>
+
+                                                <div class="form-group">
                                                     <label>Pricelist*</label>
                                                     <select class="select2 form-control  col-md-12 mb-3 " style="width:100%" id=listID>
                                                         @foreach($allPricelists as $list)

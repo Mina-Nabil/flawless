@@ -381,6 +381,14 @@
                                     <small class="text-danger">{{ $errors->first('mobn') }}</small>
                                 </div>
 
+                                <div class="form-group">
+                                    <label>Birth Date</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" class="form-control" placeholder="Birth Date" name=birthdate
+                                            value="{{ isset($patient) && $patient->PTNT_BDAY ? \Carbon\Carbon::parse($patient->PTNT_BDAY)->format('Y-m-d') : old('birthdate') }}">
+                                    </div>
+                                    <small class="text-danger">{{ $errors->first('birthdate') }}</small>
+                                </div>
 
                                 <div class="form-group">
                                     <label>Pricelist*</label>

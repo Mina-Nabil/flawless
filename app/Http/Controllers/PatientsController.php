@@ -26,11 +26,12 @@ class PatientsController extends Controller
 
         $this->data['patientsTitle'] = "Manage Patients";
         $this->data['patientsSubtitle'] = "Showing All Patients Data";
-        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Area', 'Since', 'Promo'];
+        $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Birth Date', 'Balance', 'Area', 'Since', 'Promo'];
         $this->data['patientsAtts'] = [
             'id',
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
             'PTNT_MOBN',
+            ['date' => ['att' => 'PTNT_BDAY', 'format' => 'd-M-Y']],
             ['number' => ['att' => 'PTNT_BLNC']],
             ['foreign' => ['att' => 'LOCT_NAME', 'rel' => 'location']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
@@ -228,6 +229,7 @@ class PatientsController extends Controller
         $patient->PTNT_NAME = $request->name;
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
+        $patient->PTNT_BDAY = $request->birthdate;
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;
@@ -255,6 +257,7 @@ class PatientsController extends Controller
         $patient->PTNT_NAME = $request->name;
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
+        $patient->PTNT_BDAY = $request->birthdate;
         $patient->PTNT_BLNC = $request->balance ?? 0;
         $patient->PTNT_PRLS_ID = $request->listID ?? (PriceList::getDefaultList()->id ?? NULL);
         $patient->PTNT_CHNL_ID = $request->channelID;

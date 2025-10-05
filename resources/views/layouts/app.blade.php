@@ -495,6 +495,16 @@
                                     </div>
                                     <small class="text-danger">{{ $errors->first('mobn') }}</small>
                                 </div>
+
+                                <div class="form-group">
+                                    <label>Birth Date</label>
+                                    <div class="input-group mb-3">
+                                        <input type="date" id="patientBirthdateModal" class="form-control"
+                                            placeholder="Patient Birth Date" name=birthdate>
+                                    </div>
+                                    <small class="text-danger">{{ $errors->first('birthdate') }}</small>
+                                </div>
+
                                 <div class="form-group">
                                     <label>Pricelist*</label>
                                     <select class="select form-control  col-md-12 mb-3 " style="width:100%"
@@ -1163,6 +1173,7 @@
                 var name = $('#patientNameModal').val();
                 var adrs = $('#patientAdrsModal').val();
                 var mobn = $('#patientMobnModal').val();
+                var birthdate = $('#patientBirthdateModal').val();
                 var balance = $('#patientBlncModal').val();
                 var listID = $('#listIDModal').val();
                 var channelID = $('#channelIDModal').val();
@@ -1172,6 +1183,7 @@
                 var name = $('#patientName').val();
                 var adrs = $('#patientAdrs').val();
                 var mobn = $('#patientMobn').val();
+                var birthdate = $('#patientBirthdate').val();
                 var balance = $('#patientBlnc').val();
                 var listID = $('#listID').val();
                 var locationID = $('#locationID').val();
@@ -1184,6 +1196,7 @@
             formData.append("adrs", adrs)
             formData.append("balance", balance)
             formData.append("mobn", mobn)
+            formData.append("birthdate", birthdate)
             formData.append("listID", listID)
             formData.append("channelID", channelID)
             formData.append("locationID", locationID)
@@ -1275,10 +1288,12 @@
             var name = $('#patientName').val("");
             var adrs = $('#patientAdrs').val("");
             var mobn = $('#patientMobn').val("");
+            var birthdate = $('#patientBirthdate').val("");
             var balance = $('#patientBlnc').val("0");
             var name = $('#patientNameModal').val("");
             var adrs = $('#patientAdrsModal').val("");
             var mobn = $('#patientMobnModal').val("");
+            var birthdate = $('#patientBirthdateModal').val("");
             var balance = $('#patientBlncModal').val("0");
         }
 
