@@ -328,13 +328,18 @@ $(document).ready(function() {
 
 // Live preview for message text
 @if($sampleSession)
-var samplePatientName = "{{ $sampleSession->patient->PTNT_NAME ?? 'Patient' }}";
+@php
+    $fullName = $sampleSession->patient->PTNT_NAME ?? 'Patient';
+    $nameParts = explode(' ', $fullName);
+    $firstName = $nameParts[0] ?? 'Patient';
+@endphp
+var samplePatientFirstName = "{{ $firstName }}";
 $(document).ready(function() {
     $('#messageText').on('input', function() {
         var messageText = $(this).val();
         if (messageText) {
-            // Replace {patient} placeholder
-            var previewText = messageText.replace(/{patient}/g, samplePatientName);
+            // Replace {patient} placeholder with first name only
+            var previewText = messageText.replace(/{patient}/g, samplePatientFirstName);
             
             // Convert \r\n to actual newlines
             previewText = previewText.replace(/\\r\\n/g, '\r\n');
