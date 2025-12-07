@@ -97,14 +97,15 @@ class SmsHandler
                 // Get the formatted message with patient name replaced
                 $messageText = $patientMessage->getMessageForSession($session);
                 $msg = urlencode($messageText);
-
-                $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$mobile}&message={$msg}");
                 
                 Log::info("-------------- SENDING PATIENT MESSAGE SMS -------------");
                 Log::info('Session ID: ' . $session->id);
                 Log::info('Patient Message ID: ' . $patientMessage->id);
                 Log::info('Phone: ' . $mobile);
                 Log::info('Content: ' . $messageText);
+                
+                $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$mobile}&message={$msg}");
+                
                 Log::info(print_r($response->json(), true));
                 Log::info("-------------- -------------- -------------");
 
