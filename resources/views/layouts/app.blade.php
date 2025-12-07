@@ -218,6 +218,7 @@
                                                 <li><a href="{{ url('sessiontypes') }}">Session Types</a></li>
                                                 <li><a href="{{ url('settings/devices') }}">Devices & Areas</a></li>
                                                 <li><a href="{{ url('settings/pricelists') }}">Price Lists</a></li>
+                                                <li><a href="{{ url('patient-messages') }}">Patient Messages</a></li>
                                             </ul>
                                         </li>
 
