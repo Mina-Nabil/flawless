@@ -75,7 +75,7 @@ class SmsHandler
      */
     public static function sendPatientMessages(Session $session): void
     {
-        if (!env('SMS_EG_ACTIVE', false)) return;
+        if (!env('SMS_EG_PM_ACTIVE', false)) return;
 
         $session->loadMissing('patient');
         
