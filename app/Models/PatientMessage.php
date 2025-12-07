@@ -22,6 +22,7 @@ class PatientMessage extends Model
     /**
      * Get the formatted message text for a given session
      * Replaces {patient} placeholder with the patient's name
+     * Converts \r\n to actual newlines
      * 
      * @param Session $session
      * @return string
@@ -33,6 +34,11 @@ class PatientMessage extends Model
         
         // Replace {patient} placeholder with actual patient name
         $message = str_replace('{patient}', $patientName, $this->PTMS_MSSG);
+        
+        // Convert \r\n to actual newlines
+        $message = str_replace('\r\n', "\r\n", $message);
+        $message = str_replace('\n', "\n", $message);
+        $message = str_replace('\r', "\r", $message);
         
         return $message;
     }

@@ -45,11 +45,11 @@
                                 <label>Message*</label>
                                 <textarea class="form-control" id=messageText rows="4" placeholder="Enter message text... Use {patient} to insert patient name dynamically" required>{{ $selectedMessage ? $selectedMessage->PTMS_MSSG : '' }}</textarea>
                                 <small class="form-text text-muted">
-                                    <i class="fas fa-info-circle"></i> Use <code>{patient}</code> placeholder to dynamically insert the patient's name. Example: "Hello {patient}, your session is ready!"
+                                    <i class="fas fa-info-circle"></i> Use <code>{patient}</code> placeholder to dynamically insert the patient's name. Use <code>\r\n</code> for new lines. Example: "Hello {patient}, your session is ready!\r\nSee you soon!"
                                 </small>
                                 <div class="mt-2 p-2 bg-light rounded" id="messagePreview" style="display: none;">
                                     <strong>Preview:</strong> 
-                                    <span class="text-info" id="messagePreviewText"></span>
+                                    <div class="text-info" id="messagePreviewText" style="white-space: pre-line;"></div>
                                 </div>
                             </div>
                         </div>
@@ -80,7 +80,8 @@
                                     @endif
                                 </h5>
                                 <p class="mb-1" id="patientMessageText{{$message->id}}">
-                                    <strong>Original:</strong> {{ strlen($message->PTMS_MSSG) > 100 ? substr($message->PTMS_MSSG, 0, 100) . '...' : $message->PTMS_MSSG }}
+                                    <strong>Original:</strong> 
+                                    <span style="white-space: pre-line;">{{ strlen($message->PTMS_MSSG) > 100 ? substr($message->PTMS_MSSG, 0, 100) . '...' : str_replace('\r\n', "\r\n", $message->PTMS_MSSG) }}</span>
                                 </p>
                                 @if($sampleSession)
                                 <p class="mb-1 text-info" style="font-size: 0.9em;">
@@ -89,7 +90,7 @@
                                         $previewText = $message->getMessageForSession($sampleSession);
                                         $previewDisplay = strlen($previewText) > 100 ? substr($previewText, 0, 100) . '...' : $previewText;
                                     @endphp
-                                    {{ $previewDisplay }}
+                                    <span style="white-space: pre-line;">{{ $previewDisplay }}</span>
                                 </p>
                                 @endif
                             </div>
@@ -331,8 +332,15 @@ var samplePatientName = "{{ $sampleSession->patient->PTNT_NAME ?? 'Patient' }}";
 $(document).ready(function() {
     $('#messageText').on('input', function() {
         var messageText = $(this).val();
-        if (messageText && messageText.includes('{patient}')) {
+        if (messageText) {
+            // Replace {patient} placeholder
             var previewText = messageText.replace(/{patient}/g, samplePatientName);
+            
+            // Convert \r\n to actual newlines
+            previewText = previewText.replace(/\\r\\n/g, '\r\n');
+            previewText = previewText.replace(/\\n/g, '\n');
+            previewText = previewText.replace(/\\r/g, '\r');
+            
             $('#messagePreviewText').text(previewText);
             $('#messagePreview').show();
         } else {
