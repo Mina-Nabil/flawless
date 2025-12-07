@@ -75,12 +75,20 @@ class SmsHandler
      */
     public static function sendPatientMessages(Session $session): void
     {
+        Log::info("PM JOB STARTED");
+
         if (!env('SMS_EG_PM_ACTIVE', false)) return;
 
-        $session->loadMissing('patient');
+        Log::info("SMS EG PM ACTIVE: " . env('SMS_EG_PM_ACTIVE', false));
+
+        $session->load('patient');
         
         // Get patient messages that match the session items
         $patientMessages = $session->generatePatientMessages();
+
+        Log::info("-------------- PATIENT MESSAGES -------------");
+        Log::info(print_r($patientMessages->toArray(), true));
+        Log::info("-------------- -------------- -------------");
         
         if ($patientMessages->isEmpty()) {
             return;
@@ -103,7 +111,7 @@ class SmsHandler
                 Log::info('Patient Message ID: ' . $patientMessage->id);
                 Log::info('Phone: ' . $mobile);
                 Log::info('Content: ' . $messageText);
-                
+
                 $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$mobile}&message={$msg}");
                 
                 Log::info(print_r($response->json(), true));
