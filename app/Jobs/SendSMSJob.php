@@ -34,6 +34,10 @@ class SendSMSJob implements ShouldQueue
      */
     public function handle()
     {
-        SmsHandler::sendSessionMessage($this->session, $this->mode);
+        if ($this->mode === 'patient_messages') {
+            SmsHandler::sendPatientMessages($this->session);
+        } else {
+            SmsHandler::sendSessionMessage($this->session, $this->mode);
+        }
     }
 }

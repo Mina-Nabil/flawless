@@ -541,6 +541,9 @@ class Session extends Model
             $this->save();
             $this->logEvent("Set Session as DONE :)");
             $this->createFeedback();
+            
+            // Send patient messages for completed session
+            SendSMSJob::dispatch($this, 'patient_messages');
         }
     }
 
@@ -669,5 +672,60 @@ class Session extends Model
     function packageLogs()
     {
         return $this->hasMany(PackageLog::class, "PKLG_SSHN_ID");
+    }
+
+    /**
+     * Generate patient messages based on session items matching device/area
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    function generatePatientMessages()
+    {
+        $this->loadMissing('items.pricelistItem.device', 'items.pricelistItem.area');
+        
+        $matchedMessages = collect();
+        $processedCombinations = [];
+        
+        foreach ($this->items as $sessionItem) {
+            $pricelistItem = $sessionItem->pricelistItem;
+            
+            if (!$pricelistItem) {
+                continue;
+            }
+            
+            $deviceID = $pricelistItem->PLIT_DVIC_ID;
+            $areaID = $pricelistItem->PLIT_AREA_ID;
+            
+            // Create a unique key for this device/area combination to avoid duplicates
+            $combinationKey = $deviceID . '_' . ($areaID ?? 'null');
+            
+            if (in_array($combinationKey, $processedCombinations)) {
+                continue;
+            }
+            
+            $processedCombinations[] = $combinationKey;
+            
+            // Find patient messages that match this device and area
+            $query = PatientMessage::where('PTMS_DVIC_ID', $deviceID);
+            
+            // Match messages where:
+            // 1. Area ID matches exactly, OR
+            // 2. Patient message has no area (null) - meaning it applies to all areas for this device
+            if ($areaID) {
+                $query->where(function($q) use ($areaID) {
+                    $q->where('PTMS_AREA_ID', $areaID)
+                      ->orWhereNull('PTMS_AREA_ID');
+                });
+            } else {
+                // If session item has no area, only match messages with no area
+                $query->whereNull('PTMS_AREA_ID');
+            }
+            
+            $messages = $query->get();
+            $matchedMessages = $matchedMessages->merge($messages);
+        }
+        
+        // Remove duplicates based on message ID
+        return $matchedMessages->unique('id');
     }
 }

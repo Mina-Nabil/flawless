@@ -3,6 +3,7 @@
 
 namespace App\Helpers;
 
+use App\Models\PatientMessage;
 use App\Models\Session;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -63,6 +64,54 @@ class SmsHandler
         } catch (Exception $e) {
             report($e);
             return false;
+        }
+    }
+
+    /**
+     * Send patient messages for a completed session
+     * 
+     * @param Session $session
+     * @return void
+     */
+    public static function sendPatientMessages(Session $session): void
+    {
+        if (!env('SMS_EG_ACTIVE', false)) return;
+
+        $session->loadMissing('patient');
+        
+        // Get patient messages that match the session items
+        $patientMessages = $session->generatePatientMessages();
+        
+        if ($patientMessages->isEmpty()) {
+            return;
+        }
+
+        $API_USER = env('SMS_EG_USERNAME');
+        $API_KEY = env('SMS_EG_PASSWORD');
+        $API_SENDER = env('SMS_SENDER_TOKEN');
+        $API_ENV = env('APP_ENV') === 'production' ? 1 : 2;
+        $mobile = $session->patient->sms_mobile_number;
+
+        foreach ($patientMessages as $patientMessage) {
+            try {
+                // Get the formatted message with patient name replaced
+                $messageText = $patientMessage->getMessageForSession($session);
+                $msg = urlencode($messageText);
+
+                $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$mobile}&message={$msg}");
+                
+                Log::info("-------------- SENDING PATIENT MESSAGE SMS -------------");
+                Log::info('Session ID: ' . $session->id);
+                Log::info('Patient Message ID: ' . $patientMessage->id);
+                Log::info('Phone: ' . $mobile);
+                Log::info('Content: ' . $messageText);
+                Log::info(print_r($response->json(), true));
+                Log::info("-------------- -------------- -------------");
+
+            } catch (Exception $e) {
+                Log::error("Failed to send patient message SMS for session {$session->id}, message {$patientMessage->id}: " . $e->getMessage());
+                report($e);
+            }
         }
     }
 }

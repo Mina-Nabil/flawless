@@ -12,6 +12,7 @@ use App\Http\Controllers\FollowupsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LocationsController;
+use App\Http\Controllers\PatientMessagesController;
 use App\Http\Controllers\PatientsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\RoomsController;
@@ -146,6 +147,13 @@ Route::post('delete/device', [SettingsController::class, 'deleteDevice']);
 Route::post('add/area', [SettingsController::class, 'addArea']);
 Route::post('edit/area', [SettingsController::class, 'editArea']);
 Route::post('delete/area', [SettingsController::class, 'deleteArea']);
+
+//Patient Messages
+Route::get('patient-messages', [PatientMessagesController::class, 'index']);
+Route::get('patient-messages/{id}', [PatientMessagesController::class, 'index']);
+Route::post('patient-messages/add', [PatientMessagesController::class, 'addPatientMessage']);
+Route::post('patient-messages/edit', [PatientMessagesController::class, 'editPatientMessage']);
+Route::post('patient-messages/delete', [PatientMessagesController::class, 'deletePatientMessage']);
 
 //Patients
 Route::get('patients/home',[PatientsController::class, 'home']);
