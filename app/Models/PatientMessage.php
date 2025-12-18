@@ -30,11 +30,11 @@ class PatientMessage extends Model
     public function getMessageForSession($session)
     {
         $session->loadMissing('patient');
-        $fullName = $session->patient->PTNT_NAME ?? 'Patient';
+        $fullName = ucwords($session->patient->PTNT_NAME ?? 'Patient');
         
         // Get first name only (first word)
         $nameParts = explode(' ', $fullName);
-        $patientName = $nameParts[0] ?? 'Patient';
+        $patientName = ucwords($nameParts[0] ?? 'Patient');
         
         // Replace {patient} placeholder with patient's first name
         $message = str_replace('{patient}', $patientName, $this->PTMS_MSSG);
