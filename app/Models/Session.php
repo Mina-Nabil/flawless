@@ -21,7 +21,8 @@ class Session extends Model
     public const STATE_LATE_CANCEL = "Late Cancel";
 
     public const ACTIVE_STATES = [
-        self::STATE_NEW, self::STATE_PENDING_PYMT
+        self::STATE_NEW,
+        self::STATE_PENDING_PYMT
     ];
 
     public $timestamps = false;
@@ -510,7 +511,8 @@ class Session extends Model
     public function logEvent($text)
     {
         $logEvent = new Log([
-            "LOG_TEXT" => $text, "LOG_DASH_ID" => Auth::user()->id
+            "LOG_TEXT" => $text,
+            "LOG_DASH_ID" => Auth::user()->id
         ]);
         $this->logs()->save($logEvent);
     }
@@ -541,7 +543,7 @@ class Session extends Model
             $this->save();
             $this->logEvent("Set Session as DONE :)");
             $this->createFeedback();
-            
+
             // Send patient messages for completed session
             SendSMSJob::dispatch($this, 'patient_messages');
         }
@@ -682,49 +684,40 @@ class Session extends Model
     function generatePatientMessages()
     {
         $this->loadMissing('items.pricelistItem.device', 'items.pricelistItem.area');
-        
+
         $matchedMessages = collect();
         $processedCombinations = [];
-        
+
         foreach ($this->items as $sessionItem) {
             $pricelistItem = $sessionItem->pricelistItem;
-            
+
             if (!$pricelistItem) {
                 continue;
             }
-            
+
             $deviceID = $pricelistItem->PLIT_DVIC_ID;
             $areaID = $pricelistItem->PLIT_AREA_ID;
-            
+
             // Create a unique key for this device/area combination to avoid duplicates
             $combinationKey = $deviceID . '_' . ($areaID ?? 'null');
-            
+
             if (in_array($combinationKey, $processedCombinations)) {
                 continue;
             }
-            
+
             $processedCombinations[] = $combinationKey;
-            
+
             // Find patient messages that match this device and area
-            $query = PatientMessage::where('PTMS_DVIC_ID', $deviceID);
-            
-            // Match messages where:
-            // 1. Area ID matches exactly, OR
-            // 2. Patient message has no area (null) - meaning it applies to all areas for this device
-            if ($areaID) {
-                $query->where(function($q) use ($areaID) {
+            $query = PatientMessage::where('PTMS_DVIC_ID', $deviceID)
+                ->where(function ($q) use ($areaID) {
                     $q->where('PTMS_AREA_ID', $areaID)
-                      ->orWhereNull('PTMS_AREA_ID');
+                        ->orWhereNull('PTMS_AREA_ID');
                 });
-            } else {
-                // If session item has no area, only match messages with no area
-                $query->whereNull('PTMS_AREA_ID');
-            }
-            
+
             $messages = $query->get();
             $matchedMessages = $matchedMessages->merge($messages);
         }
-        
+
         // Remove duplicates based on message ID
         return $matchedMessages->unique('id');
     }
