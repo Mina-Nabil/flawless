@@ -178,6 +178,32 @@
                                                     height="36" style="width: auto" />
                                             @endisset
                                         </td>
+                                    
+                                    @elseif(array_key_exists('services', $att))
+                                        <td>
+                                            @php
+                                                $services = $item->{$att['services']['rel']} ?? collect();
+                                                $servicesList = $services->map(function($sessionItem) {
+                                                    $priceItem = $sessionItem->pricelistItem;
+                                                    if ($priceItem) {
+                                                        $name = $priceItem->item_name ?? $priceItem->device->DVIC_NAME ?? 'Unknown';
+                                                        $qty = $sessionItem->SHIT_QNTY ?? 1;
+                                                        return "{$name} (x{$qty})";
+                                                    }
+                                                    return null;
+                                                })->filter()->implode(', ');
+                                            @endphp
+                                            @if($servicesList)
+                                                <button type="button" style="padding:.1rem" class="btn btn-info btn-sm"
+                                                    data-container="body" data-toggle="popover" data-placement="bottom"
+                                                    data-content="{{ $servicesList }}"
+                                                    data-original-title="Services:">
+                                                    <i class="fas fa-list"></i> {{ $services->count() }}
+                                                </button>
+                                            @else
+                                                <span class="text-muted">No services</span>
+                                            @endif
+                                        </td>
                                     @elseif(array_key_exists('comment', $att))
                                         <td>
                                             <button type="button" style="padding:.1rem" class="btn btn-secondary"

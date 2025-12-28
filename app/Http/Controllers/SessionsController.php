@@ -318,7 +318,7 @@ class SessionsController extends Controller
             $devices_ids
         );
 
-        $this->data['cols'] = ["Date", "Doctor", "Patient", "Phone", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
+        $this->data['cols'] = ["Date", "Doctor", "Patient", "Phone", "Status", "CreatedBy", "Total", "Disc.", "Comment", "Services"];
 
         $this->data['atts'] = [
             ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
@@ -347,9 +347,9 @@ class SessionsController extends Controller
             ["foreign"  =>  ["rel"  =>  "creator",  "att"   =>  "DASH_USNM"]],
             ["number"   =>  ["att"  =>  "SSHN_TOTL"]],
             ["number"   =>  ["att"  =>  "SSHN_DISC"]],
-            ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
+            // ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
             ["comment"  =>  ["att"  =>  "SSHN_TEXT"]],
-
+            ["services"      =>  ["rel"  =>  "items"]],
         ];
 
         //table info
