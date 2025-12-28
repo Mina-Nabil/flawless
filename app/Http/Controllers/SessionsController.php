@@ -318,12 +318,13 @@ class SessionsController extends Controller
             $devices_ids
         );
 
-        $this->data['cols'] = ["Date", "Doctor", "Patient", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
+        $this->data['cols'] = ["Date", "Doctor", "Patient", "Phone", "Status", "CreatedBy", "Total", "Disc.", "Paid To", "Comment"];
 
         $this->data['atts'] = [
             ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
             ["verifiedRel"  =>  ["rel"  =>  "doctor",   "relAtt"   =>  "DASH_USNM", 'isVerified' => 'SSHN_CMSH', 'iconTitle' => "Commission"]],
             ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_NAME"]],
+            ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_MOBN"]],
             [
                 'state'     => [
                     "url"       => "sessions/details/",
