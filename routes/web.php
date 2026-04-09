@@ -165,6 +165,8 @@ Route::get('patients/notes/delete/{id}', [PatientsController::class, 'deleteNote
 Route::get('patients/notes/restore/{id}', [PatientsController::class, 'restoreNote']);
 Route::post('patients/addbalance', [PatientsController::class, 'addBalance']);
 Route::post('patients/add/package', [PatientsController::class, 'addPackage']);
+Route::get('patients/package/delete/{id}', [PatientsController::class, 'deletePackage']);
+Route::get('patients/package/clearqty/{id}', [PatientsController::class, 'clearPackageQty']);
 Route::post('patients/insert', [PatientsController::class, 'insert']);
 Route::post('patients/update', [PatientsController::class, 'update']);
 Route::get('patients/get/json', [PatientsController::class, 'getJSONPatients']);

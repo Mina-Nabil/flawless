@@ -220,6 +220,19 @@
                                     @elseif(array_key_exists('hiddenRel', $att))
                                         <input type=hidden id="{{ $att['hiddenRel']['id'] }}{{ $item->id }}"
                                             value="{{ $item->{$att['hiddenRel']['rel']}->{$att['hiddenRel']['valueAtt']} }}" />
+                                    @elseif(array_key_exists('packageActions', $att))
+                                        <td>
+                                            @if (Auth::user()->isOwner())
+                                                <a href="javascript:void(0);" class="mr-2">
+                                                    <i class="fas fa-ban text-warning" title="Zero out remaining quantity"
+                                                        onclick="confirmAndGoTo('{{ url('patients/package/clearqty/' . $item->id) }}', 'zero out this package\'s remaining quantity')"></i>
+                                                </a>
+                                                <a href="javascript:void(0);">
+                                                    <i class="fas fa-trash text-danger" title="Delete package record"
+                                                        onclick="confirmAndGoTo('{{ url('patients/package/delete/' . $item->id) }}', 'permanently delete this package record')"></i>
+                                                </a>
+                                            @endif
+                                        </td>
                                     @elseif(array_key_exists('leadsActions', $att))
                                         <td>
                                             <a class="openLeadFollowup mr-2" href="javascript:void(0)"

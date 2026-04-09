@@ -6,10 +6,12 @@ use App\Models\Device;
 use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\PatientNote;
+use App\Models\PatientPackage;
 use App\Models\PatientPayment;
 use App\Models\PriceList;
 use App\Models\Room;
 use Illuminate\Support\Facades\Session as HttpSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class PatientsController extends Controller
@@ -106,6 +108,10 @@ class PatientsController extends Controller
             ["number" => ['att' => 'PTPK_PRCE', 'nums' => 2]],
             'PTPK_QNTY',
         ];
+        if (Auth::user()->isOwner()) {
+            $this->data['packagesCols'][] = 'Actions';
+            $this->data['packagesAtts'][] = ['packageActions' => true];
+        }
 
         //Pay table
         $this->data['pays'] = PatientPayment::with('dash_user')->where('PTPY_PTNT_ID', '=', $this->data['patient']->id)
@@ -294,6 +300,31 @@ class PatientsController extends Controller
         $patientNote = PatientNote::withTrashed()->findOrFail($id);
         $patientNote->restore();
         return back();
+    }
+
+    public function deletePackage($id)
+    {
+        if (!Auth::user()->isOwner()) {
+            abort(403);
+        }
+        /** @var PatientPackage */
+        $package = PatientPackage::findOrFail($id);
+        $patientID = $package->PTPK_PTNT_ID;
+        $package->delete();
+        return redirect("patients/profile/" . $patientID);
+    }
+
+    public function clearPackageQty($id)
+    {
+        if (!Auth::user()->isOwner()) {
+            abort(403);
+        }
+        /** @var PatientPackage */
+        $package = PatientPackage::findOrFail($id);
+        $patientID = $package->PTPK_PTNT_ID;
+        $package->PTPK_QNTY = 0;
+        $package->save();
+        return redirect("patients/profile/" . $patientID);
     }
 
 
