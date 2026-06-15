@@ -20,11 +20,12 @@
                     @if(session('branch')==0)
                     <div class="col-12 form-group">
                         <label>Branch</label>
-                        <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=branchID>
+                        <select class="select2 select2-multiple form-control  col-md-12 mb-3" multiple="multiple" style="width:100%" name="branchID[]">
                             @foreach($branches as $branch)
                             <option value="{{$branch->id}}"> {{$branch->BRCH_NAME}}</option>
                             @endforeach
                         </select>
+                        <small class="text-muted">Leave empty to include all branches</small>
                         <small class="text-danger">{{$errors->first('branchID')}}</small>
                     </div>
                     @elseif(session('branch')>0)
@@ -69,7 +70,7 @@
                         <select class="select2 form-control  col-md-12 mb-3" style="width:100%" name=patient>
                             <option value="0">All</option>
                             @foreach($patients as $patient)
-                            <option value="{{$patient->id}}"> {{$patient->PTNT_NAME}} ({{$patient->PTNT_MOBN}}) </option>
+                            <option value="{{$patient->id}}"> {{$patient->display_name}} ({{$patient->PTNT_MOBN}}) </option>
                             @endforeach
                         </select>
                     </div>

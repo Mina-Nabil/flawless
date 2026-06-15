@@ -83,6 +83,10 @@ Route::get('reports/toppayers', [ReportsController::class, 'prepareTopPayers']);
 Route::post('reports/toppayers', [ReportsController::class, 'loadTopPayers']);
 Route::get('reports/newpatients', [ReportsController::class, 'prepareNewPatients']);
 Route::post('reports/newpatients', [ReportsController::class, 'loadNewPatients']);
+Route::get('reports/packages', [ReportsController::class, 'preparePackagesSold']);
+Route::post('reports/packages', [ReportsController::class, 'loadPackagesSold']);
+Route::get('reports/admins', [ReportsController::class, 'prepareAdmins']);
+Route::post('reports/admins', [ReportsController::class, 'loadAdmins']);
 
 //attendance
 Route::get('attendance/home', [AttendanceController::class, 'index']);
@@ -169,6 +173,7 @@ Route::get('patients/package/delete/{id}', [PatientsController::class, 'deletePa
 Route::get('patients/package/clearqty/{id}', [PatientsController::class, 'clearPackageQty']);
 Route::post('patients/insert', [PatientsController::class, 'insert']);
 Route::post('patients/update', [PatientsController::class, 'update']);
+Route::post('patients/setdnd', [PatientsController::class, 'setDoNotDisturb']);
 Route::get('patients/get/json', [PatientsController::class, 'getJSONPatients']);
 
 //Leads Account

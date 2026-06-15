@@ -31,7 +31,7 @@ class PatientsController extends Controller
         $this->data['patientsCols'] = ['Code', 'Full Name', 'Mob#', 'Birth Date', 'Balance', 'Area', 'Since', 'Promo'];
         $this->data['patientsAtts'] = [
             'id',
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             ['date' => ['att' => 'PTNT_BDAY', 'format' => 'd-M-Y']],
             ['number' => ['att' => 'PTNT_BLNC']],
@@ -49,7 +49,7 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device", "followUps", 'followUps.caller')->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device", "followUps", 'followUps.caller', "nameLogs", "nameLogs.user")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['setNoteURL']           = url("patients/setnote");
@@ -112,6 +112,19 @@ class PatientsController extends Controller
             $this->data['packagesCols'][] = 'Actions';
             $this->data['packagesAtts'][] = ['packageActions' => true];
         }
+
+        //Name change log table
+        $this->data['nameLogsList']    =   $this->data['patient']->nameLogs;
+        $this->data['nameLogsCols'] = ['Date', 'From', 'To', 'By'];
+        $this->data['nameLogsAtts'] = [
+            ['date' => ['att' => 'created_at', 'format' => 'd-M-Y h:i A']],
+            'PNML_FROM',
+            'PNML_TO',
+            ['foreign' => ['rel' => 'user', 'att' => 'DASH_USNM']],
+        ];
+
+        //DND form
+        $this->data['setDndURL'] = url('patients/setdnd');
 
         //Pay table
         $this->data['pays'] = PatientPayment::with('dash_user')->where('PTPY_PTNT_ID', '=', $this->data['patient']->id)
@@ -217,7 +230,7 @@ class PatientsController extends Controller
         $this->data['rooms']    =   Room::byBranch($branch_ID)->get();
         if (isset($request->service))
             foreach ($request->service as $key => $pricelistID) {
-                $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa);;
+                $patient->submitNewPackage($request->branchID, $pricelistID, $request->unit[$key], $request->price[$key] / $request->unit[$key], $isVisa, Auth::id());;
             }
         return redirect("patients/profile/" . $patient->id);
     }
@@ -260,7 +273,7 @@ class PatientsController extends Controller
             "locationID"       => "required|exists:locations,id",
         ]);
 
-        $patient->PTNT_NAME = $request->name;
+        $patient->changeName($request->name); // logs the name change when it differs
         $patient->PTNT_ADRS = $request->adrs;
         $patient->PTNT_MOBN = $request->mobn;
         $patient->PTNT_BDAY = $request->birthdate;
@@ -272,6 +285,18 @@ class PatientsController extends Controller
         $patient->save();
 
         return redirect("patients/profile/" . $patient->id);
+    }
+
+    public function setDoNotDisturb(Request $request)
+    {
+        $request->validate([
+            "id"    =>  "required|exists:patients,id",
+        ]);
+        /** @var Patient */
+        $patient = Patient::findOrFail($request->id);
+        $dnd = $request->boolean('dnd');
+        $patient->setDoNotDisturb($dnd, $request->reason);
+        return back();
     }
 
     public function setNote(Request $request)

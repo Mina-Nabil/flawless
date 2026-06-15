@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Branch;
+use App\Models\Cash;
 use App\Models\Channel;
 use App\Models\DashUser;
 use App\Models\Device;
 use App\Models\Location;
 use App\Models\Patient;
+use App\Models\PatientPackage;
 use App\Models\Session;
 use App\Models\SessionItem;
+use App\Models\Visa;
 use Carbon\Carbon;
 use DateInterval;
 use DateTime;
@@ -203,7 +206,7 @@ class ReportsController extends Controller
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
         $this->data['atts'] = [
             'id',
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             ['number' => ['att' => 'PTNT_BLNC']],
             ['comment' => ['att' => 'PTNT_ADRS']],
@@ -241,7 +244,7 @@ class ReportsController extends Controller
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
         $this->data['atts'] = [
             'id',
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             ['number' => ['att' => 'PTNT_BLNC']],
             ['comment' => ['att' => 'PTNT_ADRS']],
@@ -267,16 +270,18 @@ class ReportsController extends Controller
         $request->validate([
             "totalPaid"      =>  "required",
         ]);
-        $this->data['items'] = Patient::getTopPayers($request->totalPaid);
+        $this->data['items'] = Patient::getTopPayers($request->totalPaid, $request->from, $request->to);
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Top Payers Report";
-        $this->data['tableSubtitle'] = "Showing Patients who paid more than " . number_format($request->totalPaid);
+        $this->data['tableSubtitle'] = "Showing Patients who paid more than " . number_format($request->totalPaid) .
+            ($request->from ? " from " . (new DateTime($request->from))->format('d-M-Y') : "") .
+            ($request->to ? " to " . (new DateTime($request->to))->format('d-M-Y') : "");
 
         $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
         $this->data['atts'] = [
             'id',
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             'sessions_count',
             ["number" => ["att" => "total_paid"]],
@@ -308,12 +313,16 @@ class ReportsController extends Controller
         $this->data['tableTitle'] = "New Patients Report";
         $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " Patients who are created from " . (new DateTime($request->from))->format("d M Y") . " to " . (new DateTime($request->to))->format("d M Y");
 
-        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', "Sessions", "Total", 'Since'];
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Channel', 'Location', 'Branch Visited', "Sessions", "Services", "Total", 'Since'];
         $this->data['atts'] = [
             'id',
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
+            ['foreign' => ['rel' => 'channel', 'att' => 'CHNL_NAME']],
+            ['foreign' => ['rel' => 'location', 'att' => 'LOCT_NAME']],
+            'branches_visited',
             'sessions_count',
+            ['services' => ['rel' => 'services']],
             ["number" => ["att" => "total_paid"]],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
         ];
@@ -349,11 +358,120 @@ class ReportsController extends Controller
             'id',
             ['foreign' => ['rel' => 'location', 'att' => 'LOCT_NAME']],
             ['foreign' => ['rel' => 'channel', 'att' => 'CHNL_NAME']],
-            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "PTNT_NAME"]],
+            ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             'sessions_count',
             ["number" => ["att" => "total_paid"]],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
+        ];
+
+        return view("layouts.table", $this->data);
+    }
+
+    //Packages Sold Query
+    public function preparePackagesSold()
+    {
+        //page info
+        $this->data['title']           =   'Packages Sold Report';
+        $this->data['formTitle']       =   'Load Packages Sold';
+        $this->data['formSubtitle']    =   'Filter sold packages by channel, location and date range';
+
+        $this->data['channels']    =   Channel::all();
+        $this->data['locations']    =   Location::all();
+        return view("reports.packagesSoldQuery", $this->data);
+    }
+
+    public function loadPackagesSold(Request $request)
+    {
+        $request->validate([
+            "channel_ids"    =>  "required",
+            "location_ids"   =>  "required"
+        ]);
+
+        $this->data['items'] = PatientPackage::getSoldPackages($request->channel_ids, $request->location_ids, $request->from, $request->to);
+
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Packages Sold Report";
+        $this->data['totalSold'] = $this->data['items']->sum('line_total');
+        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " packages sold" .
+            ($request->from ? " from " . (new DateTime($request->from))->format('d-M-Y') : "") .
+            ($request->to ? " to " . (new DateTime($request->to))->format('d-M-Y') : "") .
+            " -- Total: " . number_format($this->data['totalSold']);
+
+        $this->data['cols'] = ['Date', 'Seller', 'Patient', 'Location', 'Channel', 'Package', 'Qty', 'Unit Price', 'Total'];
+        $this->data['atts'] = [
+            ['date' => ['att' => 'PTPK_DATE', 'format' => 'd-M-Y']],
+            ['foreign' => ['rel' => 'seller', 'att' => 'DASH_USNM']],
+            ['foreignUrl' => ['baseUrl' => 'patients/profile', 'urlAtt' => 'PTPK_PTNT_ID', 'rel' => 'patient', 'att' => 'PTNT_NAME']],
+            ['foreignForeign' => ['rel1' => 'patient', 'rel2' => 'location', 'att' => 'LOCT_NAME']],
+            ['foreignForeign' => ['rel1' => 'patient', 'rel2' => 'channel', 'att' => 'CHNL_NAME']],
+            'package_name',
+            ['number' => ['att' => 'PTPK_QNTY', 'decimals' => 0]],
+            ['number' => ['att' => 'PTPK_PRCE']],
+            ['number' => ['att' => 'line_total']],
+        ];
+
+        return view("layouts.table", $this->data);
+    }
+
+    //Admins Query
+    public function prepareAdmins()
+    {
+        //page info
+        $this->data['title']           =   'Admins Report';
+        $this->data['formTitle']       =   'Admins Performance Query';
+        $this->data['formSubtitle']    =   'Set a date range to count created sessions and money collected per admin';
+
+        return view("reports.adminsQuery", $this->data);
+    }
+
+    public function loadAdmins(Request $request)
+    {
+        $request->validate([
+            "from"      =>  "required",
+            "to"        =>  "required",
+        ]);
+
+        $from = $request->from;
+        $to = $request->to;
+
+        $admins = DashUser::admins();
+
+        // created sessions per admin (by session date)
+        $sessionCounts = Session::whereBetween('SSHN_DATE', [$from, $to])
+            ->groupBy('SSHN_OPEN_ID')
+            ->selectRaw('SSHN_OPEN_ID, COUNT(*) as cnt')
+            ->pluck('cnt', 'SSHN_OPEN_ID');
+
+        // money collected per admin (cash + visa IN, by transaction time)
+        $cashCollected = Cash::whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
+            ->groupBy('CASH_DASH_ID')
+            ->selectRaw('CASH_DASH_ID, SUM(CASH_IN) as total')
+            ->pluck('total', 'CASH_DASH_ID');
+        $visaCollected = Visa::whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
+            ->groupBy('VISA_DASH_ID')
+            ->selectRaw('VISA_DASH_ID, SUM(VISA_IN) as total')
+            ->pluck('total', 'VISA_DASH_ID');
+
+        foreach ($admins as $admin) {
+            $admin->sessions_count = $sessionCounts->get($admin->id, 0);
+            $admin->money_collected = $cashCollected->get($admin->id, 0) + $visaCollected->get($admin->id, 0);
+        }
+
+        $this->data['items'] = $admins;
+
+        //table info
+        $this->data['title'] = "FLAWLESS Dashboard";
+        $this->data['tableTitle'] = "Admins Report";
+        $this->data['tableSubtitle'] = "Showing created sessions and money collected per admin from " .
+            (new DateTime($from))->format('d-M-Y') . " to " . (new DateTime($to))->format('d-M-Y');
+
+        $this->data['cols'] = ['Admin', 'Created Sessions', 'Money Collected'];
+        $this->data['atts'] = [
+            'DASH_USNM',
+            ['number' => ['att' => 'sessions_count', 'decimals' => 0]],
+            ['number' => ['att' => 'money_collected']],
         ];
 
         return view("layouts.table", $this->data);

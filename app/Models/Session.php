@@ -145,8 +145,13 @@ class Session extends Model
         if ($roomID != null && $roomID != 0)
             $query = $query->where("SSHN_ROOM_ID", "=", $roomID);
 
-        if ($branchID != null && $branchID != 0)
+        if (is_array($branchID)) {
+            $branchIDs = array_filter($branchID, fn($id) => $id != null && $id != 0);
+            if (count($branchIDs) != 0)
+                $query = $query->whereIn("SSHN_BRCH_ID", $branchIDs);
+        } elseif ($branchID != null && $branchID != 0) {
             $query = $query->where("SSHN_BRCH_ID", "=", $branchID);
+        }
 
         if (count($state) != 0)
             $query = $query->whereIn("SSHN_STTS", $state);

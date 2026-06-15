@@ -22,7 +22,49 @@ class Patient extends Model
 
     protected $casts = [
         'PTNT_BDAY' => 'date',
+        'PTNT_DND' => 'boolean',
     ];
+
+    protected $appends = ['display_name'];
+
+    /**
+     * Name decorated with a "Do Not Disturb" marker when the patient is flagged.
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->PTNT_NAME . ($this->PTNT_DND ? ' -- Do Not Disturb' : '');
+    }
+
+    /**
+     * Flag/unflag the patient as Do Not Disturb with an optional reason.
+     */
+    public function setDoNotDisturb(bool $dnd, ?string $reason = null): bool
+    {
+        $this->PTNT_DND = $dnd;
+        $this->PTNT_DND_RSON = $dnd ? $reason : null;
+        return $this->save();
+    }
+
+    /**
+     * Persist a name change and log it (from -> to, by the current user).
+     */
+    public function changeName(string $newName): bool
+    {
+        $oldName = $this->PTNT_NAME;
+        if ($oldName === $newName) {
+            return false;
+        }
+        $this->PTNT_NAME = $newName;
+        $saved = $this->save();
+        if ($saved) {
+            $this->nameLogs()->create([
+                "PNML_FROM"     =>  $oldName,
+                "PNML_TO"       =>  $newName,
+                "PNML_DASH_ID"  =>  Auth::id(),
+            ]);
+        }
+        return $saved;
+    }
 
     public function profileURL()
     {
@@ -70,7 +112,7 @@ class Patient extends Model
 
     public static function loadMissingPatients($daysFrom, $daysTo)
     {
-        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE < DATE_SUB(NOW() , INTERVAL {$daysFrom} DAY) AND SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$daysTo} DAY ")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
+        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE < DATE_SUB(NOW() , INTERVAL {$daysFrom} DAY) AND SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$daysTo} DAY)")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
         return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
     }
 
@@ -90,21 +132,41 @@ class Patient extends Model
         return $query->get();
     }
 
-    public static function getTopPayers($limit)
+    public static function getTopPayers($limit, $from = null, $to = null)
     {
-        return self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id")
+        $query = self::join("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id")
             ->select("patients.*")
             ->selectRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) as total_paid")
             ->selectRaw("COUNT(sessions.id) as sessions_count")
-            ->where('SSHN_STTS', "Done")
-            ->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
+            ->where('SSHN_STTS', "Done");
+
+        if ($from != null) {
+            $query = $query->where("SSHN_DATE", ">=", $from);
+        }
+        if ($to != null) {
+            $query = $query->where("SSHN_DATE", "<=", $to);
+        }
+
+        return $query->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
             ->groupBy("patients.id")
             ->get();
     }
 
     public static function getPatientsByDate($from, $to)
     {
-        return self::whereBetween("created_at", [$from, $to])->get();
+        return self::leftJoin("sessions", "sessions.SSHN_PTNT_ID", "=", "patients.id")
+            ->select("patients.*")
+            ->selectRaw("SUM(CASE WHEN SSHN_STTS = 'Done' THEN SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL) ELSE 0 END) as total_paid")
+            ->selectRaw("COUNT(sessions.id) as sessions_count")
+            ->whereBetween("patients.created_at", [$from, $to])
+            ->groupBy("patients.id")
+            ->with("channel", "location", "services", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "sessions", "sessions.branch")
+            ->get();
+    }
+
+    public function getBranchesVisitedAttribute()
+    {
+        return $this->sessions->pluck('branch.BRCH_NAME')->filter()->unique()->implode(', ');
     }
 
     public function createAFollowUp($updateLatestIfExist = true)
@@ -122,11 +184,11 @@ class Patient extends Model
 
     /////package functions
 
-    public function submitNewPackage($branch, $item_id, $quantity, $price, $isVisa): bool
+    public function submitNewPackage($branch, $item_id, $quantity, $price, $isVisa, $userID = null): bool
     {
         try {
-            DB::transaction(function () use ($item_id, $quantity, $price, $isVisa, $branch) {
-                $this->addPackage($item_id, $quantity, $price);
+            DB::transaction(function () use ($item_id, $quantity, $price, $isVisa, $branch, $userID) {
+                $this->addPackage($item_id, $quantity, $price, $userID);
                 $this->pay($branch, $quantity * $price, "Payment added from adding package", true, $isVisa, false);
             });
         } catch (Exception $e) {
@@ -168,7 +230,7 @@ class Patient extends Model
      * @param PriceListItem item to be queried if available
      * @return int pricelist item quantity found
      */
-    private function addPackage($itemID, int $quantity, float $price): bool
+    private function addPackage($itemID, int $quantity, float $price, $userID = null): bool
     {
         try {
             /** @var PriceListItem */
@@ -179,11 +241,13 @@ class Patient extends Model
                 $comment .= " (" . $item->area->AREA_NAME . ")";
             }
             $comment .= " for " . $price . "EGP";
-            DB::transaction(function () use ($itemID, $quantity, $price, $title, $comment) {
+            DB::transaction(function () use ($itemID, $quantity, $price, $title, $comment, $userID) {
                 $this->packageItems()->create([
                     "PTPK_PLIT_ID"  =>  $itemID,
                     "PTPK_QNTY"     =>  $quantity,
                     "PTPK_PRCE"     =>  $price,
+                    "PTPK_USER_ID"  =>  $userID ?? Auth::id(),
+                    "PTPK_DATE"     =>  now(),
                 ]);
                 $this->addToPackageLog($title, $quantity, $comment);
             });
@@ -289,6 +353,11 @@ class Patient extends Model
     public function packageLogs(): HasMany
     {
         return $this->hasMany(PackageLog::class, 'PKLG_PTNT_ID');
+    }
+
+    public function nameLogs(): HasMany
+    {
+        return $this->hasMany(PatientNameLog::class, 'PNML_PTNT_ID')->orderByDesc('id');
     }
 
     public function packageItems(): HasMany

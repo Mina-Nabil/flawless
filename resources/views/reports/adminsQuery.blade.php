@@ -11,29 +11,23 @@
                 <form class="form pt-3" method="post">
                     @csrf
 
-                    <div class="col-6 form-group">
-                        <label>Load Patients who paid more than*</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" name=totalPaid required>
-                        </div>
-                    </div>
-
                     <div class=row>
                         <div class="col-6 form-group">
-                            <label>From</label>
+                            <label>From*</label>
                             <div class="input-group">
-                                <input type="date" class="form-control" name=from>
+                                <input type="date" class="form-control" name=from required>
                             </div>
+                            <small class="text-danger">{{$errors->first('from')}}</small>
                         </div>
 
                         <div class="col-6 form-group">
-                            <label>To</label>
+                            <label>To*</label>
                             <div class="input-group">
-                                <input type="date" class="form-control" name=to>
+                                <input type="date" class="form-control" name=to value="{{date('Y-m-d')}}" required>
                             </div>
+                            <small class="text-danger">{{$errors->first('to')}}</small>
                         </div>
                     </div>
-                    <small class="text-muted d-block mb-2">Leave dates empty to count payments across all time</small>
 
                     <button type="submit" class="btn btn-success mr-2">Submit</button>
 

@@ -34,6 +34,37 @@
                     <h6>{{ $patient->location->LOCT_NAME ?? '' }}</h6>
                 </div>
             </div>
+
+            <!-- Do Not Disturb -->
+            <div class="card border-{{ $patient->PTNT_DND ? 'danger' : 'light' }}">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Do Not Disturb
+                        @if ($patient->PTNT_DND)
+                            <span class="label label-danger ml-2">ON</span>
+                        @else
+                            <span class="label label-success ml-2">OFF</span>
+                        @endif
+                    </h5>
+                    @if ($patient->PTNT_DND && $patient->PTNT_DND_RSON)
+                        <h6 class="text-muted">Reason: {{ $patient->PTNT_DND_RSON }}</h6>
+                    @endif
+                    <form class="form pt-2" method="post" action="{{ $setDndURL }}">
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $patient->id }}">
+                        <input type="hidden" name="dnd" value="{{ $patient->PTNT_DND ? 0 : 1 }}">
+                        @if (!$patient->PTNT_DND)
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="reason"
+                                    placeholder="Reason (optional)">
+                            </div>
+                            <button type="submit" class="btn btn-danger btn-sm">Mark as Do Not Disturb</button>
+                        @else
+                            <button type="submit" class="btn btn-success btn-sm">Remove Do Not Disturb</button>
+                        @endif
+                    </form>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Total Paid</h5>
@@ -82,6 +113,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#followups" role="tab">Follow-ups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#namelog" role="tab">Name Log</a>
                     </li>
                 </ul>
                 <!-- Tab panes -->
@@ -523,6 +557,17 @@
                             <h6 class="card-subtitle">All followups related to the Patient</h6>
                             <div class="col-12">
                                 <x-datatable id="patientFollowupsTable" :title="$title ?? 'Followups History'" :subtitle="$subTitle ?? ''" :cols="$followupsCols" :items="$followupsList" :atts="$followupsAtts" :cardTitle="false" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Name Change Log tab-->
+                    <div class="tab-pane" id="namelog" role="tabpanel">
+                        <div class="card-body">
+                            <h4 class="card-title">Name Change Log</h4>
+                            <h6 class="card-subtitle">History of changes to this patient's name</h6>
+                            <div class="col-12">
+                                <x-datatable id="patientNameLogTable" :title="'Name Changes'" :subtitle="''" :cols="$nameLogsCols" :items="$nameLogsList" :atts="$nameLogsAtts" :cardTitle="false" />
                             </div>
                         </div>
                     </div>

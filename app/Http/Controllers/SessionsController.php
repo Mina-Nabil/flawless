@@ -289,7 +289,7 @@ class SessionsController extends Controller
     public function loadQuery(Request $request)
     {
         $request->validate([
-            "branchID"  =>  "required|numeric",
+            "branchID"  =>  "nullable",
             "from"  =>  "required",
             "to"    =>  "required"
         ]);
@@ -318,13 +318,33 @@ class SessionsController extends Controller
             $devices_ids
         );
 
-        $this->data['cols'] = ["Date", "Doctor", "Patient", "Phone", "Status", "CreatedBy", "Total", "Disc.", "Comment", "Services"];
+        // Patient-level aggregates: lifetime total paid & number of visits
+        $patientIDs = $this->data['items']->pluck('SSHN_PTNT_ID')->unique()->filter()->values();
+        $patientStats = collect();
+        if ($patientIDs->isNotEmpty()) {
+            $patientStats = Session::whereIn('SSHN_PTNT_ID', $patientIDs)
+                ->groupBy('SSHN_PTNT_ID')
+                ->selectRaw('SSHN_PTNT_ID, SUM(SSHN_PAID + SSHN_PTNT_BLNC) as paid, COUNT(*) as visits')
+                ->get()
+                ->keyBy('SSHN_PTNT_ID');
+        }
+
+        $this->data['items']->loadMissing('patient.channel', 'patient.location');
+        foreach ($this->data['items'] as $item) {
+            $stats = $patientStats->get($item->SSHN_PTNT_ID);
+            $item->patient_total_paid = $stats->paid ?? 0;
+            $item->patient_visits = $stats->visits ?? 0;
+        }
+
+        $this->data['cols'] = ["Date", "Doctor", "Patient", "Phone", "Location", "Channel", "Status", "CreatedBy", "Total", "Total Paid", "Visits", "Services"];
 
         $this->data['atts'] = [
             ["date"         =>  ["att"  =>  "SSHN_DATE", "format" => "d-M-Y"]],
             ["verifiedRel"  =>  ["rel"  =>  "doctor",   "relAtt"   =>  "DASH_USNM", 'isVerified' => 'SSHN_CMSH', 'iconTitle' => "Commission"]],
             ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_NAME"]],
             ["foreign"      =>  ["rel"  =>  "patient",  "att"   =>  "PTNT_MOBN"]],
+            ["foreignForeign" => ["rel1" => "patient", "rel2" => "location", "att" => "LOCT_NAME"]],
+            ["foreignForeign" => ["rel1" => "patient", "rel2" => "channel",  "att" => "CHNL_NAME"]],
             [
                 'state'     => [
                     "url"       => "sessions/details/",
@@ -346,9 +366,8 @@ class SessionsController extends Controller
             ],
             ["foreign"  =>  ["rel"  =>  "creator",  "att"   =>  "DASH_USNM"]],
             ["number"   =>  ["att"  =>  "SSHN_TOTL"]],
-            ["number"   =>  ["att"  =>  "SSHN_DISC"]],
-            // ["foreign"  =>  ["rel"  =>  "accepter",  "att"   =>  "DASH_USNM"]],
-            ["comment"  =>  ["att"  =>  "SSHN_TEXT"]],
+            ["number"   =>  ["att"  =>  "patient_total_paid"]],
+            ["number"   =>  ["att"  =>  "patient_visits", "decimals" => 0]],
             ["services"      =>  ["rel"  =>  "items"]],
         ];
 

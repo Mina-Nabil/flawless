@@ -721,7 +721,7 @@
                                                     @foreach ($patients as $patient)
                                                         <option value="{{ $patient->id }}"
                                                             @if ($patient->id == $session->SSHN_PTNT_ID) selected @endif>
-                                                            {{ $patient->PTNT_NAME }}
+                                                            {{ $patient->display_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>

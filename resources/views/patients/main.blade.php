@@ -177,7 +177,7 @@
                                                         <select class="select2 form-control" style="width:100%" name=patientID>
                                                             <?php foreach ($patients as $patient) { ?>
                                                             <option value="{{$patient->id}}">
-                                                                {{$patient->PTNT_NAME}} - {{$patient->PTNT_MOBN}}
+                                                                {{$patient->display_name}} - {{$patient->PTNT_MOBN}}
                                                             </option>
                                                             <?php } ?>
                                                         </select>

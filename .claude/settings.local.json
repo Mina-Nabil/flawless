@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l app/Models/Session.php)",
+      "Bash(php -l app/Http/Controllers/SessionsController.php)",
+      "Bash(grep -niE \"NAME|fillable|protected \\\\\\\\\\\\$\" app/Models/Channel.php app/Models/Location.php)",
+      "Bash(php artisan *)"
+    ]
+  }
+}

@@ -193,6 +193,8 @@
                                             <li><a href="{{ url('stock/entry') }}">Entry</a></li>
                                         </ul>
                                     </li>
+                                    <li><a href="{{ url('reports/packages') }}">Packages Sold</a></li>
+                                    <li><a href="{{ url('reports/admins') }}">Admins</a></li>
                                     <li><a href="{{ url('attendance/query') }}">Attendance</a></li>
                                     <li><a href="{{ url('followups/query') }}">Follow-Ups</a></li>
                                     <li><a href="{{ url('feedbacks/query') }}">Feedbacks</a></li>
@@ -1112,7 +1114,7 @@
 
                         let dataArr = retArr.map((p) => {
                            return {
-                            text: p.PTNT_NAME + ' - ' + p.PTNT_MOBN,
+                            text: (p.display_name || p.PTNT_NAME) + ' - ' + p.PTNT_MOBN,
                             id: p.id
                            }
                         })
