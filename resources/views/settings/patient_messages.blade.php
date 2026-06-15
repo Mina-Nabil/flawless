@@ -135,7 +135,7 @@ function submitPatientMessageForm() {
     var formData = new FormData();
     formData.append('_token','{{ csrf_token() }}');
     formData.append("device_id", deviceID)
-    formData.append("area_id", areaID)
+    if (areaID) formData.append("area_id", areaID) // omit when empty so it is treated as null (Area is optional)
     formData.append("message", message)
 
     var url;

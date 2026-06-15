@@ -185,8 +185,8 @@ class ReportsController extends Controller
     {
         //page info
         $this->data['title']           =   'Patients Report';
-        $this->data['formTitle']       =   'Load All Missing Patients since the provided days';
-        $this->data['formSubtitle']    =   'Search for patients who didn\'t visit since the supplied days';
+        $this->data['formTitle']       =   'Where is My Patient?';
+        $this->data['formSubtitle']    =   'Find patients whose last visit falls within the given day range (e.g. absent 45 to 90 days) so you can re-engage them';
 
         return view("patients.loadMissing", $this->data);
     }
@@ -201,17 +201,18 @@ class ReportsController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Missing Patients Report";
-        $this->data['tableSubtitle'] = "Showing Patients who didn't visit {$request->days} days ago";
+        $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " patients whose last visit was between {$request->daysFrom} and {$request->daysTo} days ago";
 
-        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Since', "Sessions"];
+        $this->data['cols'] = ['Code', 'Full Name', 'Mob#', 'Balance', 'Address', 'Last Visit', 'Since', "Sessions"];
         $this->data['atts'] = [
             'id',
             ['attUrl' => ["url" => 'patients/profile', "urlAtt" => 'id', "shownAtt" =>  "display_name"]],
             'PTNT_MOBN',
             ['number' => ['att' => 'PTNT_BLNC']],
             ['comment' => ['att' => 'PTNT_ADRS']],
+            ['date' => ['att' => 'last_visit', 'format' => 'd-M-Y']],
             ['date' => ['att' => 'created_at', 'format' => 'Y-M-d']],
-            'sessionCount',
+            'sessions_count',
         ];
 
         return view("layouts.table", $this->data);

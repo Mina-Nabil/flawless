@@ -23,6 +23,7 @@ class Patient extends Model
     protected $casts = [
         'PTNT_BDAY' => 'date',
         'PTNT_DND' => 'boolean',
+        'last_visit' => 'datetime',
     ];
 
     protected $appends = ['display_name'];
@@ -112,8 +113,24 @@ class Patient extends Model
 
     public static function loadMissingPatients($daysFrom, $daysTo)
     {
-        $recentPatientsIDs = self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->whereRaw("SSHN_DATE < DATE_SUB(NOW() , INTERVAL {$daysFrom} DAY) AND SSHN_DATE > DATE_SUB(NOW() , INTERVAL {$daysTo} DAY)")->selectRaw('DISTINCT patients.id')->get()->pluck('id');
-        return self::join("sessions", "SSHN_PTNT_ID", '=', "patients.id")->selectRaw("patients.*, Count(sessions.id) as sessionCount")->groupBy('patients.id')->whereNotIn('patients.id', $recentPatientsIDs)->get();
+        $daysFrom = (int) $daysFrom;
+        $daysTo = (int) $daysTo;
+
+        return self::with('location')
+            ->withCount('sessions')
+            ->addSelect(['last_visit' => Session::select(DB::raw('MAX(SSHN_DATE)'))
+                ->whereColumn('SSHN_PTNT_ID', 'patients.id')])
+            // visited within the absence window (between $daysFrom and $daysTo days ago)
+            ->whereHas('sessions', function ($q) use ($daysFrom, $daysTo) {
+                $q->whereRaw("SSHN_DATE >= DATE_SUB(NOW(), INTERVAL {$daysTo} DAY)")
+                    ->whereRaw("SSHN_DATE < DATE_SUB(NOW(), INTERVAL {$daysFrom} DAY)");
+            })
+            // but have NOT returned since (no visit within the last $daysFrom days)
+            ->whereDoesntHave('sessions', function ($q) use ($daysFrom) {
+                $q->whereRaw("SSHN_DATE >= DATE_SUB(NOW(), INTERVAL {$daysFrom} DAY)");
+            })
+            ->orderByDesc('last_visit')
+            ->get();
     }
 
     public static function loadByBranch($branchID, Carbon $from = null, Carbon $to = null)

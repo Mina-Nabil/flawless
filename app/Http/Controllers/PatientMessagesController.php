@@ -60,6 +60,10 @@ class PatientMessagesController extends Controller
      */
     function addPatientMessage(Request $request)
     {
+        // Area is optional: normalize empty / "null" / 0 to a real null before validation
+        if (!$request->filled('area_id') || $request->area_id === 'null' || $request->area_id == 0) {
+            $request->merge(['area_id' => null]);
+        }
         $request->validate([
             "device_id" => "required|exists:devices,id",
             "area_id" => "nullable|exists:areas,id",
@@ -89,6 +93,10 @@ class PatientMessagesController extends Controller
 
         $patientMessage = PatientMessage::findOrFail($request->id);
 
+        // Area is optional: normalize empty / "null" / 0 to a real null before validation
+        if (!$request->filled('area_id') || $request->area_id === 'null' || $request->area_id == 0) {
+            $request->merge(['area_id' => null]);
+        }
         $request->validate([
             "id" => "required",
             "device_id" => "required|exists:devices,id",
