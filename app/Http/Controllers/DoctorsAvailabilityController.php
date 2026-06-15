@@ -56,6 +56,11 @@ class DoctorsAvailabilityController extends Controller
 
         $doctors = DoctorAvailability::getAvailableDoctors($midShifts, $shift, null, $room->ROOM_BRCH_ID);
 
+        // Only active doctors should be selectable when creating a session
+        $doctors = array_values(array_filter($doctors, function ($doc) {
+            return isset($doc['doctor']) && $doc['doctor']->DASH_ACTV == 1;
+        }));
+
         if ($request->patient_id != null) {
             $patient = Patient::with('doctors')->findOrFail($request->patient_id);
         
