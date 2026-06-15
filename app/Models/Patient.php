@@ -149,6 +149,7 @@ class Patient extends Model
 
         return $query->havingRaw("SUM(SSHN_TOTL - (SSHN_DISC/100*SSHN_TOTL)) >= {$limit}")
             ->groupBy("patients.id")
+            ->orderByDesc("total_paid")
             ->get();
     }
 
