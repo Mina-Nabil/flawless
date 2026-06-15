@@ -436,7 +436,7 @@ class ReportsController extends Controller
         $from = $request->from;
         $to = $request->to;
 
-        $admins = DashUser::admins();
+        $admins = DashUser::admins()->where('DASH_ACTV', 1)->values();
 
         // created sessions per admin (by session date)
         $sessionCounts = Session::whereBetween('SSHN_DATE', [$from, $to])
