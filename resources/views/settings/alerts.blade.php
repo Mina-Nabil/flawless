@@ -23,9 +23,12 @@
                         <label>Recipients*</label>
                         <select class="select2 select2-multiple form-control" multiple="multiple" name="recipients[]"
                             style="width:100%" required>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->DASH_USNM }}
-                                    ({{ $user->dash_types->DHTP_NAME ?? '' }})</option>
+                            @foreach ($users as $groupName => $groupUsers)
+                                <optgroup label="{{ $groupName }}">
+                                    @foreach ($groupUsers as $user)
+                                        <option value="{{ $user->id }}">{{ $user->DASH_USNM }}</option>
+                                    @endforeach
+                                </optgroup>
                             @endforeach
                         </select>
                         <small class="text-danger">{{ $errors->first('recipients') }}</small>
