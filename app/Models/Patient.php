@@ -23,6 +23,7 @@ class Patient extends Model
     protected $casts = [
         'PTNT_BDAY' => 'date',
         'PTNT_DND' => 'boolean',
+        'PTNT_DND_AT' => 'datetime',
         'last_visit' => 'datetime',
     ];
 
@@ -43,6 +44,8 @@ class Patient extends Model
     {
         $this->PTNT_DND = $dnd;
         $this->PTNT_DND_RSON = $dnd ? $reason : null;
+        $this->PTNT_DND_USER_ID = $dnd ? Auth::id() : null;
+        $this->PTNT_DND_AT = $dnd ? now() : null;
         return $this->save();
     }
 
@@ -376,6 +379,11 @@ class Patient extends Model
     public function nameLogs(): HasMany
     {
         return $this->hasMany(PatientNameLog::class, 'PNML_PTNT_ID')->orderByDesc('id');
+    }
+
+    public function dndUser(): BelongsTo
+    {
+        return $this->belongsTo(DashUser::class, 'PTNT_DND_USER_ID');
     }
 
     public function packageItems(): HasMany

@@ -100,7 +100,8 @@ class DashUser extends Authenticatable
 
     public function canAdmin()
     {
-        return ($this->DASH_TYPE_ID == 1 || $this->DASH_TYPE_ID == 3);
+        // Admins, owners and call center agents can all perform admin functions
+        return ($this->DASH_TYPE_ID == 1 || $this->DASH_TYPE_ID == 3 || $this->DASH_TYPE_ID == 4);
     }
 
     public function isAdmin()
@@ -116,6 +117,19 @@ class DashUser extends Authenticatable
     public function isOwner()
     {
         return ($this->DASH_TYPE_ID == 3);
+    }
+
+    public function isCallCenter()
+    {
+        return ($this->DASH_TYPE_ID == 4);
+    }
+
+    /**
+     * Call center agents must not see any payment / money information.
+     */
+    public function canSeePayments()
+    {
+        return !$this->isCallCenter();
     }
 
     public function toggle()
@@ -137,5 +151,10 @@ class DashUser extends Authenticatable
     public static function doctors()
     {
         return self::where("DASH_TYPE_ID", 2)->get();
+    }
+
+    public static function callCenters()
+    {
+        return self::where("DASH_TYPE_ID", 4)->get();
     }
 }

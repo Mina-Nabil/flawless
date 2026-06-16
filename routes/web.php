@@ -12,6 +12,7 @@ use App\Http\Controllers\FollowupsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LocationsController;
+use App\Http\Controllers\AlertMessagesController;
 use App\Http\Controllers\PatientMessagesController;
 use App\Http\Controllers\PatientsController;
 use App\Http\Controllers\ReportsController;
@@ -151,6 +152,13 @@ Route::post('delete/device', [SettingsController::class, 'deleteDevice']);
 Route::post('add/area', [SettingsController::class, 'addArea']);
 Route::post('edit/area', [SettingsController::class, 'editArea']);
 Route::post('delete/area', [SettingsController::class, 'deleteArea']);
+
+//Alert Messages
+Route::get('alerts', [AlertMessagesController::class, 'index']);
+Route::post('alerts/add', [AlertMessagesController::class, 'store']);
+Route::get('alerts/toggle/{id}', [AlertMessagesController::class, 'toggle']);
+Route::get('alerts/delete/{id}', [AlertMessagesController::class, 'delete']);
+Route::post('alerts/confirm', [AlertMessagesController::class, 'confirmRead']);
 
 //Patient Messages
 Route::get('patient-messages', [PatientMessagesController::class, 'index']);

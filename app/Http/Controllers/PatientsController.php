@@ -49,7 +49,7 @@ class PatientsController extends Controller
 
     private function initProfileArr($id)
     {
-        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device", "followUps", 'followUps.caller', "nameLogs", "nameLogs.user")->withCount("sessions")->findOrFail($id);
+        $this->data['patient'] = Patient::with("location", "sessions", "services", "services.session", "services.session.doctor", "services.pricelistItem", "services.pricelistItem.device", "services.pricelistItem.area", "balanceLogs", "balanceLogs.user", "packageItems", "packageItems.pricelistItem", "packageItems.pricelistItem.area", "packageItems.pricelistItem.device", "followUps", 'followUps.caller', "nameLogs", "nameLogs.user", "dndUser")->withCount("sessions")->findOrFail($id);
         $this->data['formURL'] = "patients/update";
         $this->data['addPackagesURL'] = "patients/add/package";
         $this->data['setNoteURL']           = url("patients/setnote");
@@ -167,6 +167,10 @@ class PatientsController extends Controller
 
     public function home()
     {
+        // Patients listing is hidden from admins; owners only
+        if (!Auth::user()->isOwner()) {
+            abort(403);
+        }
         $this->initHomeArr();
         return view("patients.main", $this->data);
     }

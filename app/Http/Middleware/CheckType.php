@@ -16,6 +16,32 @@ class CheckType
      */
     public function handle($request, Closure $next)
     {
+        // Call center agents may do admin work but must never reach payment / money areas
+        if (!Auth::user()->canSeePayments()) {
+            $paymentPaths = [
+                'cash/*',
+                'visa/*',
+                'reports/cash',
+                'reports/visa',
+                'reports/revenue',
+                'reports/devices',
+                'reports/admins',
+                'reports/toppayers',
+                'reports/packages',
+                'patients/pay',
+                'patients/addbalance',
+                'sessions/settle/*',
+                'sessions/add/payment',
+                'sessions/set/discount',
+                'payments/modal/add',
+            ];
+            foreach ($paymentPaths as $path) {
+                if (request()->is($path)) {
+                    return abort(404);
+                }
+            }
+        }
+
         if (!Auth::user()->canAdmin()) {
             if (request()->is('cash/*')) {
                 return abort(404);

@@ -24,9 +24,15 @@ class DashUsersController extends Controller
     {
         $this->data['items'] = DashUser::where("DASH_TYPE_ID", $accountType)->with('dash_types')->get();
         $this->data['types'] = DashType::all();
-        $this->data['title'] = ($accountType == 1) ? "Application Admins" : "Doctor Accounts";
-        $this->data['subTitle'] = ($accountType == 1) ? "Manage, Add and Delete Admins data" : "Manage, Add and Delete Doctors data";
-        $this->data['formTitle'] = ($accountType == 1) ? "Add Admins" : "Add Doctors";
+        $labels = [
+            1 => ["Application Admins", "Manage, Add and Delete Admins data", "Add Admins"],
+            3 => ["Owners", "Manage, Add and Delete Owners data", "Add Owners"],
+            4 => ["Call Center Agents", "Manage, Add and Delete Call Center data", "Add Call Center Agent"],
+        ];
+        [$title, $subTitle, $formTitle] = $labels[$accountType] ?? ["Doctor Accounts", "Manage, Add and Delete Doctors data", "Add Doctors"];
+        $this->data['title'] = $title;
+        $this->data['subTitle'] = $subTitle;
+        $this->data['formTitle'] = $formTitle;
         $this->data['cols'] = ['Username', 'Fullname', 'Branch', 'Type', 'Active', 'Edit'];
         $this->data['atts'] = [
             'DASH_USNM', 'DASH_FLNM',

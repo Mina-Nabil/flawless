@@ -107,7 +107,7 @@ class LeadsController extends Controller
         /** @var DashUser */
         $user = Auth::user();
 
-        Lead::newLead($request->user_id && $user->isAdmin() ? $request->user_id : $user->id, $request->name, $request->mobn, $request->promo, $request->address, $request->note, $request->channel_id, $request->location_id);
+        Lead::newLead($request->user_id && $user->canAdmin() ? $request->user_id : $user->id, $request->name, $request->mobn, $request->promo, $request->address, $request->note, $request->channel_id, $request->location_id);
 
         return redirect()->action([self::class, 'home']);
     }

@@ -129,7 +129,7 @@
                                 </ul>
                             </li>
                         @endif
-                        @if (Auth::user()->canAdmin())
+                        @if (Auth::user()->isOwner())
                             <li> <a class="waves-effect waves-dark" href="{{ url('patients/home') }}"
                                     aria-expanded="false"><i class="icon-people"></i>Patients</a>
                                 <ul aria-expanded="false" class="collapse">
@@ -207,6 +207,12 @@
                             <li> <a class="waves-effect waves-dark" href="{{ url('reports/doctors/services') }}"
                                     aria-expanded="false"><i class="fas fa-chart-bar"></i>Services Report</a>
                         @endif
+                        @if (Auth::user()->isOwner())
+                            <li> <a class="waves-effect waves-dark" href="{{ url('alerts') }}"
+                                    aria-expanded="false"><i class="fas fa-bullhorn"></i><span
+                                        class="hide-menu">Alerts</span></a>
+                            </li>
+                        @endif
                         @if (Auth::user()->canAdmin())
                             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
                                     aria-expanded="false"><i class="fas fa-cog"></i><span
@@ -241,6 +247,7 @@
                                                 <li><a href="{{ url('dash/users/3') }}">Owners</a></li>
                                                 <li><a href="{{ url('dash/users/2') }}">Doctors</a></li>
                                                 <li><a href="{{ url('dash/users/1') }}">Admins</a></li>
+                                                <li><a href="{{ url('dash/users/4') }}">Call Center</a></li>
                                             </ul>
                                         </li>
                                     @endif
@@ -359,10 +366,12 @@
                                         class="fa fa-plus-circle"></i> Add
                                     Patient</a>
                             @endif
+                            @if (Auth::user()->canSeePayments())
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal"
                                 data-target="#add-payment-modal" class="btn btn-info m-b-5 m-l-15"><i
                                     class="fa fa-plus-circle"></i> Add
                                 Payment</a>
+                            @endif
                             {{-- <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal" data-target="#send-message" class="btn btn-info m-b-5 m-l-15"><i class="fa fa-plus-circle"></i> Send Msg.
                             </a> --}}
                             <a style="font-family: 'Oswald'" href="javascript:void(0)" data-toggle="modal"
@@ -915,6 +924,144 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
+
+        <!-- ============================================================== -->
+        <!-- Alert Messages bottom banner -->
+        <!-- ============================================================== -->
+        @if (isset($bottomAlerts) && $bottomAlerts->count() > 0)
+            <style>
+                #alertBanner {
+                    position: fixed;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 1050;
+                    background: #21202a;
+                    border-top: 2px solid #fec107;
+                    box-shadow: 0 -2px 10px rgba(0, 0, 0, .25);
+                }
+
+                .alert-banner-row {
+                    display: flex;
+                    align-items: center;
+                    padding: 6px 12px;
+                    border-bottom: 1px solid rgba(255, 255, 255, .07);
+                }
+
+                .alert-banner-row:last-child {
+                    border-bottom: 0;
+                }
+
+                .alert-banner-icon {
+                    color: #fec107;
+                    margin-right: 10px;
+                    flex: 0 0 auto;
+                }
+
+                .alert-marquee {
+                    flex: 1 1 auto;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+
+                .alert-marquee span {
+                    display: inline-block;
+                    padding-left: 100%;
+                    color: #fff;
+                    font-weight: 500;
+                    animation: alertMarquee 18s linear infinite;
+                }
+
+                .alert-marquee:hover span {
+                    animation-play-state: paused;
+                }
+
+                @keyframes alertMarquee {
+                    0% {
+                        transform: translateX(0);
+                    }
+
+                    100% {
+                        transform: translateX(-100%);
+                    }
+                }
+
+                .alert-confirm-btn {
+                    flex: 0 0 auto;
+                    margin-left: 12px;
+                }
+            </style>
+
+            <div id="alertBanner">
+                @foreach ($bottomAlerts as $alert)
+                    <div class="alert-banner-row" data-alert-row="{{ $alert->id }}">
+                        <i class="fas fa-bullhorn alert-banner-icon"></i>
+                        <div class="alert-marquee"><span>{{ $alert->ALRT_TEXT }}</span></div>
+                        <button type="button" class="btn btn-sm btn-warning alert-confirm-btn"
+                            data-alert-id="{{ $alert->id }}">
+                            <i class="fas fa-check"></i> Confirm Read
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+
+            <script>
+                (function () {
+                    var banner = document.getElementById('alertBanner');
+                    if (!banner) return;
+                    var confirmUrl = "{{ url('alerts/confirm') }}";
+                    var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    function applyOffset() {
+                        document.body.style.paddingBottom = (banner.offsetHeight + 10) + 'px';
+                    }
+                    applyOffset();
+                    window.addEventListener('resize', applyOffset);
+
+                    banner.addEventListener('click', function (e) {
+                        var btn = e.target.closest('.alert-confirm-btn');
+                        if (!btn) return;
+                        var id = btn.getAttribute('data-alert-id');
+
+                        Swal.fire({
+                            title: 'Confirm Read',
+                            text: 'Do you confirm that you have read this alert?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, I read it',
+                            cancelButtonText: 'Cancel'
+                        }).then(function (result) {
+                            if (!result.value) return;
+
+                            var formData = new FormData();
+                            formData.append('_token', token);
+                            formData.append('id', id);
+
+                            fetch(confirmUrl, {
+                                method: 'POST',
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                body: formData
+                            }).then(function (res) {
+                                if (!res.ok) throw new Error('Request failed');
+                                return res.json();
+                            }).then(function () {
+                                var row = banner.querySelector('[data-alert-row="' + id + '"]');
+                                if (row) row.remove();
+                                if (!banner.querySelector('.alert-banner-row')) {
+                                    banner.remove();
+                                    document.body.style.paddingBottom = '';
+                                } else {
+                                    applyOffset();
+                                }
+                            }).catch(function () {
+                                Swal.fire({ title: 'Error', text: 'Could not confirm, please try again.', icon: 'error' });
+                            });
+                        });
+                    });
+                })();
+            </script>
+        @endif
+
         <!-- ============================================================== -->
         <!-- footer -->
         <!-- ============================================================== -->

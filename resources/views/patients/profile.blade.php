@@ -49,6 +49,13 @@
                     @if ($patient->PTNT_DND && $patient->PTNT_DND_RSON)
                         <h6 class="text-muted">Reason: {{ $patient->PTNT_DND_RSON }}</h6>
                     @endif
+                    @if ($patient->PTNT_DND && $patient->dndUser)
+                        <h6 class="text-muted">Set by: {{ $patient->dndUser->DASH_USNM }}
+                            @if ($patient->PTNT_DND_AT)
+                                on {{ $patient->PTNT_DND_AT->format('d-M-Y h:i A') }}
+                            @endif
+                        </h6>
+                    @endif
                     <form class="form pt-2" method="post" action="{{ $setDndURL }}">
                         @csrf
                         <input type="hidden" name="id" value="{{ $patient->id }}">
@@ -65,6 +72,7 @@
                     </form>
                 </div>
             </div>
+            @if (Auth::user()->canSeePayments())
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Total Paid</h5>
@@ -85,6 +93,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         <!-- Column -->
         <!-- Column -->
@@ -100,17 +109,21 @@
                     </li>
                     <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#packages" role="tab">Packages</a>
                     </li>
+                    @if (Auth::user()->canSeePayments())
                     <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paid" role="tab">Account</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#pay" role="tab">Add
                             Payment</a> </li>
+                    @endif
                     {{-- <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#addBalance" role="tab">Add Balance</a> </li> --}}
                     <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Info</a>
                     </li>
+                    @if (Auth::user()->canSeePayments())
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#balancelogs" role="tab">
                             Balance Log</a>
                     </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#followups" role="tab">Follow-ups</a>
                     </li>
@@ -312,6 +325,7 @@
                         </div>
                     </div>
 
+                    @if (Auth::user()->canSeePayments())
                     <div class="tab-pane" id="paid" role="tabpanel">
                         <div class="row">
                             <div class="col-12">
@@ -387,6 +401,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
 
                     <div class="tab-pane" id="settings" role="tabpanel">
@@ -527,6 +542,7 @@
                         </div>
                     </div>
 
+                    @if (Auth::user()->canSeePayments())
                     <div class="tab-pane" id="balancelogs" role="tabpanel">
                         <div class="card-body">
                             <h4 class="card-title">Patient's Balance Log</h4>
@@ -549,6 +565,7 @@
                             </ul>
                         </div>
                     </div>
+                    @endif
 
                     <!--Item Bought tab-->
                     <div class="tab-pane" id="followups" role="tabpanel">

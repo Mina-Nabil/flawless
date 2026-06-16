@@ -40,6 +40,7 @@
             </div>
         </div>
 
+        @if(Auth::user()->canSeePayments())
         <div class=row>
             <div class="col-md-6">
                 <div class="card">
@@ -89,6 +90,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
 
     </div>
@@ -154,7 +156,7 @@
                                 <th>Start</th>
                                 {{-- <th>End</th> --}}
                                 <th>Doctor</th>
-                                @if(Auth::user()->canAdmin())
+                                @if(Auth::user()->canAdmin() && Auth::user()->canSeePayments())
                                 <th>Total</th>
                                 @endif
                             </tr>
@@ -188,7 +190,7 @@
                                     <td>{{ date("g:i a", strtotime($session->SSHN_STRT_TIME))}}</td>
                                     {{-- <td>{{$session->SSHN_END_TIME}}</td> --}}
                                     <td>{{$session->doctor->DASH_USNM ?? ""}}</td>
-                                    @if(Auth::user()->canAdmin())
+                                    @if(Auth::user()->canAdmin() && Auth::user()->canSeePayments())
                                     <td>{{$session->getTotalAfterDiscount()}}</td>
                                     @endif
                                 </tr>

@@ -94,7 +94,7 @@
                             <p class="text-muted">{{ $session->room ? $session->room->ROOM_NAME : 'N/A' }}</p>
                         </div>
                         <div class="col-md-2">
-                            @if (Auth::user()->canAdmin())
+                            @if (Auth::user()->canAdmin() && Auth::user()->canSeePayments())
                                 <div class="font-bold mb-2">
                                     Total {{ $session->discount > 0 ? "({$session->SSHN_DISC}% Discount)" : '' }}
                                 </div>
@@ -147,16 +147,20 @@
                         <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
                                 href="#history">Patient</a> </li>
                         @if (Auth::user()->canAdmin())
-                            <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
-                                    href="#payment ">Payment</a> </li>
+                            @if (Auth::user()->canSeePayments())
+                                <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
+                                        href="#payment ">Payment</a> </li>
+                            @endif
                             <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
                                     href="#doctor ">Doctor</a> </li>
                             <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
                                     href="#stock">Stock</a> </li>
                             <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
                                     href="#settings">Session Info</a> </li>
-                            <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
-                                    href="#balancelogs">Balance Log</a> </li>
+                            @if (Auth::user()->canSeePayments())
+                                <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab"
+                                        href="#balancelogs">Balance Log</a> </li>
+                            @endif
                         @endif
                         <li class="nav-item"> <a class="nav-link" role="tab" data-toggle="tab" href="#log">Log</a>
                         </li>
@@ -200,7 +204,7 @@
                                                         {{ $item->pricelistItem->PLIT_TYPE }} @if ($item->pricelistItem->PLIT_TYPE == 'Area')
                                                             ({{ $item->pricelistItem->area->AREA_NAME }})
                                                         @endif
-                                                        @if (Auth::user()->canAdmin())
+                                                        @if (Auth::user()->canAdmin() && Auth::user()->canSeePayments())
                                                             {{ $item->SHIT_TOTL }}EGP
                                                         @endif
                                                     </p>
@@ -209,7 +213,7 @@
                                         </ul>
                                     </li>
                                 @endif
-                                @if (Auth::user()->canAdmin())
+                                @if (Auth::user()->canAdmin() && Auth::user()->canSeePayments())
                                     <li>
                                         @if ($session->remaining_money != 0)
                                             <p class="text-muted">Payment not yet fully collected please collect payment
@@ -510,6 +514,7 @@
 
 
                     @if (Auth::user()->canAdmin())
+                        @if (Auth::user()->canSeePayments())
                         <!--Add Item tab-->
                         <div class="tab-pane" id="payment" role="tabpanel">
                             <div class="card-body">
@@ -584,6 +589,7 @@
                                 @endif
                             </div>
                         </div>
+                        @endif
 
 
                         {{-- Session Details --}}

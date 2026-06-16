@@ -60,6 +60,7 @@
                             <select name=type class="form-control">
                                 <option value=1 {{ (isset($user) && $user->DASH_TYPE_ID==1) ? "selected" : "" }}>Admin</option>
                                 <option value=3 {{ (isset($user) && $user->DASH_TYPE_ID==3) ? "selected" : "" }}>Owner</option>
+                                <option value=4 {{ (isset($user) && $user->DASH_TYPE_ID==4) ? "selected" : "" }}>Call Center</option>
                             </select>
                         </div>
                     </div>
