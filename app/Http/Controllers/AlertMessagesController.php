@@ -23,7 +23,7 @@ class AlertMessagesController extends Controller
         $this->data['formTitle'] = "Leave an Alert";
         $this->data['formSubtitle'] = "Send a moving alert to selected users and track who confirmed reading it";
         $this->data['alerts'] = AlertMessage::with('creator', 'recipientRows.user')->orderByDesc('id')->get();
-        $this->data['users'] = DashUser::where('id', '!=', Auth::id())->orderBy('DASH_USNM')->get();
+        $this->data['users'] = DashUser::where('id', '!=', Auth::id())->where('DASH_ACTV', 1)->orderBy('DASH_USNM')->get();
         $this->data['addAlertURL'] = url('alerts/add');
 
         return view('settings.alerts', $this->data);
