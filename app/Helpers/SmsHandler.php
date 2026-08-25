@@ -39,28 +39,25 @@ class SmsHandler
                 break;
         }
         if ($action == 'cancelled') {
-            $msg = urlencode("Thanks for choosing us.
+            $message = "Thanks for choosing us.
             Unfortunately, the appointment scheduled on {$session->carbon_date->rawFormat('D, d/m')} at {$session->carbon_date->format('H:i A')} is cancelled.
             Please contact us for more details.
-            01270002080");
+            01270002080";
         } else {
             $doctorName = $session->doctor == null ? false : $session->doctor->DASH_FLNM;
-            $msg = urlencode("Hi {$session->patient->first_name}, your session is on {$session->carbon_date->rawFormat('D, d/m')} at {$session->carbon_date->format('h:i A')} at {$session->branch->BRCH_NAME} branch" . ($doctorName ? " with Dr. {$doctorName} " : '') .  ". See you! Flawless clinics\n{$session->branch->BRCH_LOCT}");
+            $message = "Hi {$session->patient->first_name}, your session is on {$session->carbon_date->rawFormat('D, d/m')} at {$session->carbon_date->format('h:i A')} at {$session->branch->BRCH_NAME} branch" . ($doctorName ? " with Dr. {$doctorName} " : '') .  ". See you! Flawless clinics\n{$session->branch->BRCH_LOCT}";
         }
 
-        $API_USER = env('SMS_EG_USERNAME');
-        $API_KEY = env('SMS_EG_PASSWORD');
-        $API_SENDER = env('SMS_SENDER_TOKEN');
-        $API_ENV = env('APP_ENV') === 'production' ? 1 : 2;
         try {
-            $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$session->patient->sms_mobile_number}&message={$msg}");
             Log::info("-------------- SENDING SMS -------------");
             Log::info('Phone ' . $session->patient->sms_mobile_number);
-            Log::info('Content: ' . $msg);
-            Log::info(print_r($response->json(), true));
+            Log::info('Content: ' . $message);
+
+            $success = self::sendSms($session->patient->sms_mobile_number, $message);
+
             Log::info("-------------- -------------- -------------");
 
-            return $response->json()['code'] == '1901';
+            return $success;
         } catch (Exception $e) {
             report($e);
             return false;
@@ -94,17 +91,11 @@ class SmsHandler
             return;
         }
 
-        $API_USER = env('SMS_EG_USERNAME');
-        $API_KEY = env('SMS_EG_PASSWORD');
-        $API_SENDER = env('SMS_SENDER_TOKEN');
-        $API_ENV = env('APP_ENV') === 'production' ? 1 : 2;
         $mobile = $session->patient->sms_mobile_number;
 
         foreach ($patientMessages as $patientMessage) {
             try {
-                // Get the formatted message with patient name replaced
                 $messageText = $patientMessage->getMessageForSession($session);
-                $msg = urlencode($messageText);
                 
                 Log::info("-------------- SENDING PATIENT MESSAGE SMS -------------");
                 Log::info('Session ID: ' . $session->id);
@@ -112,9 +103,8 @@ class SmsHandler
                 Log::info('Phone: ' . $mobile);
                 Log::info('Content: ' . $messageText);
 
-                $response = Http::post("https://smsmisr.com/api/SMS/?environment={$API_ENV}&username={$API_USER}&password={$API_KEY}&language=1&sender={$API_SENDER}&mobile={$mobile}&message={$msg}");
+                self::sendSms($mobile, $messageText);
                 
-                Log::info(print_r($response->json(), true));
                 Log::info("-------------- -------------- -------------");
 
             } catch (Exception $e) {
@@ -122,5 +112,20 @@ class SmsHandler
                 report($e);
             }
         }
+    }
+
+    private static function sendSms(string $mobile, string $message): bool
+    {
+        $response = Http::post('https://smssmartegypt.com/sms/api/', [
+            'username'   => env('SMS_EG_USERNAME'),
+            'password'   => env('SMS_EG_PASSWORD'),
+            'sendername' => env('SMS_SENDER_TOKEN'),
+            'mobiles'    => $mobile,
+            'message'    => $message,
+        ]);
+
+        Log::info(print_r($response->json(), true));
+
+        return ($response->json()['type'] ?? null) === 'success';
     }
 }
