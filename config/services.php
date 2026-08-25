@@ -30,4 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'smseg' => [
+        'username' => env('SMS_EG_USERNAME'),
+        'password' => env('SMS_EG_PASSWORD'),
+        'sender' => env('SMS_SENDER_TOKEN'),
+        'active' => env('SMS_EG_ACTIVE', false),
+        'pm_active' => env('SMS_EG_PM_ACTIVE', false),
+    ],
+
 ];

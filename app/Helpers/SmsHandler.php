@@ -19,7 +19,7 @@ class SmsHandler
 
     public static function sendSessionMessage(Session $session, string $mode): bool
     {
-        if (!env('SMS_EG_ACTIVE', false)) return false;
+        if (!config('services.smseg.active', false)) return false;
 
         $session->loadMissing('patient', 'branch', 'doctor');
         $action = 'confirmed';
@@ -74,9 +74,9 @@ class SmsHandler
     {
         Log::info("PM JOB STARTED");
 
-        if (!env('SMS_EG_PM_ACTIVE', false)) return;
+        if (!config('services.smseg.pm_active', false)) return;
 
-        Log::info("SMS EG PM ACTIVE: " . env('SMS_EG_PM_ACTIVE', false));
+        Log::info("SMS EG PM ACTIVE: " . config('services.smseg.pm_active', false));
 
         $session->load('patient');
         
@@ -116,13 +116,27 @@ class SmsHandler
 
     private static function sendSms(string $mobile, string $message): bool
     {
-        $response = Http::post('https://smssmartegypt.com/sms/api/', [
-            'username'   => env('SMS_EG_USERNAME'),
-            'password'   => env('SMS_EG_PASSWORD'),
-            'sendername' => env('SMS_SENDER_TOKEN'),
+        $username = config('services.smseg.username');
+        $password = config('services.smseg.password');
+        $sendername = config('services.smseg.sender');
+
+        if (empty($username) || empty($password)) {
+            Log::error('SMSeg credentials missing. Set SMS_EG_USERNAME and SMS_EG_PASSWORD in .env');
+            return false;
+        }
+
+        $query = http_build_query([
+            'username'   => $username,
+            'password'   => $password,
+            'sendername' => $sendername,
             'mobiles'    => $mobile,
             'message'    => $message,
         ]);
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en-US',
+        ])->post("https://smssmartegypt.com/sms/api/?{$query}");
 
         Log::info(print_r($response->json(), true));
 
