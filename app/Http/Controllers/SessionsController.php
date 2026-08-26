@@ -65,7 +65,7 @@ class SessionsController extends Controller
         //cash data
         $this->data['paidToday'] = Cash::paidToday($branch_ID);
         $this->data['cashIn'] = Cash::collectedToday($branch_ID);
-        $this->data['visaIn'] = Visa::collectedToday($branch_ID);
+        $this->data['visaBalance'] = Visa::collectedToday($branch_ID) - Visa::paidToday($branch_ID);
         $this->data['collectedToday'] = $this->data['cashIn'];
         $this->data['cashBalance'] = Cash::currentBalance($branch_ID);
 
