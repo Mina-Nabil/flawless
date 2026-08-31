@@ -125,18 +125,13 @@ class SmsHandler
             return false;
         }
 
-        $query = http_build_query([
+        $response = Http::acceptJson()->get('https://plus.smssmartegypt.com/api/PlusSMS/SendSMS', [
             'username'   => $username,
             'password'   => $password,
             'sendername' => $sendername,
-            'mobiles'    => $mobile,
             'message'    => $message,
+            'mobiles'    => $mobile,
         ]);
-
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Accept-Language' => 'en-US',
-        ])->post("https://smssmartegypt.com/sms/api/?{$query}");
 
         Log::info(print_r($response->json(), true));
 
