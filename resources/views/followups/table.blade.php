@@ -16,6 +16,7 @@
                                     <th>Branch</th>
                                     <th>Call On</th>
                                     <th>Patient</th>
+                                    <th>Phone</th>
                                     <th>Caller</th>
                                     <th>On</th>
                                     <th>Status</th>
@@ -31,8 +32,13 @@
                                             <td><a
                                                     href="{{ $item->patient->profileURL() }}">{{ $item->patient->PTNT_NAME }}</a>
                                             </td>
+                                            <td>{{ $item->patient->PTNT_MOBN }}</td>
                                         @elseif($item->lead)
                                             <td>{{ $item->lead->LEAD_NAME }}</td>
+                                            <td>{{ $item->lead->LEAD_MOBN }}</td>
+                                        @else
+                                            <td></td>
+                                            <td></td>
                                         @endif
 
                                         <td>{{ $item->caller->DASH_USNM ?? '' }}</td>
