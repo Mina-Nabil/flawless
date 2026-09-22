@@ -21,7 +21,7 @@ class AlertMessagesController extends Controller
 
         $this->data['title'] = "Alert Messages";
         $this->data['formTitle'] = "Leave an Alert";
-        $this->data['formSubtitle'] = "Send a moving alert to selected users and track who confirmed reading it";
+        $this->data['formSubtitle'] = "Send a moving alert to selected users and track who confirmed or replied";
         $this->data['alerts'] = AlertMessage::with('creator', 'recipientRows.user')->orderByDesc('id')->get();
         $this->data['users'] = DashUser::with('dash_types')
             ->where('id', '!=', Auth::id())
@@ -110,6 +110,31 @@ class AlertMessagesController extends Controller
 
         if ($recipient->ALRC_READ_AT == null) {
             $recipient->ALRC_READ_AT = now();
+            $recipient->save();
+        }
+
+        return response()->json(["success" => true]);
+    }
+
+    /**
+     * Current user replies to an alert (one-shot) and marks it read.
+     */
+    public function reply(Request $request)
+    {
+        $request->validate([
+            "id"    => "required|exists:alert_messages,id",
+            "reply" => "required|string|max:2000",
+        ]);
+
+        $recipient = AlertRecipient::where('ALRC_ALRT_ID', $request->id)
+            ->where('ALRC_DASH_ID', Auth::id())
+            ->firstOrFail();
+
+        if ($recipient->ALRC_RPLY == null) {
+            $recipient->ALRC_RPLY = $request->reply;
+            if ($recipient->ALRC_READ_AT == null) {
+                $recipient->ALRC_READ_AT = now();
+            }
             $recipient->save();
         }
 

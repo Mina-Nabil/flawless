@@ -986,8 +986,13 @@
                     }
                 }
 
-                .alert-confirm-btn {
+                .alert-confirm-btn,
+                .alert-reply-btn {
                     flex: 0 0 auto;
+                    margin-left: 8px;
+                }
+
+                .alert-reply-btn {
                     margin-left: 12px;
                 }
             </style>
@@ -997,6 +1002,10 @@
                     <div class="alert-banner-row" data-alert-row="{{ $alert->id }}">
                         <i class="fas fa-bullhorn alert-banner-icon"></i>
                         <div class="alert-marquee"><span>{{ $alert->ALRT_TEXT }}</span></div>
+                        <button type="button" class="btn btn-sm btn-info alert-reply-btn"
+                            data-alert-id="{{ $alert->id }}">
+                            <i class="fas fa-reply"></i> Reply
+                        </button>
                         <button type="button" class="btn btn-sm btn-warning alert-confirm-btn"
                             data-alert-id="{{ $alert->id }}">
                             <i class="fas fa-check"></i> Confirm Read
@@ -1010,6 +1019,7 @@
                     var banner = document.getElementById('alertBanner');
                     if (!banner) return;
                     var confirmUrl = "{{ url('alerts/confirm') }}";
+                    var replyUrl = "{{ url('alerts/reply') }}";
                     var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                     function applyOffset() {
@@ -1018,10 +1028,68 @@
                     applyOffset();
                     window.addEventListener('resize', applyOffset);
 
+                    function dismissRow(id) {
+                        var row = banner.querySelector('[data-alert-row="' + id + '"]');
+                        if (row) row.remove();
+                        if (!banner.querySelector('.alert-banner-row')) {
+                            banner.remove();
+                            document.body.style.paddingBottom = '';
+                        } else {
+                            applyOffset();
+                        }
+                    }
+
+                    function postAlert(url, data, errorText) {
+                        var formData = new FormData();
+                        formData.append('_token', token);
+                        Object.keys(data).forEach(function (key) {
+                            formData.append(key, data[key]);
+                        });
+
+                        return fetch(url, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            body: formData
+                        }).then(function (res) {
+                            if (!res.ok) throw new Error('Request failed');
+                            return res.json();
+                        }).catch(function () {
+                            Swal.fire({ title: 'Error', text: errorText, icon: 'error' });
+                            return Promise.reject();
+                        });
+                    }
+
                     banner.addEventListener('click', function (e) {
-                        var btn = e.target.closest('.alert-confirm-btn');
-                        if (!btn) return;
-                        var id = btn.getAttribute('data-alert-id');
+                        var confirmBtn = e.target.closest('.alert-confirm-btn');
+                        var replyBtn = e.target.closest('.alert-reply-btn');
+                        if (!confirmBtn && !replyBtn) return;
+
+                        var id = (confirmBtn || replyBtn).getAttribute('data-alert-id');
+
+                        if (replyBtn) {
+                            Swal.fire({
+                                title: 'Reply',
+                                input: 'textarea',
+                                inputPlaceholder: 'Write your reply...',
+                                inputAttributes: { maxlength: 2000 },
+                                showCancelButton: true,
+                                confirmButtonText: 'Send Reply',
+                                cancelButtonText: 'Cancel',
+                                inputValidator: function (value) {
+                                    if (!value || !value.trim()) {
+                                        return 'Please write a reply';
+                                    }
+                                }
+                            }).then(function (result) {
+                                if (!result.value) return;
+
+                                postAlert(replyUrl, { id: id, reply: result.value.trim() }, 'Could not send reply, please try again.')
+                                    .then(function () {
+                                        dismissRow(id);
+                                    });
+                            });
+                            return;
+                        }
 
                         Swal.fire({
                             title: 'Confirm Read',
@@ -1033,29 +1101,10 @@
                         }).then(function (result) {
                             if (!result.value) return;
 
-                            var formData = new FormData();
-                            formData.append('_token', token);
-                            formData.append('id', id);
-
-                            fetch(confirmUrl, {
-                                method: 'POST',
-                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                                body: formData
-                            }).then(function (res) {
-                                if (!res.ok) throw new Error('Request failed');
-                                return res.json();
-                            }).then(function () {
-                                var row = banner.querySelector('[data-alert-row="' + id + '"]');
-                                if (row) row.remove();
-                                if (!banner.querySelector('.alert-banner-row')) {
-                                    banner.remove();
-                                    document.body.style.paddingBottom = '';
-                                } else {
-                                    applyOffset();
-                                }
-                            }).catch(function () {
-                                Swal.fire({ title: 'Error', text: 'Could not confirm, please try again.', icon: 'error' });
-                            });
+                            postAlert(confirmUrl, { id: id }, 'Could not confirm, please try again.')
+                                .then(function () {
+                                    dismissRow(id);
+                                });
                         });
                     });
                 })();

@@ -159,6 +159,7 @@ Route::post('alerts/add', [AlertMessagesController::class, 'store']);
 Route::get('alerts/toggle/{id}', [AlertMessagesController::class, 'toggle']);
 Route::get('alerts/delete/{id}', [AlertMessagesController::class, 'delete']);
 Route::post('alerts/confirm', [AlertMessagesController::class, 'confirmRead']);
+Route::post('alerts/reply', [AlertMessagesController::class, 'reply']);
 
 //Patient Messages
 Route::get('patient-messages', [PatientMessagesController::class, 'index']);

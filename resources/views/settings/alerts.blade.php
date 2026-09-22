@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label>Expiry Date (optional)</label>
                         <input type="date" class="form-control" name="expiry" value="{{ old('expiry') }}">
-                        <small class="text-muted">Leave empty to keep showing until each recipient confirms</small>
+                        <small class="text-muted">Leave empty to keep showing until each recipient confirms or replies</small>
                     </div>
 
                     <button type="submit" class="btn btn-success mr-2">Send Alert</button>
@@ -51,12 +51,13 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Alerts</h4>
-                <h6 class="card-subtitle">Track who has confirmed reading each alert</h6>
+                <h6 class="card-subtitle">Track who has confirmed or replied to each alert</h6>
 
                 @forelse ($alerts as $alert)
                     @php
                         $total = $alert->recipientRows->count();
                         $confirmed = $alert->recipientRows->whereNotNull('ALRC_READ_AT')->count();
+                        $replied = $alert->recipientRows->whereNotNull('ALRC_RPLY')->count();
                     @endphp
                     <div class="card border {{ $alert->ALRT_ACTV ? 'border-warning' : 'border-light' }} mt-3">
                         <div class="card-body">
@@ -76,17 +77,24 @@
                                         {{ $alert->ALRT_ACTV ? 'Active' : 'Inactive' }}
                                     </span>
                                     <span class="label label-info">{{ $confirmed }} / {{ $total }} read</span>
+                                    <span class="label label-warning">{{ $replied }} / {{ $total }} replied</span>
                                 </div>
                             </div>
 
                             <ul class="list-unstyled mt-3 mb-2">
                                 @foreach ($alert->recipientRows as $row)
-                                    <li>
+                                    <li class="mb-2">
                                         @if ($row->ALRC_READ_AT)
                                             <i class="fas fa-check-circle" style="color:lightgreen"></i>
                                             {{ $row->user->DASH_USNM ?? 'N/A' }}
                                             <small class="text-muted">— confirmed
                                                 {{ $row->ALRC_READ_AT->format('d-M-Y h:i A') }}</small>
+                                            @if ($row->ALRC_RPLY)
+                                                <div class="pl-4 mt-1">
+                                                    <small class="text-muted d-block">Reply:</small>
+                                                    <div class="border rounded px-2 py-1 bg-light">{!! nl2br(e($row->ALRC_RPLY)) !!}</div>
+                                                </div>
+                                            @endif
                                         @else
                                             <i class="far fa-clock" style="color:#fec107"></i>
                                             {{ $row->user->DASH_USNM ?? 'N/A' }}

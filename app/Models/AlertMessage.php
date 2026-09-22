@@ -30,7 +30,7 @@ class AlertMessage extends Model
     public function recipients(): BelongsToMany
     {
         return $this->belongsToMany(DashUser::class, "alert_recipients", "ALRC_ALRT_ID", "ALRC_DASH_ID")
-            ->withPivot("ALRC_READ_AT")
+            ->withPivot("ALRC_READ_AT", "ALRC_RPLY")
             ->withTimestamps();
     }
 

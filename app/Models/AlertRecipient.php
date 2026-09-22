@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AlertRecipient extends Model
 {
     protected $table = "alert_recipients";
-    protected $fillable = ["ALRC_ALRT_ID", "ALRC_DASH_ID", "ALRC_READ_AT"];
+    protected $fillable = ["ALRC_ALRT_ID", "ALRC_DASH_ID", "ALRC_READ_AT", "ALRC_RPLY"];
     protected $casts = [
         "ALRC_READ_AT" => "datetime",
     ];
