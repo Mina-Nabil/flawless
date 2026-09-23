@@ -125,8 +125,9 @@ class SmsHandler
             return false;
         }
 
-        // POST https://smssmartegypt.com/sms/api/
-        // This gateway does not decode %2A or %24, so "*" and "$" must stay literal.
+        //POST https://smssmartegypt.com/sms/api/
+
+        $url = 'https://smssmartegypt.com/sms/api/';
         $params = [
             'username'   => $username,
             'password'   => $password,
@@ -134,16 +135,13 @@ class SmsHandler
             'message'    => $message,
             'mobiles'    => $mobile,
         ];
-        $query = str_replace(['%2A', '%24'], ['*', '$'], http_build_query($params));
-        $url = 'https://smssmartegypt.com/sms/api/?' . $query;
-
-        Log::info("-------------- SENDING SMS -------------");
-        Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
+        $url .= '?' . http_build_query($params);
+        Log::info("-------------- SENDING SMS V2 -------------");
+        Log::info('URL: ' . $url);
         Log::info("-------------- -------------- -------------");
 
-        $response = Http::acceptJson()
-            ->withHeaders(['Accept-Language' => 'en-US'])
-            ->post($url);
+        $response = Http::acceptJson()->post($url . '?username=' . $username . '&password=' . $password . '&sendername=' . $sendername . '&message=' . $message . '&mobiles=' . $mobile);
+
 
         Log::info(print_r($response->json(), true));
 
