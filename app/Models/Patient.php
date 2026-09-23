@@ -266,6 +266,7 @@ class Patient extends Model
                 $this->packageItems()->create([
                     "PTPK_PLIT_ID"  =>  $itemID,
                     "PTPK_QNTY"     =>  $quantity,
+                    "PTPK_SOLD_QNTY" =>  $quantity,
                     "PTPK_PRCE"     =>  $price,
                     "PTPK_USER_ID"  =>  $userID ?? Auth::id(),
                     "PTPK_DATE"     =>  now(),

@@ -204,7 +204,7 @@
                                                         {{ $item->pricelistItem->PLIT_TYPE }} @if ($item->pricelistItem->PLIT_TYPE == 'Area')
                                                             ({{ $item->pricelistItem->area->AREA_NAME }})
                                                         @endif
-                                                        @if (Auth::user()->canAdmin() && Auth::user()->canSeePayments())
+                                                        @if (Auth::user()->canSeePayments())
                                                             {{ $item->SHIT_TOTL }}EGP
                                                         @endif
                                                     </p>

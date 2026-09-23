@@ -394,7 +394,7 @@ class ReportsController extends Controller
         //table info
         $this->data['title'] = "FLAWLESS Dashboard";
         $this->data['tableTitle'] = "Packages Sold Report";
-        $this->data['totalSold'] = $this->data['items']->sum('line_total');
+        $this->data['totalSold'] = $this->data['items']->sum('sold_total');
         $this->data['tableSubtitle'] = "Showing " . $this->data['items']->count() . " packages sold" .
             ($request->from ? " from " . (new DateTime($request->from))->format('d-M-Y') : "") .
             ($request->to ? " to " . (new DateTime($request->to))->format('d-M-Y') : "") .
@@ -408,9 +408,9 @@ class ReportsController extends Controller
             ['foreignForeign' => ['rel1' => 'patient', 'rel2' => 'location', 'att' => 'LOCT_NAME']],
             ['foreignForeign' => ['rel1' => 'patient', 'rel2' => 'channel', 'att' => 'CHNL_NAME']],
             'package_name',
-            ['number' => ['att' => 'PTPK_QNTY', 'decimals' => 0]],
+            ['number' => ['att' => 'PTPK_SOLD_QNTY', 'decimals' => 0]],
             ['number' => ['att' => 'PTPK_PRCE']],
-            ['number' => ['att' => 'line_total']],
+            ['number' => ['att' => 'sold_total']],
         ];
 
         return view("layouts.table", $this->data);

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PatientPackage extends Model
 {
     // protected $with = ["pricelistItem", "pricelistItem.area", "pricelistItem.device"];
-    protected $fillable = ["PTPK_PLIT_ID", "PTPK_QNTY", "PTPK_PRCE", "PTPK_USER_ID", "PTPK_DATE"];
+    protected $fillable = ["PTPK_PLIT_ID", "PTPK_QNTY", "PTPK_SOLD_QNTY", "PTPK_PRCE", "PTPK_USER_ID", "PTPK_DATE"];
     protected $casts = ["PTPK_DATE" => "datetime"];
     public $timestamps = false;
 
@@ -33,6 +33,11 @@ class PatientPackage extends Model
         return $this->PTPK_PRCE * $this->PTPK_QNTY;
     }
 
+    public function getSoldTotalAttribute()
+    {
+        return $this->PTPK_PRCE * $this->PTPK_SOLD_QNTY;
+    }
+
     public function getPackageNameAttribute()
     {
         $item = $this->pricelistItem;
@@ -51,6 +56,7 @@ class PatientPackage extends Model
 
     /**
      * Load sold packages filtered by patient channel/location and a date range.
+     * Quantity shown is PTPK_SOLD_QNTY, the amount stored at sale, not the remaining balance.
      *
      * @param array $channel_ids  channel ids, or [-1] for all channels
      * @param array $location_ids location ids, or [-1] for all locations
