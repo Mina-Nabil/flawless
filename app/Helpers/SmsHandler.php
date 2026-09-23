@@ -128,22 +128,19 @@ class SmsHandler
         //POST https://smssmartegypt.com/sms/api/
 
         $url = 'https://smssmartegypt.com/sms/api/';
-        Log::info("-------------- SENDING SMS -------------");
-        Log::info('URL: ' . $url);
-        Log::info('Username: ' . $username);
-        Log::info('Password: ' . $password);
-        Log::info('Sender: ' . $sendername);
-        Log::info('Message: ' . $message);
-        Log::info('Mobile: ' . $mobile);
-        Log::info("-------------- -------------- -------------");
-
-        $response = Http::acceptJson()->post($url, [
+        $params = [
             'username'   => $username,
             'password'   => $password,
             'sendername' => $sendername,
             'message'    => $message,
             'mobiles'    => $mobile,
-        ]);
+        ];
+        $url .= '?' . http_build_query($params);
+        Log::info("-------------- SENDING SMS V2 -------------");
+        Log::info('URL: ' . $url);
+        Log::info("-------------- -------------- -------------");
+
+        $response = Http::acceptJson()->post($url . '?username=' . $username . '&password=' . $password . '&sendername=' . $sendername . '&message=' . $message . '&mobiles=' . $mobile);
 
         Log::info(print_r($response->json(), true));
 
