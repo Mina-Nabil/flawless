@@ -125,7 +125,19 @@ class SmsHandler
             return false;
         }
 
-        $response = Http::acceptJson()->post('https://plus.smssmartegypt.com/api/', [
+        //POST https://smssmartegypt.com/sms/api/
+
+        $url = 'https://smssmartegypt.com/sms/api/';
+        Log::info("-------------- SENDING SMS -------------");
+        Log::info('URL: ' . $url);
+        Log::info('Username: ' . $username);
+        Log::info('Password: ' . $password);
+        Log::info('Sender: ' . $sendername);
+        Log::info('Message: ' . $message);
+        Log::info('Mobile: ' . $mobile);
+        Log::info("-------------- -------------- -------------");
+
+        $response = Http::acceptJson()->post($url, [
             'username'   => $username,
             'password'   => $password,
             'sendername' => $sendername,
