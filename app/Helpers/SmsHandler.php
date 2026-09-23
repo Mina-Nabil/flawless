@@ -136,11 +136,13 @@ class SmsHandler
             'mobiles'    => $mobile,
         ];
         $url .= '?' . http_build_query($params);
-        Log::info("-------------- SENDING SMS V2 -------------");
-        Log::info('URL: ' . $url);
+        Log::info("-------------- SENDING SMS -------------");
+        Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
         Log::info("-------------- -------------- -------------");
 
-        $response = Http::acceptJson()->post($url . '?username=' . $username . '&password=' . $password . '&sendername=' . $sendername . '&message=' . $message . '&mobiles=' . $mobile);
+        $response = Http::acceptJson()
+            ->withHeaders(['Accept-Language' => 'en-US'])
+            ->post($url);
 
 
         Log::info(print_r($response->json(), true));
