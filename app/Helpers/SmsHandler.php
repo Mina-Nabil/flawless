@@ -125,7 +125,7 @@ class SmsHandler
             return false;
         }
 
-        $response = Http::acceptJson()->get('https://plus.smssmartegypt.com/api/PlusSMS/SendSMS', [
+        $response = Http::acceptJson()->post('https://plus.smssmartegypt.com/api/PlusSMS/SendSMS', [
             'username'   => $username,
             'password'   => $password,
             'sendername' => $sendername,
