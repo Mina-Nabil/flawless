@@ -6,7 +6,6 @@ namespace App\Helpers;
 use App\Models\PatientMessage;
 use App\Models\Session;
 use Exception;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SmsHandler
@@ -125,7 +124,7 @@ class SmsHandler
             return false;
         }
 
-        //POST https://smssmartegypt.com/sms/api/
+        $message = preg_replace('/\s+/', ' ', trim($message));
 
         $url = 'https://plus.smssmartegypt.com/api/PlusSMS/SendSMS'
             . "?username={$username}"
@@ -133,16 +132,31 @@ class SmsHandler
             . "&sendername={$sendername}"
             . "&message={$message}"
             . "&mobiles={$mobile}";
-        Log::info("-------------- SENDING SMS -------------");
+
         Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
-        Log::info("-------------- -------------- -------------");
 
-        $response = Http::get($url);
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => ['Accept: */*'],
+            CURLOPT_TIMEOUT        => 30,
+        ]);
 
+        $body = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
 
-        Log::info(print_r($response, true));
-        Log::info(print_r($response->json(), true));
+        if ($body === false) {
+            Log::error('SMSeg cURL error: ' . $error);
+            return false;
+        }
 
-        return ($response->json()['type'] ?? null) === 'success';
+        $data = json_decode($body, true);
+        Log::info(print_r($data, true));
+
+        $result = is_array($data) && isset($data[0]) ? $data[0] : $data;
+
+        return ($result['type'] ?? null) === 'success';
     }
 }
