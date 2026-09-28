@@ -142,7 +142,7 @@ class SmsHandler
 
         $response = Http::acceptJson()
             ->withHeaders(['Accept-Language' => 'en-US'])
-            ->post($url);
+            ->get($url);
 
 
         Log::info(print_r($response->json(), true));
