@@ -127,7 +127,7 @@ class SmsHandler
 
         //POST https://smssmartegypt.com/sms/api/
 
-        $url = 'https://smssmartegypt.com/sms/api/';
+        $url = 'https://plus.smssmartegypt.com/api/PlusSMS/SendSMS';
         $params = [
             'username'   => $username,
             'password'   => $password,
