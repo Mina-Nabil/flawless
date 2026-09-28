@@ -130,9 +130,10 @@ class SmsHandler
             . "?username={$username}"
             . "&password={$password}"
             . "&sendername={$sendername}"
-            . "&message={$message}"
+            . '&message=' . rawurlencode($message)
             . "&mobiles={$mobile}";
 
+        Log::info('Normalized message: ' . $message);
         Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
 
         $ch = curl_init();
@@ -145,6 +146,7 @@ class SmsHandler
 
         $body = curl_exec($ch);
         $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if ($body === false) {
@@ -152,7 +154,14 @@ class SmsHandler
             return false;
         }
 
+        Log::info("SMSeg HTTP {$httpCode}, body: {$body}");
+
         $data = json_decode($body, true);
+        if ($data === null) {
+            Log::error('SMSeg invalid JSON response');
+            return false;
+        }
+
         Log::info(print_r($data, true));
 
         $result = is_array($data) && isset($data[0]) ? $data[0] : $data;
