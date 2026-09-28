@@ -138,7 +138,6 @@ class SmsHandler
         Log::info("-------------- -------------- -------------");
 
         $response = Http::acceptJson()
-            ->withHeaders(['Accept-Language' => 'en-US'])
             ->get($url);
 
 
