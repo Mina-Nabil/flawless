@@ -140,6 +140,7 @@ class SmsHandler
         $response = Http::get($url);
 
 
+        Log::info(print_r($response, true));
         Log::info(print_r($response->json(), true));
 
         return ($response->json()['type'] ?? null) === 'success';
