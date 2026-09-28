@@ -132,7 +132,7 @@ class SmsHandler
             'username'   => $username,
             'password'   => $password,
             'sendername' => $sendername,
-            'message'    => $message,
+            'message'    => preg_replace('/\s+/', ' ', trim($message)),
             'mobiles'    => $mobile,
         ];
         $url .= '?' . http_build_query($params);
