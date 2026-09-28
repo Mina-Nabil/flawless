@@ -137,8 +137,7 @@ class SmsHandler
         Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
         Log::info("-------------- -------------- -------------");
 
-        $response = Http::acceptJson()
-            ->get($url);
+        $response = Http::get($url);
 
 
         Log::info(print_r($response->json(), true));
