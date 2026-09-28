@@ -37,7 +37,7 @@ class PatientMessage extends Model
         $patientName = ucwords($nameParts[0] ?? 'Patient');
         
         // Replace {patient} placeholder with patient's first name
-        $message = str_replace('{patient}', $patientName, $this->PTMS_MSSG);
+        $message = str_replace('{patient}', $patientName . "!", $this->PTMS_MSSG);
         
         // Convert \r\n to actual newlines
         $message = str_replace('\r\n', "\r\n", $message);
