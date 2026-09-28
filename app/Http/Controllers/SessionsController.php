@@ -407,10 +407,13 @@ class SessionsController extends Controller
         return $this->redirectToDetails($session->id);
     }
 
-    public function setSessionCancelled($id)
+    public function setSessionCancelled(Request $request, $id)
     {
+        $request->validate([
+            "reason" => "required|string|max:500",
+        ]);
         $session = Session::findOrFail($id);
-        $session->setAsCancelled();
+        $session->setAsCancelled($request->reason);
         return $this->redirectToDetails($session->id);
     }
 

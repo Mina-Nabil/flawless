@@ -129,6 +129,14 @@
                             </div>
                             <p class="text-muted">{{ $session->SSHN_TEXT }}</p>
                         </div>
+                        @if ($session->SSHN_STTS == 'Cancelled' && $session->SSHN_CNCL_RSON)
+                            <div class="col-md-6">
+                                <div class="font-bold mb-2">
+                                    Cancellation Reason
+                                </div>
+                                <p class="text-muted">{{ $session->SSHN_CNCL_RSON }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -178,6 +186,11 @@
                                 <li>
                                     <p class="text-muted">Session created by {{ $session->creator->DASH_USNM }} </p>
                                 </li>
+                                @if ($session->SSHN_STTS == 'Cancelled' && $session->SSHN_CNCL_RSON)
+                                    <li>
+                                        <p class="text-muted">Cancellation reason: {{ $session->SSHN_CNCL_RSON }}</p>
+                                    </li>
+                                @endif
 
                                 @if (isset($session->doctor))
                                     <li>
@@ -250,8 +263,8 @@
                             <button class="btn btn-warning mr-2"
                                 onclick="confirmAndGoTo('{{ url($setSessionPendingUrl) }}', 'Set Session as Pending Payment')"
                                 @if (!$session->canBePending()) disabled @endif>Session Is Ready For Payment</button>
-                            <button class="btn btn-danger mr-2"
-                                onclick="confirmAndGoTo('{{ url($setSessionCancelledUrl) }}', 'Cancel the Session')"
+                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal"
+                                data-target="#cancel-session-modal"
                                 @if (!$session->canBeCancelled()) disabled @endif>
                                 Cancel Session</button>
                             <button class="btn btn-success mr-2" onclick="setAsDone()"
@@ -820,6 +833,39 @@
         <!-- Column -->
     </div>
 
+    @if ($session->canBeCancelled())
+        <div id="cancel-session-modal" class="modal fade" tabindex="-1" role="dialog"
+            aria-labelledby="cancelSessionModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url($setSessionCancelledUrl) }}">
+                        @csrf
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="cancelSessionModalLabel">Cancel Session</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-muted">Please provide a reason before cancelling this session.</p>
+                            <div class="form-group mb-0">
+                                <label>Cancellation Reason*</label>
+                                <div class="input-group mb-3">
+                                    <textarea class="form-control" rows="3" name="reason" maxlength="500"
+                                        placeholder="Why is this session being cancelled?"
+                                        required>{{ old('reason') }}</textarea>
+                                </div>
+                                <small class="text-danger">{{ $errors->first('reason') }}</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Cancel Session</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <script src="{{ asset('assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('assets/node_modules/datatables/datatables.min.js') }}"></script>
 
@@ -936,6 +982,10 @@
 
 @section('js_content')
     <script>
+        @if ($errors->has('reason'))
+            $('#cancel-session-modal').modal('show');
+        @endif
+
         @if ($session->canEditServices())
             var room = {{ $i }};
 

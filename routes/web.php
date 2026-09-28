@@ -48,7 +48,7 @@ Route::post('sessions/set/doctor', [SessionsController::class, 'setDoctor']);
 Route::get('sessions/set/pending/{id}', [SessionsController::class, 'setSessionPending']);
 Route::get('sessions/set/new/{id}', [SessionsController::class, 'setSessionNew']);
 Route::get('sessions/set/done/{id}/{date?}', [SessionsController::class, 'setSessionDone']);
-Route::get('sessions/set/cancelled/{id}', [SessionsController::class, 'setSessionCancelled']);
+Route::post('sessions/set/cancelled/{id}', [SessionsController::class, 'setSessionCancelled']);
 Route::get('sessions/set/confirm/{id}', [SessionsController::class, 'confirmSession']);
 Route::post('sessions/api/get/services', [SessionsController::class, 'getServices']);
 Route::post('sessions/api/get/duration', [SessionsController::class, 'getServicesDuration']);

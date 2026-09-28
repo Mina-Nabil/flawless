@@ -573,10 +573,15 @@ class Session extends Model
         if ($this->canBeCancelled()) {
             $this->returnCollectedPackages();
             $this->SSHN_STTS = "Cancelled";
-            if ($comment !== null)
-                $this->SSHN_TEXT = $this->SSHN_TEXT . ". Cancellation Note: " . $comment;
+            if ($comment !== null) {
+                $this->SSHN_CNCL_RSON = $comment;
+            }
             if ($this->save()) {
-                $this->logEvent("Set Session as Cancelled");
+                $logText = "Set Session as Cancelled";
+                if ($comment) {
+                    $logText .= ". Reason: " . $comment;
+                }
+                $this->logEvent($logText);
                 SendSMSJob::dispatch($this, SmsHandler::MODE_CANCEL);
                 return true;
             }
