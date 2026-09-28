@@ -127,15 +127,12 @@ class SmsHandler
 
         //POST https://smssmartegypt.com/sms/api/
 
-        $url = 'https://plus.smssmartegypt.com/api/PlusSMS/SendSMS';
-        $params = [
-            'username'   => $username,
-            'password'   => $password,
-            'sendername' => $sendername,
-            'message'    => preg_replace('/\s+/', ' ', trim($message)),
-            'mobiles'    => $mobile,
-        ];
-        $url .= '?' . http_build_query($params);
+        $url = 'https://plus.smssmartegypt.com/api/PlusSMS/SendSMS'
+            . "?username={$username}"
+            . "&password={$password}"
+            . "&sendername={$sendername}"
+            . "&message={$message}"
+            . "&mobiles={$mobile}";
         Log::info("-------------- SENDING SMS -------------");
         Log::info('URL: ' . preg_replace('/(^|&)password=[^&]*/', '$1password=***', $url));
         Log::info("-------------- -------------- -------------");
