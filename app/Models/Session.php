@@ -26,7 +26,10 @@ class Session extends Model
     ];
 
     public $timestamps = false;
-    protected $dates = ['SSHN_DATE'];
+
+    protected $casts = [
+        'SSHN_DATE' => 'datetime',
+    ];
 
     //Query functions
     public function getClassNameAttribute()

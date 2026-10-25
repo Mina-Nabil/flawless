@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Auth;
 class Feedback extends Model
 {
     protected $table = "feedbacks";
-    protected $dates = [
-        'FDBK_DATE',
+
+    protected $casts = [
+        'FDBK_DATE' => 'datetime',
     ];
 
     public function setCalled($state, $overall = null, $comment = null)

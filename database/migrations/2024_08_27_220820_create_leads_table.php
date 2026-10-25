@@ -31,7 +31,7 @@ return new class extends Migration
         });
 
         Schema::table("followups", function (Blueprint $table) {
-            $table->unsignedBigInteger("FLUP_PTNT_ID")->nullable()->constrained("patients")->change();
+            $table->unsignedBigInteger("FLUP_PTNT_ID")->nullable()->change();
             $table->foreignId("FLUP_LEAD_ID")->nullable()->constrained("leads");
         });
 

@@ -14,9 +14,10 @@ class FollowUp extends Model
     use SoftDeletes;
 
     protected $table = "followups";
-    protected $dates = [
-        'FLUP_DATE',
-        "FLUP_LAST_SSHN"
+
+    protected $casts = [
+        'FLUP_DATE' => 'datetime',
+        'FLUP_LAST_SSHN' => 'datetime',
     ];
     protected $fillable = [
         'FLUP_BRCH_ID',

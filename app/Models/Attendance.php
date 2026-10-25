@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\Auth;
 class Attendance extends Model
 {
     protected $table = "attendance";
-    protected $dates = [
-        'ATND_DATE',
+
+    protected $casts = [
+        'ATND_DATE' => 'datetime',
     ];
 
     public function setAttendance($type, $shifts = 1, $comment = null)

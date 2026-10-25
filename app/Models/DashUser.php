@@ -16,6 +16,13 @@ class DashUser extends Authenticatable
 {
     use Notifiable;
     protected $table = "dash_users";
+
+    /**
+     * Password column used by Laravel 11+ rehashing on login.
+     *
+     * @var string
+     */
+    protected $authPasswordName = 'DASH_PASS';
     /**
      * The attributes that are mass assignable.
      *

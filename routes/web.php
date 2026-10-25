@@ -259,11 +259,11 @@ Route::get("set/branch/{id}", [HomeController::class, "setBranch"]);
 
 Route::post('payments/modal/add', [HomeController::class, 'addPayment']);
 Route::post('message', [HomeController::class, 'sendMessage'])->name('sendMessage');
-Route::get('calendar', [SessionsController::class, 'calendar'])->name('calendar');
+Route::get('calendar', [SessionsController::class, 'calendar']);
 Route::get('calendar/{room}', [SessionsController::class, 'calendar'])->name('calendar');
 Route::post('search', [HomeController::class, 'search'])->name('search');
 Route::get('logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/login', [HomeController::class, 'login'])->name('login');
 Route::post('/login', [HomeController::class, 'authenticate'])->name('login');
-Route::get('/home', [SessionsController::class, 'index'])->name('home');
+Route::get('/home', [SessionsController::class, 'index']);
 Route::get('/', [SessionsController::class, 'index'])->name('home');
